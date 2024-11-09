@@ -32,7 +32,7 @@ def test_logger_config():
     assert os.path.exists(log_file_path), f"Log file '{log_file_path}' was not created."
 
     # Read the log file to check if the expected log message is present.
-    with open(log_file_path, 'r') as log_file:
+    with open(log_file_path, 'r', encoding='utf-8') as log_file:
         log_contents = log_file.read()
 
     # Assert that the test message is in the log file.
