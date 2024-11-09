@@ -1,4 +1,4 @@
-
+"""Helper function for setting up loggers equally"""
 import logging
 
 def setup_logger(name: str, log_file : str, level=logging.DEBUG):

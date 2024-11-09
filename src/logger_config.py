@@ -39,9 +39,7 @@ def logger_config(name: str, log_filename: str):
     return setup_logger(name, log_file=log_file_path)
 
 
-if __name__ == "__main__":
+
 
    
-    test_logger = logger_config("test_logger", log_filename="example_log.log")
 
-    test_logger.info("This is a test log entry.")
