@@ -25,6 +25,7 @@ numpy=2.1.3=py313hf4aebb8_0
 numpy-base=2.1.3=py313h3fc9231_0
 openssl=3.0.15=h5eee18b_0
 pip=24.2=py313h06a4308_0
+pygame=2.6.1=pypi_0
 python=3.13.0=hf623796_100_cp313
 python_abi=3.13=0_cp313
 readline=8.2=h5eee18b_0
