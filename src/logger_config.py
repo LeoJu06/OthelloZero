@@ -1,5 +1,5 @@
 import os
-from utils.setup_logger import setup_logger
+from src.utils.setup_logger import setup_logger
 
 LOGGER_DISABLED = {
     "logger_test": False
