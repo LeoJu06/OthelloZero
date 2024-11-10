@@ -1,6 +1,6 @@
 
 import constants as const
-
+import src.logger_config as lg
 
 class Board:
     def __init__(self, board, current_player=const.PlayerColor.BLACK):
@@ -77,4 +77,3 @@ if __name__ == "__main__":
     print(b.is_draw())
 
     b.print_board()
-
