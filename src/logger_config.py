@@ -38,7 +38,7 @@ def logger_config(name: str, log_filename: str):
     # Return the configured logger.
     return setup_logger(name, log_file=log_file_path)
 
-
+logger_board = logger_config("Logger_board", "logger_board.log")
 
 
    
