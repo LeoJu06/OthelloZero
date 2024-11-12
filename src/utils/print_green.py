@@ -1,4 +1,3 @@
-
 def print_green(text):
     """Function to print green text on the console"""
     # Using ANSI Escape Codes to print green

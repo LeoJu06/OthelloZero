@@ -1,8 +1,8 @@
 """Helper function for setting up loggers equally"""
 import logging
 
-def setup_logger(name: str, log_file : str, level=logging.DEBUG):
 
+def setup_logger(name: str, log_file: str, level=logging.DEBUG):
     """
     This function sets up and configures a logger with a specified name.
     The logger writes log messages to a specified file and can be used to log
@@ -25,9 +25,11 @@ def setup_logger(name: str, log_file : str, level=logging.DEBUG):
 
     """
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
 
-    handler = logging.FileHandler(log_file)        
+    handler = logging.FileHandler(log_file)
     handler.setFormatter(formatter)
 
     logger = logging.getLogger(name)
