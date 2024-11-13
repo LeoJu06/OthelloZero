@@ -84,6 +84,9 @@ class Board:
 
     def update_board(self, x_pos, y_pos):
         """Method for updating the board, flipes the stones and switches the player"""
+        # Here it is important to firstly call self._flipt_stones
+        # otherwise the stones for the wrong player will be flipped
+        # or in genreral this would lead to unexpected acting of the program
 
         # flipping the stones
         self._flip_stones(x_pos, y_pos)
