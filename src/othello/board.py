@@ -26,7 +26,7 @@ class Board:
     def apply_move(self, x_pos: int, y_pos: int):
         """Function to apply the given move into self.board.
         Assumes that only valid moves are passed to this method.
-        Mark that only this function needs to be called to complete the game logic.
+        Mark that only this Method needs to be called to complete the game logic.
         This Method also updates the board (flips the stones and swtiching the player)
         """
 
