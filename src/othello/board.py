@@ -3,13 +3,14 @@ which represents an othello board with all it's functions
 """
 import src.othello.game_constants as const
 import src.logger_config as lg
+import numpy as np
 
 
 class Board:
     """The Board Class represents an Othello board"""
 
     def __init__(self, board, player=const.PlayerColor.BLACK.value, empty_cells=None):
-        self.board = board
+        self.board = np.array(board)
         self.player = player
 
         if empty_cells is None:
@@ -25,19 +26,19 @@ class Board:
     def apply_move(self, x_pos: int, y_pos: int):
         """Function to apply the given move into self.board.
         Assumes that only valid moves are passed to this method.
+        Mark that only this function needs to be called to complete the game logic.
+        This Method also updates the board (flips the stones and swtiching the player)
         """
-
-       
 
         # placing the piece
         self.board[x_pos][y_pos] = self.player
 
         # removing it from the empty fields
-        self.empty_cells.remove((x_pos, y_pos))
+        self._remove_empty_cell(x_pos, y_pos)
 
-        # Flipping the stones
-        self._flip_stones()
-        
+        # updates the board, flips the peaces and switches the player
+        self.update_board(x_pos, y_pos)
+
         # simple debug logging
         lg.logger_board.debug(
             "Player (%s) places at (%s|%s)", self.player, x_pos, y_pos
@@ -45,15 +46,50 @@ class Board:
         lg.logger_board.debug("Remaining empty fields: {%s}", self.print_empty_cells())
         lg.logger_board.debug("Board: %s", self.print_board(to_console=False))
 
-        # switch player
-        self.switch_player()
+    def _flip_stones(self, x_pos_, y_pos_):
+        directions = [
+            (-1, -1),
+            (-1, 0),
+            (-1, 1),
+            (0, -1),
+            (0, 1),
+            (1, -1),
+            (1, 0),
+            (1, 1),
+        ]
 
-    def _flip_stones(self):
-        pass
+        for dx, dy in directions:
+            nx, ny = x_pos_ + dx, y_pos_ + dy
+            stones_to_flip = []
 
-    def switch_player(self):
+            while 0 <= nx < 8 and 0 <= ny < 8:
+                if self.board[nx][ny] == -self.player:
+                    stones_to_flip.append((nx, ny))
+                elif self.board[nx][ny] == self.player:
+                    for flip_x, flip_y in stones_to_flip:
+                        self.board[flip_x][flip_y] = self.player
+                    break
+                else:
+                    break
+                nx, ny = nx + dx, ny + dy
+
+    def _switch_player(self):
         """Function to switch to the other player (e.g from black to white)"""
         self.player = -self.player
+
+    def _remove_empty_cell(self, x_pos, y_pos):
+        """Method to remove the given move from empty cells"""
+        # Removing the move out of the list
+        self.empty_cells.remove((x_pos, y_pos))
+
+    def update_board(self, x_pos, y_pos):
+        """Method for updating the board, flipes the stones and switches the player"""
+
+        # flipping the stones
+        self._flip_stones(x_pos, y_pos)
+
+        # switching the player
+        self._switch_player()
 
     def valid_moves(self):
         """Returns a list with all valid moves, which can be made"""
@@ -109,7 +145,7 @@ class Board:
             # In this case, the current player would have to pass
 
             # Change to the opponents view
-            self.switch_player()
+            self._switch_player()
 
             # Check whether the opponent no longer has a valid move
             if not self.valid_moves():
@@ -117,10 +153,29 @@ class Board:
                 return True
 
             # change back to the original player
-            self.switch_player()
+            self._switch_player()
 
         # There is no draw yet
         return False
+
+    def determine_winner(self):
+        """Method to determine the winner of the current board.
+        Returns (-1 if black won), (1 if white won) and (0 for a draw)."""
+
+        # calculate the sum of all peaces
+        total_sum = np.sum(self.board)
+
+        # if the sum is 1 or greater, white won
+        if total_sum > 0:
+            return const.PlayerColor.WHITE.value
+
+        # if the sum is less than -1 or -1, black won
+        elif total_sum < 0:
+            return const.PlayerColor.BLACK.value
+
+        # it is a draw, no one won
+        else:
+            return 0
 
     def print_board(self, to_console=True):
         """Function to return the board as a formatted string with row and column numbers."""
@@ -142,7 +197,7 @@ class Board:
                     row_str += " . "  # Empty space (represented by a dot)
 
             board_str += row_str + "\n"
-        
+
         if to_console:
             print(board_str)
         else:
