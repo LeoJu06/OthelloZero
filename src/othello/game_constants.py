@@ -21,6 +21,14 @@ class PlayerColor(Enum):
 EMPTY_CELL = 0
 EMPTY_BOARD = [[EMPTY_CELL for x in range(8)] for y in range(8)]
 
+# Placing the starting peaces
+EMPTY_BOARD[3][4] = PlayerColor.BLACK.value
+EMPTY_BOARD[3][3] = PlayerColor.WHITE.value
+EMPTY_BOARD[4][3] = PlayerColor.BLACK.value
+EMPTY_BOARD[4][4] = PlayerColor.WHITE.value
+
+    
+
 
 if __name__ == "__main__":
     # prints -1 to the console (representing the black player)
