@@ -218,3 +218,23 @@ class Board:
                 cells_str += " - "
 
         return cells_str
+
+if __name__ == "__main__":
+
+    board = Board(const.EMPTY_BOARD)
+
+    while not board.is_terminal_state():
+
+        board.print_board()
+        moves = board.valid_moves()
+        print("Your valid moves")
+        print(moves)
+        x = int(input("Where do you like to set your x? "))
+        y = int(input("Where do you like to set your x? "))
+
+        assert (x, y) in moves, "This is not a valid move!"
+
+        board.apply_move(x, y)
+
+
+    print(f"Congrats player {board.determine_winner()}, you won!!")
