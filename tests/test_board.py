@@ -6,8 +6,6 @@ def test_board():
     # Init empty board
     board = Board(const.EMPTY_BOARD)
 
-    
-
     # New game situation: An additional move that changes the game situation
     new_move = (2, 3)  # Beispielzug, der auf das Board angewendet wird
     board.apply_move(*new_move)

@@ -27,8 +27,6 @@ EMPTY_BOARD[3][3] = PlayerColor.WHITE.value
 EMPTY_BOARD[4][3] = PlayerColor.BLACK.value
 EMPTY_BOARD[4][4] = PlayerColor.WHITE.value
 
-    
-
 
 if __name__ == "__main__":
     # prints -1 to the console (representing the black player)
