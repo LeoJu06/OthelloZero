@@ -46,7 +46,11 @@ class Board:
         lg.logger_board.debug("Remaining empty fields: {%s}", self.print_empty_cells())
         lg.logger_board.debug("Board: %s", self.print_board(to_console=False))
 
-    def _flip_stones(self, x_pos_, y_pos_):
+    def stones_to_flip(self, x_pos, y_pos):
+        """Method to calculate which stones have to be flipped on the current board.
+        x_pos and y_pos are representing the last played move."""
+
+        stones_to_flip = []
         directions = [
             (-1, -1),
             (-1, 0),
@@ -59,19 +63,33 @@ class Board:
         ]
 
         for dx, dy in directions:
-            nx, ny = x_pos_ + dx, y_pos_ + dy
-            stones_to_flip = []
+            nx, ny = x_pos + dx, y_pos + dy
+            turn = []
 
             while 0 <= nx < 8 and 0 <= ny < 8:
                 if self.board[nx][ny] == -self.player:
-                    stones_to_flip.append((nx, ny))
+                    turn.append((nx, ny))
                 elif self.board[nx][ny] == self.player:
-                    for flip_x, flip_y in stones_to_flip:
-                        self.board[flip_x][flip_y] = self.player
+                    if (
+                        turn
+                    ):  # Nur hinzufügen, wenn eine Kette von gegnerischen Steinen existiert
+                        stones_to_flip.extend(turn)
                     break
                 else:
                     break
                 nx, ny = nx + dx, ny + dy
+
+        return stones_to_flip
+
+    def _flip_stones(self, stones_to_flip):
+        """Method to flip stones on self.board.
+        stones_to_flip is a list with tuples.
+        Each tuple contains x and y coordinates
+        of stones that have to be flipped."""
+
+        # Flip each stone by setting it to the current player's value
+        for flip_x, flip_y in stones_to_flip:
+            self.board[flip_x][flip_y] = self.player
 
     def _switch_player(self):
         """Function to switch to the other player (e.g from black to white)"""
@@ -88,8 +106,11 @@ class Board:
         # otherwise the stones for the wrong player will be flipped
         # or in genreral this would lead to unexpected acting of the program
 
+        # calculate which stones have to be flipped
+        stones_to_flip = self.stones_to_flip(x_pos, y_pos)
+
         # flipping the stones
-        self._flip_stones(x_pos, y_pos)
+        self._flip_stones(stones_to_flip)
 
         # switching the player
         self._switch_player()
@@ -219,22 +240,25 @@ class Board:
 
         return cells_str
 
+
 if __name__ == "__main__":
 
+    import random
     board = Board(const.EMPTY_BOARD)
 
     while not board.is_terminal_state():
-
-        board.print_board()
+        #board.print_board()
         moves = board.valid_moves()
         print("Your valid moves")
         print(moves)
-        x = int(input("Where do you like to set your x? "))
-        y = int(input("Where do you like to set your x? "))
+        #x = int(input("Where do you like to set your x? "))
+        #y = int(input("Where do you like to set your x? "))
 
-        assert (x, y) in moves, "This is not a valid move!"
-
-        board.apply_move(x, y)
-
+        #assert (x, y) in moves, "This is not a valid move!"
+        if moves:
+            board.apply_move(*random.choice(moves))
+        else:
+            board._switch_player()
+        board.print_board()
 
     print(f"Congrats player {board.determine_winner()}, you won!!")
