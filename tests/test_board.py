@@ -9,6 +9,7 @@ def test_board():
     # New game situation: An additional move that changes the game situation
     new_move = (2, 3)  # Beispielzug, der auf das Board angewendet wird
     board.apply_move(*new_move)
+    board.update(*new_move)
 
     # Calculate new valid moves
     new_valid_moves = board.valid_moves()
