@@ -13,9 +13,9 @@ import os
 pygame.init()
 
 # Setze die Größe des Spielfensters
-WIDTH, HEIGHT = 800, 800
+WIDTH, HEIGHT = 1300, 900
 ROWS, COLS = 8, 8
-SQUARE_SIZE = WIDTH // COLS
+SQUARE_SIZE = HEIGHT // COLS
 
 # Farben definieren
 BG_COLOR = (50, 50, 50)  # Dunkelgrauer Hintergrund
@@ -40,7 +40,7 @@ rotation_images = [
 
 # Optionale Skalierung der Bilder, falls notwendig
 for i in range(len(rotation_images)):
-    rotation_images[i] = pygame.transform.scale(rotation_images[i], (100, 100))
+    rotation_images[i] = pygame.transform.smoothscale(rotation_images[i], (100, 100))
 
 
 
@@ -97,8 +97,11 @@ def main():
                 col = x // SQUARE_SIZE
                 row = y // SQUARE_SIZE
                 if (row, col) in board.valid_moves():
+
+                    print(row, col)
                     board.apply_move(row, col)
                     flipped_stones = board.update(row, col)
+        
 
         # Wenn es Steine zum animieren gibt, führe die Animation aus
         if flipped_stones:
@@ -117,6 +120,7 @@ def main():
             flipped_stones = []  # Keine weiteren Animationen mehr
             animation_step = 0
             draw_board(board)
+            
 
         pygame.time.delay(100)  # Verzögere die Animation, damit der Fortschritt sichtbar ist
 
