@@ -1,3 +1,6 @@
+from os import environ
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1' # deactivates pygame's welcome message
+
 import pygame
 import numpy as np
 import pygame.locals
@@ -39,7 +42,7 @@ rotation_images = [
 
 # Optionally scale the rotation images if necessary
 for i in range(len(rotation_images)):
-    rotation_images[i] = pygame.transform.smoothscale(rotation_images[i], (100, 100))
+    rotation_images[i] = pygame.transform.smoothscale(rotation_images[i], (SQUARE_SIZE,SQUARE_SIZE))
 
 
 # Initialize the game window
@@ -58,6 +61,16 @@ def draw_board(board: Board):
 
             elif piece == const.PlayerColor.WHITE.value:
                 screen.blit(img_white_stone, (col * SQUARE_SIZE, row * SQUARE_SIZE))
+
+# Play flip animation at the positions of flipped stones
+def play_flip_animation(flipped_stones, board, delay_time=50): 
+    for frame in rotation_images:
+        draw_board(board)  # Redraw the base state of the board
+        for row, col in flipped_stones:
+            screen.blit(frame, (col * SQUARE_SIZE, row * SQUARE_SIZE))
+        pygame.display.flip()  # Update the display only after all images are drawn
+        pygame.time.delay(delay_time)  # Adjust delay for smooth animation
+
 
 
 
@@ -79,6 +92,9 @@ def main():
                     print(row, col)
                     board.apply_move(row, col)
                     flipped_stones = board.update(row, col)
+                    print(flipped_stones)
+
+                    play_flip_animation(flipped_stones, board)
         
         draw_board(board)
         pygame.display.flip()
