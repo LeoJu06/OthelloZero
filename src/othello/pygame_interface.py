@@ -6,6 +6,9 @@ import numpy as np
 import pygame.locals
 from src.othello.board import Board  
 import src.othello.game_constants as const
+from src.othello.game_settings import WIDTH, HEIGHT,ROWS, COLS, SQUARE_SIZE
+from src.othello.game_settings import BG_COLOR, GRID_COLOR, WHITE, BLACK
+from src.othello.animations import AnimationManager
 
 import os
 
@@ -14,16 +17,7 @@ import os
 pygame.init()
 clock = pygame.time.Clock()
 
-# Set the size of the game window
-WIDTH, HEIGHT = 1300, 900
-ROWS, COLS = 8, 8
-SQUARE_SIZE = HEIGHT // COLS
 
-# Define colors
-BG_COLOR = (50, 50, 50)  # Dark gray background
-GRID_COLOR = (200, 200, 200)  # Light gray for the grid lines
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
 
 
 # Load images
@@ -44,6 +38,7 @@ rotation_images = [
 for i in range(len(rotation_images)):
     rotation_images[i] = pygame.transform.smoothscale(rotation_images[i], (SQUARE_SIZE,SQUARE_SIZE))
 
+animation_manager = AnimationManager(rotation_images, square_size=SQUARE_SIZE)
 
 # Initialize the game window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -62,14 +57,7 @@ def draw_board(board: Board):
             elif piece == const.PlayerColor.WHITE.value:
                 screen.blit(img_white_stone, (col * SQUARE_SIZE, row * SQUARE_SIZE))
 
-# Play flip animation at the positions of flipped stones
-def play_flip_animation(flipped_stones, board, delay_time=50): 
-    for frame in rotation_images:
-        draw_board(board)  # Redraw the base state of the board
-        for row, col in flipped_stones:
-            screen.blit(frame, (col * SQUARE_SIZE, row * SQUARE_SIZE))
-        pygame.display.flip()  # Update the display only after all images are drawn
-        pygame.time.delay(delay_time)  # Adjust delay for smooth animation
+
 
 
 
@@ -94,7 +82,7 @@ def main():
                     flipped_stones = board.update(row, col)
                     print(flipped_stones)
 
-                    play_flip_animation(flipped_stones, board)
+                    animation_manager.play_flip_animation(flipped_stones, board, screen, draw_board)
         
         draw_board(board)
         pygame.display.flip()
