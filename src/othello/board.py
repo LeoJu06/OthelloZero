@@ -25,7 +25,7 @@ class Board:
         empty_cells (list): List of tuples representing empty cells on the board.
     """
 
-    def __init__(self, board, player=const.PlayerColor.BLACK.value, empty_cells=None):
+    def __init__(self, board=None, player=const.PlayerColor.BLACK.value, empty_cells=None):
         """Initializes the Board instance.
 
         Args:
@@ -33,7 +33,7 @@ class Board:
             player (int, optional): The starting player. Defaults to BLACK.
             empty_cells (list, optional): List of initial empty cells. Defaults to calculation based on the board state.
         """
-        self.board = np.array(board)
+        self.board = board or np.array(const.EMPTY_BOARD)
         self.player = player
 
         # Calculate empty cells if not provided
