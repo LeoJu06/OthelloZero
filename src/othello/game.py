@@ -1,5 +1,6 @@
 from os import environ
-environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'  # Deactivates pygame's welcome message
+
+environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"  # Deactivates pygame's welcome message
 
 import pygame
 import numpy as np
@@ -12,6 +13,7 @@ from src.othello.animations import AnimationManager
 
 import os
 
+
 class Game:
     def __init__(self, screen, animation_manager, board=None):
         self.screen = screen
@@ -22,10 +24,18 @@ class Game:
         self.clock = pygame.time.Clock()
 
         path_to_images = os.path.join(os.path.dirname(__file__), "images")
-        image_black_stone = pygame.image.load(os.path.join(path_to_images, "black_stone.png"))
-        image_white_stone = pygame.image.load(os.path.join(path_to_images, "white_stone.png"))
-        self.image_white_stone = pygame.transform.smoothscale(image_white_stone, (SQUARE_SIZE, SQUARE_SIZE))
-        self.image_black_stone = pygame.transform.smoothscale(image_black_stone, (SQUARE_SIZE, SQUARE_SIZE))
+        image_black_stone = pygame.image.load(
+            os.path.join(path_to_images, "black_stone.png")
+        )
+        image_white_stone = pygame.image.load(
+            os.path.join(path_to_images, "white_stone.png")
+        )
+        self.image_white_stone = pygame.transform.smoothscale(
+            image_white_stone, (SQUARE_SIZE, SQUARE_SIZE)
+        )
+        self.image_black_stone = pygame.transform.smoothscale(
+            image_black_stone, (SQUARE_SIZE, SQUARE_SIZE)
+        )
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -41,7 +51,9 @@ class Game:
         if (row, col) in self.board.valid_moves():
             self.board.apply_move(row, col)
             flipped_stones = self.board.update(row, col)
-            self.animation_manager.play_flip_animation(flipped_stones,self.screen, self.draw_board)
+            self.animation_manager.play_flip_animation(
+                flipped_stones, self.screen, self.draw_board
+            )
 
     def update(self):
         # Add game update logic (e.g., AI moves)
@@ -55,20 +67,32 @@ class Game:
         self.screen.fill(BACKGROUND_COLOR)
         for row in range(ROWS):
             for col in range(COLS):
-                pygame.draw.rect(self.screen, GRID_COLOR,
-                                 (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 1)
+                pygame.draw.rect(
+                    self.screen,
+                    GRID_COLOR,
+                    (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE),
+                    1,
+                )
                 piece = self.board.board[row][col]
                 if piece == const.PlayerColor.BLACK.value:
-                    self.screen.blit(self.image_black_stone, (col * SQUARE_SIZE, row * SQUARE_SIZE))
+                    self.screen.blit(
+                        self.image_black_stone, (col * SQUARE_SIZE, row * SQUARE_SIZE)
+                    )
                 elif piece == const.PlayerColor.WHITE.value:
-                    self.screen.blit(self.image_white_stone, (col * SQUARE_SIZE, row * SQUARE_SIZE))
+                    self.screen.blit(
+                        self.image_white_stone, (col * SQUARE_SIZE, row * SQUARE_SIZE)
+                    )
 
-    def run(self):
+    def run(self, FPS=60):
+       
         while self.running:
             self.handle_events()
             self.update()
             self.draw()
-            self.clock.tick(60)
+            self.clock.tick(FPS)
+            
+            
+
 
 # Initialize Pygame and game settings
 pygame.init()
