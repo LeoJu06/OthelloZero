@@ -25,7 +25,9 @@ class Board:
         empty_cells (list): List of tuples representing empty cells on the board.
     """
 
-    def __init__(self, board=None, player=const.PlayerColor.BLACK.value, empty_cells=None):
+    def __init__(
+        self, board=None, player=const.PlayerColor.BLACK.value, empty_cells=None
+    ):
         """Initializes the Board instance.
 
         Args:
@@ -33,7 +35,11 @@ class Board:
             player (int, optional): The starting player. Defaults to BLACK.
             empty_cells (list, optional): List of initial empty cells. Defaults to calculation based on the board state.
         """
-        self.board = board or np.array(const.EMPTY_BOARD)
+        if board is None:
+            self.board = np.array(const.EMPTY_BOARD)
+        else:
+            self.board = np.array(board) 
+            
         self.player = player
 
         # Calculate empty cells if not provided
@@ -163,13 +169,13 @@ class Board:
         # Define all possible directions to check for valid moves (8 directions)
         directions = [
             (-1, -1),  # Top-left
-            (-1, 0),   # Up
-            (-1, 1),   # Top-right
-            (0, -1),   # Left
-            (0, 1),    # Right
-            (1, -1),   # Bottom-left
-            (1, 0),    # Down
-            (1, 1),    # Bottom-right
+            (-1, 0),  # Up
+            (-1, 1),  # Top-right
+            (0, -1),  # Left
+            (0, 1),  # Right
+            (1, -1),  # Bottom-left
+            (1, 0),  # Down
+            (1, 1),  # Bottom-right
         ]
 
         # Loop through all empty cells on the board (the possible places for a move)
@@ -177,13 +183,17 @@ class Board:
             # Check each direction from the current empty cell
             for dx, dy in directions:
                 nx, ny = x + dx, y + dy  # Start checking in the given direction
-                found_opponent = False  # Flag to track if we encounter any opponent pieces
+                found_opponent = (
+                    False  # Flag to track if we encounter any opponent pieces
+                )
 
                 # Check cells in the current direction while within the board boundaries
                 while (
                     0 <= nx < 8 and 0 <= ny < 8 and self.board[nx][ny] == -self.player
                 ):
-                    found_opponent = True  # We've found an opponent piece in this direction
+                    found_opponent = (
+                        True  # We've found an opponent piece in this direction
+                    )
                     nx += dx  # Move to the next cell in this direction
                     ny += dy
 
@@ -192,13 +202,15 @@ class Board:
                     found_opponent  # We found at least one opponent's piece
                     and 0 <= nx < 8  # Ensure the new position is within board bounds
                     and 0 <= ny < 8
-                    and self.board[nx][ny] == self.player  # The current player's piece should be at the new position
+                    and self.board[nx][ny]
+                    == self.player  # The current player's piece should be at the new position
                 ):
-                    valid_moves.append((x, y))  # Add the current empty cell (x, y) as a valid move
+                    valid_moves.append(
+                        (x, y)
+                    )  # Add the current empty cell (x, y) as a valid move
                     break  # No need to check further directions for this empty cell, move to the next one
 
         return valid_moves  # Return the list of all valid moves for the current player
-
 
     def is_terminal_state(self):
         """Determines if the current board state is terminal (game over).
