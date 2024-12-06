@@ -1,5 +1,3 @@
-
-
 # Set the size of the game window
 WIDTH, HEIGHT = 1300, 900
 ROWS, COLS = 8, 8
