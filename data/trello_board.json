@@ -222,13 +222,13 @@
         "black_light": ""
     },
     "powerUps": [],
-    "dateLastActivity": "2024-12-19T20:20:41.868Z",
-    "dateLastView": "2024-12-19T20:20:41.916Z",
+    "dateLastActivity": "2024-12-19T20:29:49.152Z",
+    "dateLastView": "2024-12-19T20:40:16.938Z",
     "shortUrl": "https://trello.com/b/dUL17l6j",
     "idTags": [],
     "datePluginDisable": null,
     "creationMethod": "automatic",
-    "ixUpdate": "1860",
+    "ixUpdate": "1890",
     "templateGallery": null,
     "enterpriseOwned": false,
     "idBoardSource": null,
@@ -243,6 +243,391 @@
     "idMemberCreator": "667ffbc68f223b79aad3ae96",
     "type": null,
     "actions": [
+        {
+            "id": "6764823d9fd50090a4e9662f",
+            "idMemberCreator": "667ffbc68f223b79aad3ae96",
+            "data": {
+                "board": {
+                    "id": "672b9bbc97c86d6599920565",
+                    "name": "Maturitätsarbeit",
+                    "shortLink": "dUL17l6j"
+                },
+                "card": {
+                    "id": "67647cbad0b2f494aae47bb6",
+                    "name": "Erstellung eines Files - das Trello Board soll über die Trello API geladen werden und das Json file soll dann gespeichert werden",
+                    "idShort": 72,
+                    "shortLink": "iKpWbDX7"
+                },
+                "checklist": {
+                    "id": "67647cbad0b2f494aae47bf1",
+                    "name": "Timetracker"
+                },
+                "checkItem": {
+                    "id": "67647cbad0b2f494aae47bf3",
+                    "name": "Benötigte Bearbeitungszeit 0.5",
+                    "state": "complete",
+                    "textData": {
+                        "emoji": {}
+                    }
+                }
+            },
+            "appCreator": null,
+            "type": "updateCheckItemStateOnCard",
+            "date": "2024-12-19T20:29:49.094Z",
+            "limits": null,
+            "memberCreator": {
+                "id": "667ffbc68f223b79aad3ae96",
+                "activityBlocked": false,
+                "avatarHash": "dd73c57ec6f674855503711969402766",
+                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
+                "fullName": "Leo Junghans",
+                "idMemberReferrer": null,
+                "initials": "LJ",
+                "nonPublic": {},
+                "nonPublicAvailable": true,
+                "username": "leojunghans1"
+            }
+        },
+        {
+            "id": "6764823c4e768c990615885b",
+            "idMemberCreator": "667ffbc68f223b79aad3ae96",
+            "data": {
+                "board": {
+                    "id": "672b9bbc97c86d6599920565",
+                    "name": "Maturitätsarbeit",
+                    "shortLink": "dUL17l6j"
+                },
+                "card": {
+                    "id": "67647cbad0b2f494aae47bb6",
+                    "name": "Erstellung eines Files - das Trello Board soll über die Trello API geladen werden und das Json file soll dann gespeichert werden",
+                    "idShort": 72,
+                    "shortLink": "iKpWbDX7"
+                },
+                "checklist": {
+                    "id": "67647cbad0b2f494aae47bf1",
+                    "name": "Timetracker"
+                },
+                "checkItem": {
+                    "id": "67647cbad0b2f494aae47bf2",
+                    "name": "Geschätzte Bearbeitungszeit: 0.5",
+                    "state": "complete",
+                    "textData": {
+                        "emoji": {}
+                    }
+                }
+            },
+            "appCreator": null,
+            "type": "updateCheckItemStateOnCard",
+            "date": "2024-12-19T20:29:48.753Z",
+            "limits": null,
+            "memberCreator": {
+                "id": "667ffbc68f223b79aad3ae96",
+                "activityBlocked": false,
+                "avatarHash": "dd73c57ec6f674855503711969402766",
+                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
+                "fullName": "Leo Junghans",
+                "idMemberReferrer": null,
+                "initials": "LJ",
+                "nonPublic": {},
+                "nonPublicAvailable": true,
+                "username": "leojunghans1"
+            }
+        },
+        {
+            "id": "676482370e8cfbbc01021cae",
+            "idMemberCreator": "667ffbc68f223b79aad3ae96",
+            "data": {
+                "board": {
+                    "id": "672b9bbc97c86d6599920565",
+                    "name": "Maturitätsarbeit",
+                    "shortLink": "dUL17l6j"
+                },
+                "card": {
+                    "id": "67646a9a01db58fa8a82ec0a",
+                    "name": "Aktivierung der Trello API, Erstellung von Token und API Key",
+                    "idShort": 66,
+                    "shortLink": "vBJOxGZM"
+                },
+                "checklist": {
+                    "id": "67647dcbe8bbfd7cf8f4bbb5",
+                    "name": "Timetracker"
+                },
+                "checkItem": {
+                    "id": "67647dcbe8bbfd7cf8f4bbb7",
+                    "name": "Benötigte Bearbeitungszeit 0.25",
+                    "state": "complete",
+                    "textData": {
+                        "emoji": {}
+                    }
+                }
+            },
+            "appCreator": null,
+            "type": "updateCheckItemStateOnCard",
+            "date": "2024-12-19T20:29:43.661Z",
+            "limits": null,
+            "memberCreator": {
+                "id": "667ffbc68f223b79aad3ae96",
+                "activityBlocked": false,
+                "avatarHash": "dd73c57ec6f674855503711969402766",
+                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
+                "fullName": "Leo Junghans",
+                "idMemberReferrer": null,
+                "initials": "LJ",
+                "nonPublic": {},
+                "nonPublicAvailable": true,
+                "username": "leojunghans1"
+            }
+        },
+        {
+            "id": "676482335ac3a04599d7bb9b",
+            "idMemberCreator": "667ffbc68f223b79aad3ae96",
+            "data": {
+                "board": {
+                    "id": "672b9bbc97c86d6599920565",
+                    "name": "Maturitätsarbeit",
+                    "shortLink": "dUL17l6j"
+                },
+                "card": {
+                    "id": "67646a9a01db58fa8a82ec0a",
+                    "name": "Aktivierung der Trello API, Erstellung von Token und API Key",
+                    "idShort": 66,
+                    "shortLink": "vBJOxGZM"
+                },
+                "checklist": {
+                    "id": "67647dcbe8bbfd7cf8f4bbb5",
+                    "name": "Timetracker"
+                },
+                "checkItem": {
+                    "id": "67647dcbe8bbfd7cf8f4bbb6",
+                    "name": "Geschätzte Bearbeitungszeit: 0.25",
+                    "state": "complete",
+                    "textData": {
+                        "emoji": {}
+                    }
+                }
+            },
+            "appCreator": null,
+            "type": "updateCheckItemStateOnCard",
+            "date": "2024-12-19T20:29:39.272Z",
+            "limits": null,
+            "memberCreator": {
+                "id": "667ffbc68f223b79aad3ae96",
+                "activityBlocked": false,
+                "avatarHash": "dd73c57ec6f674855503711969402766",
+                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
+                "fullName": "Leo Junghans",
+                "idMemberReferrer": null,
+                "initials": "LJ",
+                "nonPublic": {},
+                "nonPublicAvailable": true,
+                "username": "leojunghans1"
+            }
+        },
+        {
+            "id": "67648226157c3c5d016c00e0",
+            "idMemberCreator": "667ffbc68f223b79aad3ae96",
+            "data": {
+                "card": {
+                    "id": "6762cf1cf2bf188965ef2d89",
+                    "idShort": 63,
+                    "shortLink": "cSmbMg38"
+                },
+                "list": {
+                    "id": "672b9bbc97c86d659992056c",
+                    "name": "To Do"
+                },
+                "board": {
+                    "id": "672b9bbc97c86d6599920565",
+                    "name": "Maturitätsarbeit",
+                    "shortLink": "dUL17l6j"
+                }
+            },
+            "appCreator": null,
+            "type": "deleteCard",
+            "date": "2024-12-19T20:29:26.275Z",
+            "limits": null,
+            "memberCreator": {
+                "id": "667ffbc68f223b79aad3ae96",
+                "activityBlocked": false,
+                "avatarHash": "dd73c57ec6f674855503711969402766",
+                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
+                "fullName": "Leo Junghans",
+                "idMemberReferrer": null,
+                "initials": "LJ",
+                "nonPublic": {},
+                "nonPublicAvailable": true,
+                "username": "leojunghans1"
+            }
+        },
+        {
+            "id": "67648206f80d3113f42eb65b",
+            "idMemberCreator": "667ffbc68f223b79aad3ae96",
+            "data": {
+                "card": {
+                    "pos": 16384,
+                    "id": "676481a503bb208a62ad2ae7",
+                    "name": "Erstellung einer Funkton, die das trello-json lädt und ein hübsches excel sheet daraus erstellt. Enthalten sein sollen: Name der Karte, wohin die Karte verschoben wurde, Kommentare der Karte, die geschätzte Zeit, die benötigte Zeit und das Datum",
+                    "idShort": 74,
+                    "shortLink": "AbprJ0aw"
+                },
+                "old": {
+                    "pos": 520192
+                },
+                "board": {
+                    "id": "672b9bbc97c86d6599920565",
+                    "name": "Maturitätsarbeit",
+                    "shortLink": "dUL17l6j"
+                },
+                "list": {
+                    "id": "672b9bbc97c86d659992056d",
+                    "name": "In Arbeit"
+                }
+            },
+            "appCreator": null,
+            "type": "updateCard",
+            "date": "2024-12-19T20:28:54.762Z",
+            "limits": null,
+            "memberCreator": {
+                "id": "667ffbc68f223b79aad3ae96",
+                "activityBlocked": false,
+                "avatarHash": "dd73c57ec6f674855503711969402766",
+                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
+                "fullName": "Leo Junghans",
+                "idMemberReferrer": null,
+                "initials": "LJ",
+                "nonPublic": {},
+                "nonPublicAvailable": true,
+                "username": "leojunghans1"
+            }
+        },
+        {
+            "id": "67648206f80d3113f42eb622",
+            "idMemberCreator": "667ffbc68f223b79aad3ae96",
+            "data": {
+                "card": {
+                    "idList": "672b9bbc97c86d659992056d",
+                    "id": "676481a503bb208a62ad2ae7",
+                    "name": "Erstellung einer Funkton, die das trello-json lädt und ein hübsches excel sheet daraus erstellt. Enthalten sein sollen: Name der Karte, wohin die Karte verschoben wurde, Kommentare der Karte, die geschätzte Zeit, die benötigte Zeit und das Datum",
+                    "idShort": 74,
+                    "shortLink": "AbprJ0aw"
+                },
+                "old": {
+                    "idList": "672b9bbc97c86d659992056c"
+                },
+                "board": {
+                    "id": "672b9bbc97c86d6599920565",
+                    "name": "Maturitätsarbeit",
+                    "shortLink": "dUL17l6j"
+                },
+                "listBefore": {
+                    "id": "672b9bbc97c86d659992056c",
+                    "name": "To Do"
+                },
+                "listAfter": {
+                    "id": "672b9bbc97c86d659992056d",
+                    "name": "In Arbeit"
+                }
+            },
+            "appCreator": null,
+            "type": "updateCard",
+            "date": "2024-12-19T20:28:54.689Z",
+            "limits": null,
+            "memberCreator": {
+                "id": "667ffbc68f223b79aad3ae96",
+                "activityBlocked": false,
+                "avatarHash": "dd73c57ec6f674855503711969402766",
+                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
+                "fullName": "Leo Junghans",
+                "idMemberReferrer": null,
+                "initials": "LJ",
+                "nonPublic": {},
+                "nonPublicAvailable": true,
+                "username": "leojunghans1"
+            }
+        },
+        {
+            "id": "676482037e6f1e62ae67bd2f",
+            "idMemberCreator": "667ffbc68f223b79aad3ae96",
+            "data": {
+                "card": {
+                    "name": "Erstellung einer Funkton, die das trello-json lädt und ein hübsches excel sheet daraus erstellt. Enthalten sein sollen: Name der Karte, wohin die Karte verschoben wurde, Kommentare der Karte, die geschätzte Zeit, die benötigte Zeit und das Datum",
+                    "id": "676481a503bb208a62ad2ae7",
+                    "idShort": 74,
+                    "shortLink": "AbprJ0aw"
+                },
+                "old": {
+                    "name": "Programmierung"
+                },
+                "board": {
+                    "id": "672b9bbc97c86d6599920565",
+                    "name": "Maturitätsarbeit",
+                    "shortLink": "dUL17l6j"
+                },
+                "list": {
+                    "id": "672b9bbc97c86d659992056c",
+                    "name": "To Do"
+                }
+            },
+            "appCreator": null,
+            "type": "updateCard",
+            "date": "2024-12-19T20:28:51.343Z",
+            "limits": null,
+            "memberCreator": {
+                "id": "667ffbc68f223b79aad3ae96",
+                "activityBlocked": false,
+                "avatarHash": "dd73c57ec6f674855503711969402766",
+                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
+                "fullName": "Leo Junghans",
+                "idMemberReferrer": null,
+                "initials": "LJ",
+                "nonPublic": {},
+                "nonPublicAvailable": true,
+                "username": "leojunghans1"
+            }
+        },
+        {
+            "id": "676481a503bb208a62ad2b0a",
+            "idMemberCreator": "667ffbc68f223b79aad3ae96",
+            "data": {
+                "card": {
+                    "id": "676481a503bb208a62ad2ae7",
+                    "name": "Programmierung",
+                    "idShort": 74,
+                    "shortLink": "AbprJ0aw"
+                },
+                "list": {
+                    "id": "672b9bbc97c86d659992056c",
+                    "name": "To Do"
+                },
+                "board": {
+                    "id": "672b9bbc97c86d6599920565",
+                    "name": "Maturitätsarbeit",
+                    "shortLink": "dUL17l6j"
+                },
+                "cardSource": {
+                    "id": "672b9d7822b1aa2096e20883",
+                    "name": "Programmierung",
+                    "idShort": 4,
+                    "shortLink": "pFkdswBH"
+                }
+            },
+            "appCreator": null,
+            "type": "copyCard",
+            "date": "2024-12-19T20:27:17.485Z",
+            "limits": null,
+            "memberCreator": {
+                "id": "667ffbc68f223b79aad3ae96",
+                "activityBlocked": false,
+                "avatarHash": "dd73c57ec6f674855503711969402766",
+                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
+                "fullName": "Leo Junghans",
+                "idMemberReferrer": null,
+                "initials": "LJ",
+                "nonPublic": {},
+                "nonPublicAvailable": true,
+                "username": "leojunghans1"
+            }
+        },
         {
             "id": "6764801989dff2d5b6148dec",
             "idMemberCreator": "667ffbc68f223b79aad3ae96",
@@ -1843,521 +2228,6 @@
                 "nonPublicAvailable": true,
                 "username": "leojunghans1"
             }
-        },
-        {
-            "id": "67647979b41d95c5ebbb93be",
-            "idMemberCreator": "667ffbc68f223b79aad3ae96",
-            "data": {
-                "plugin": {
-                    "id": "62446854b44d084873560bd9",
-                    "idOrganizationOwner": "59fb30baa0e270f883ddd8f6",
-                    "author": "Unito.io",
-                    "capabilities": [
-                        "board-buttons",
-                        "on-enable",
-                        "on-disable"
-                    ],
-                    "capabilitiesOptions": [],
-                    "categories": [
-                        "developer-tools",
-                        "automation"
-                    ],
-                    "iframeConnectorUrl": "https://trello-powerup.unito.io/project-sync?provider=excel",
-                    "name": "Excel + Trello 2-Way Sync",
-                    "privacyUrl": "https://unito.io/privacy/?utm_source=trello&utm_medium=marketplace&utm_campaign=trello_excel",
-                    "public": true,
-                    "moderatedState": null,
-                    "supportEmail": "support@unito.io",
-                    "tags": [
-                        "featured"
-                    ],
-                    "heroImageUrl": {
-                        "@1x": "https://trello-server--pup-assets.us-east-1.prod.public.atl-paas.net/62446854b44d084873560bd9/hero-images/@1x.png",
-                        "@2x": "https://trello-server--pup-assets.us-east-1.prod.public.atl-paas.net/62446854b44d084873560bd9/hero-images/@2x.png",
-                        "_id": "675b4e4094bb87f342d5d966"
-                    },
-                    "claimedDomains": [],
-                    "icon": {
-                        "url": "https://unito.io/wp-content/uploads/2020/01/Unito-avatar-white-symbol.svg"
-                    },
-                    "listing": {
-                        "name": "Excel + Trello 2-Way Sync",
-                        "locale": "en-US",
-                        "description": "Sync Trello cards with Excel rows using this powerful integration.\n\n---\n\n## Sync information from Trello into Excel and get real-time insights on project performance\nWith Unito, sync Trello cards to rows in Excel and keep everything updated automatically. Build powerful reports in Excel to get insights on progress in Trello with no manual work.\n\nUnito also supports 2-way workflows, which means changes made in Excel are synced back to your Trello cards. You can also use Unito to automatically create new Trello cards when a new row is created in Excel. Unito helps keep everything in perfect sync across any workflow that needs Excel and Trello.\n\n![Trello - Excel Integration](https://unito.io/wp-content/uploads/2022/05/TrelloExcel.mp4.gif)\n\n## Features\n### Supports essential Trello fields\nUnito has some of the deepest two-way integrations for Trello. Sync card names, due dates, assignees, card status, card descriptions, labels, list names, board names, and more. You can manually map these fields with any Excel column and keep your data in sync.\n\n### Customize in real-time\nUnito integrations allow data to flow across tools in real-time. Customize your flow to your exact needs and set powerful filters to define what you need synced. Make changes to your flow and they’ll be reflected in your tools in real-time.\n\n### No-code and self-serve\nUnito requires no coding knowledge. Any team can integrate Trello with Excel and build the workflow they need in a few clicks.\n\n### Step-by-step walkthrough\nNeed more help? Follow our detailed guide on how to [sync Trello cards with Microsoft Excel](https://unito.io/blog/guide-how-to-sync-trello-cards-with-microsoft-excel/?utm_source=trello&utm_medium=marketplace&utm_campaign=trello_excel).\n\n## What Unito customers are saying\n* Excellent! [...] It’s a great product and the perfect solution for our needs. It was exactly what we needed to pull information together into one place.\n* [...] It’s like someone flipped on the light switch. Now communication, tasks, and status flow seamlessly across boards, teams, and org structures.\n* I’m able to sync the issues I want from Jira to my Trello board, without having to play around in the developers’ board. They have their workflow, I have mine. All the info I need is synced continuously. [...]\n\n\n## FAQ\n### Does Unito also work with other tools?\nAbsolutely! You can sync Trello with Asana, Jira, Wrike, GitHub, GitLab, Airtable, ClickUp, Azure DevOps, HubSpot, Salesforce, Notion, [and many more tools](https://unito.io/connectors/?utm_source=trello&utm_medium=marketplace&utm_campaign=trello_excel)!\n\n### Is Unito a free Power-Up?\nUnito is free to try for 14 days, no credit card required. After that, you'll need to subscribe to one of our paid plans.\n\n### I'm having an issue, where can I turn to?\nOur [Help Center](https://guide.unito.io/unitos-trello-power-ups/en/?utm_source=trello&utm_medium=marketplace&utm_campaign=trello_excel) has troubleshooting guides for common Unito issues, information on all our integrations, and more!\n\n### Does Unito support custom fields?\nWe do! You can sync custom fields with Unito during your free trial. After that, you'll need to subscribe to one of our paid plans.\n\n---\n\n## Get started for free now!\nDirectly access and start using Unito through this power-up, or head to Unito to learn more about our [Trello Excel integration](https://unito.io/integrations/trello-microsoft-excel/?utm_source=trello&utm_medium=marketplace&utm_campaign=trello_excel) and start your free trial. Find more detailed information about Unito's Trello Excel integration in Unito's [Help Center](https://guide.unito.io/microsoft-excel-integration/?utm_source=trello&utm_medium=marketplace&utm_campaign=trello_excel).\n\n![](https://api.segment.io/v1/pixel/track?data=ewogICJ3cml0ZUtleSI6ICJiQWpkVTg1ZnBIRDFyd2FEa1liZE1VTkZiaHgxelc4SSIsCiAgImFub255bW91c0lkIjogImFub255bW91c0lkIiwKICAiZXZlbnQiOiAiVmlzaXQgUG93ZXIgVXAiLAogICJwcm9wZXJ0aWVzIjogewogICAgInBvd2VyVXBOYW1lIjogIlN5bmMgd2l0aCBNaWNyb3NvZnQgRXhjZWwiLAogICAgInVwZGF0ZWRBdCI6ICIyMDIyLTAzLTMxIgogIH0KfQ==)",
-                        "overview": "Sync Trello cards with Excel rows using this powerful integration."
-                    },
-                    "isCompliantWithPrivacyStandards": true,
-                    "usageBrackets": {
-                        "boards": 5000
-                    }
-                },
-                "board": {
-                    "id": "672b9bbc97c86d6599920565",
-                    "name": "Maturitätsarbeit",
-                    "shortLink": "dUL17l6j"
-                }
-            },
-            "appCreator": null,
-            "type": "disablePlugin",
-            "date": "2024-12-19T19:52:25.623Z",
-            "limits": null,
-            "memberCreator": {
-                "id": "667ffbc68f223b79aad3ae96",
-                "activityBlocked": false,
-                "avatarHash": "dd73c57ec6f674855503711969402766",
-                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
-                "fullName": "Leo Junghans",
-                "idMemberReferrer": null,
-                "initials": "LJ",
-                "nonPublic": {},
-                "nonPublicAvailable": true,
-                "username": "leojunghans1"
-            }
-        },
-        {
-            "id": "6764796a9554b88bd48e1104",
-            "idMemberCreator": "667ffbc68f223b79aad3ae96",
-            "data": {
-                "plugin": {
-                    "id": "651a6a2b8a5a31c4609275b8",
-                    "idOrganizationOwner": "651a60b5b2d1162e78b25191",
-                    "author": "DevCraft",
-                    "capabilities": [
-                        "board-buttons",
-                        "authorization-status",
-                        "show-authorization",
-                        "on-enable"
-                    ],
-                    "capabilitiesOptions": [],
-                    "categories": [
-                        "analytics-reporting"
-                    ],
-                    "iframeConnectorUrl": "https://timeflow-powerup.on.dev-craft.tech/",
-                    "name": "Timeflow Tracker",
-                    "privacyUrl": "https://timeflow-powerup.on.dev-craft.tech/privacy-policy.html",
-                    "public": true,
-                    "moderatedState": null,
-                    "supportEmail": "k.dimitrov@dev-craft.com",
-                    "tags": [],
-                    "claimedDomains": [],
-                    "icon": {
-                        "url": "https://timeflow-powerup.on.dev-craft.tech/icon.png"
-                    },
-                    "listing": {
-                        "name": "Timeflow Tracker",
-                        "locale": "en-GB",
-                        "description": "## **Timeflow Tracker**: Optimize Your Trello Workflow with Precision\n**Timeflow Tracker** is a dynamic plugin for Trello, meticulously crafted to elevate project management to new heights. This tool is not just an add-on; it's a game-changer for teams seeking to maximize efficiency in their workflow. By integrating seamlessly with your Trello boards, Timeflow Tracker offers real-time, actionable insights into card transitions, transforming how you manage projects.\n\n**Why Timeflow Tracker?**\n - **Clarity in Workflow:** Understand at a glance how time is allocated across various stages of your project.\n - **Identify Bottlenecks:** Instantly spot areas needing improvement, ensuring smoother project progression.\n - **Data-Driven Decisions:** Make informed choices based on comprehensive time tracking data.\n\n\n**Key Features:**\n - **Time Tracking Per Card:** Witness the journey of each card, tracking its time across columns.\n - **Instant Reports:** A click away, generate detailed reports for an in-depth analysis of workflow patterns.\n - **Selective Column Analysis:** Tailor your tracking by selecting specific columns, focusing on critical transitions.\n - **Average Card Time:** Benchmark your efficiency with average transit times for cards.\n - **Comprehensive Card List:** Dive deep into your project with a list detailing card names and transition times.\n\n\n**How It Works:**\n - **Easy Installation:** Add Timeflow Tracker from the Trello Power-Ups directory.\n - **Simple Authentication:** A one-time, straightforward step to link the plugin with your Trello data.\n - **Customizable Tracking:** Choose columns for detailed analysis using intuitive dropdowns.\n - **Real-Time Insights:** Watch as the plugin accurately records card movements.\n - **Actionable Reports:** Generate insights at the click of a button, driving efficiency and productivity.\n\n\nVisual Walkthrough:\n![See Timeflow Tracker in Action](https://timeflow-powerup.on.dev-craft.tech/trello-plugin.gif)\n\nGIF: Experience how Timeflow Tracker seamlessly integrates with your Trello boards, offering a visual and intuitive user interface.\n\n**Elevate Your Trello Experience:**\nTimeflow Tracker is more than a plugin; it's your partner in project management. By offering a clear window into how your team works, it empowers you to make impactful changes, streamline processes, and ultimately, achieve your project goals with greater efficiency and less effort.\n\n*Ready to transform your Trello workflow? Install Timeflow Tracker today and experience the difference!*",
-                        "overview": "Effortlessly track and analyze card movement times within your Trello boards."
-                    },
-                    "isCompliantWithPrivacyStandards": null,
-                    "usageBrackets": {
-                        "boards": 500
-                    }
-                },
-                "board": {
-                    "id": "672b9bbc97c86d6599920565",
-                    "name": "Maturitätsarbeit",
-                    "shortLink": "dUL17l6j"
-                }
-            },
-            "appCreator": null,
-            "type": "disablePlugin",
-            "date": "2024-12-19T19:52:10.854Z",
-            "limits": null,
-            "memberCreator": {
-                "id": "667ffbc68f223b79aad3ae96",
-                "activityBlocked": false,
-                "avatarHash": "dd73c57ec6f674855503711969402766",
-                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
-                "fullName": "Leo Junghans",
-                "idMemberReferrer": null,
-                "initials": "LJ",
-                "nonPublic": {},
-                "nonPublicAvailable": true,
-                "username": "leojunghans1"
-            }
-        },
-        {
-            "id": "6764796588e50a1fc81dea7c",
-            "idMemberCreator": "667ffbc68f223b79aad3ae96",
-            "data": {
-                "plugin": {
-                    "id": "660acb2d30346a892c44b4ae",
-                    "idOrganizationOwner": "653505962cd6a4bb83022129",
-                    "author": "small power up",
-                    "capabilities": [
-                        "board-buttons"
-                    ],
-                    "capabilitiesOptions": [],
-                    "categories": [
-                        "automation",
-                        "board-utilities"
-                    ],
-                    "iframeConnectorUrl": "https://exportefy.d1hgvjm9dk1ut.amplifyapp.com/",
-                    "name": "Exportefy (CSV, Excel, PDF, Word Export)",
-                    "privacyUrl": "https://my-main.d1hgvjm9dk1ut.amplifyapp.com/privacy",
-                    "public": true,
-                    "moderatedState": null,
-                    "supportEmail": "smallpowerup@gmail.com",
-                    "tags": [],
-                    "heroImageUrl": null,
-                    "claimedDomains": [],
-                    "icon": {
-                        "url": "https://tablefy.d1hgvjm9dk1ut.amplifyapp.com/icons/download.svg"
-                    },
-                    "listing": {
-                        "name": "Exportefy (CSV, Excel, PDF, Word Export)",
-                        "locale": "en-US",
-                        "description": "### Export Trello Boards in Multiple Formats (Excel, PDF, XML, JSON, Word, CSV, and more) — Free to Use!\n\nStop Wasting Time Copying and Pasting! [Exportefy](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/power-ups/exportefy) empowers you to effortlessly analyze and share your Trello data. Generate in-depth reports with Excel exports, create clear overviews with PDFs, or tailor Word documents for specific needs.\n\n**With [Exportefy](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/power-ups/exportefy), you can ensure that your Trello data is always accessible and shareable in the most convenient format for your workflow.**\n\n---\n\n### Export to Excel or CSV:\n\n**Export Excel Sheet**: Convert your Trello data into Excel or CSV formats with ease, making it simple to analyze, share, and organize your project details.\n\n![Export button](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/exportefy/intro.gif)\n\n---\n\n### Export to Word Document:\n\n**Create Customized Documents**: Generate Word document with all the cards, perfect for generating reports or sharing specific information.\n\n![Word Export](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/exportefy/export-word.gif)\n\n---\n\n### Export to PDF:\n\n**Share Clear and Detailed Overviews**: Export all card information, including titles, descriptions, labels, and attachments, in a clean and sharable PDF format.\n\n![PDF Export](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/exportefy/export-pdf.gif)\n\n---\n\n### Effortless Data Export Across Multiple Formats:\n\n- **Excel Precision**: Analyze your data with powerful calculations and visualizations.\n- **CSV Versatility**: Integrate your data into various applications and platforms.\n- **PDF Clarity**: Share clear and detailed overviews with ease.\n- **Word Customization**: Create tailored documents for specific purposes.\n- **JSON, XML & More**: Access your data in various developer-friendly formats.\n\n---\n\n### Supported Fields:\n\nExportefy supports a wide range of Trello card fields, including:\n\n- List Name\n- Name\n- Members\n- Labels\n- Checklists\n- Attachments\n- Comments and more\n- **Custom Fields**\n- [Easy Fields](https://trello.com/power-ups/664a47ac4346bf4424851478) (Fields created using Easy Fields Power-up)\n\n![All fields](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/exportefy/select-fields.png)\n\n**Missing Fields? Tell Us!** We're always looking for ways to improve. If you need a field Exportefy doesn't currently support, [let us know](mailto:smallpowerup@gmail.com)!.\n\n---\n\n### Enhanced Functionality with [Excelefy](https://trello.com/power-ups/657747ad4e8996a85c1630f2) and [Easy Fields](https://trello.com/power-ups/664a47ac4346bf4424851478)!\n\n**Seamless Card Import with Excelefy**: With [Excelefy](https://trello.com/power-ups/657747ad4e8996a85c1630f2), you can effortlessly bring your data back into Trello. Import cards directly from Excel or CSV files to create new boards or update existing ones. This feature simplifies your project setup, allowing you to quickly start working with fully populated Trello boards.\n\n**Custom Fields with Easy Fields**: Whether you’re managing tasks, tracking budgets, or organizing contacts, the [Easy Fields](https://trello.com/power-ups/664a47ac4346bf4424851478) Power-up lets you create custom fields that meet your project’s unique needs. Export all these fields in one seamless action with Exportefy, ensuring you have all the information you need at your fingertips.\n\n**All-in-One Subscription**: Experience the full potential of Trello with a single subscription. Exportefy not only provides comprehensive export capabilities but also offers seamless card imports with Excelefy and advanced customization with Easy Fields, all under one plan. Maximize efficiency and control over your data without the need for multiple tools.\n\n---\n\n### Features\n\n- **Wide Range of Formats**: Export your data to Excel, PDF, Word, CSV, JSON, XML, and more!\n- **Effortless Exporting**: With just a few clicks, your Trello data is converted and ready for use in your preferred format, making the process quick and hassle-free.\n- **Unlimited Exports**: Export as much data as you need, whenever you need it.\n- **Flexible Export Options**: Choose to export entire boards, specific lists, or individual cards to suit your needs.\n- **Easy Fields Export**: Export all the fields created by [Easy Fields](https://trello.com/power-ups/664a47ac4346bf4424851478) (Generate custom fields on cards) power-up.\n- **User-Friendly Interface**: Designed with ease of use in mind, Exportefy’s intuitive interface allows you to export your data in just a few steps, without any technical expertise required.\n- **Advanced Customization**: Tailor your exports to fit your specific needs by selecting only the data you want to include, and choosing the format that best suits your purpose.\n- **Secure and Reliable**: Your data’s security is our top priority. Exportefy ensures that all exports are conducted securely, keeping your information safe at all times.\n- **24/7 Support**: Our dedicated team is always here to help you get the most out of Exportefy.\n\n**Don’t let data management slow you down. Try Exportefy today and take control**\n\n---\n\n### Pricing Options\n\n**Every plan begins with a 7-day free trial!** Experience full access with the freedom to cancel anytime at no cost. For more details, check out our [pricing page](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/pricing).\n\n**Note:** Each plan is available under the Individual Membership Subscription.\n\n---\n\n**Single Power-Up Pricing:**\n\nUnlock **Full Access to Single Power-Up**.\n\n- **$2.99/month**\n- **$29.99/year** (Best value for annual access!)\n\n---\n\n**All Power-Ups Pricing:**\n\nUnlock **Full Access to All Power-Ups** with a single subscription.\n\n- **$4.99/month**\n- **$49.99/year** (Great value for long-term access!).\n\nWith the All Power-Ups subscription, you gain access to every tool available across your Trello boards, including:\n\n- [Excelefy](https://trello.com/power-ups/657747ad4e8996a85c1630f2): Export and Import cards to Excel\n- [Exportefy](https://trello.com/power-ups/660acb2d30346a892c44b4ae): Export board to Excel, CSV, Word, PDF and more\n- [Expensefy](https://trello.com/power-ups/65350632b8805ead7ce68a27): Manage expenses directly on your Trello cards.\n- [Invoicefy](https://trello.com/power-ups/65898d97efdb94fc69551ef5): Track and manage invoices with ease.\n- [Inventoryefy](https://trello.com/power-ups/66103d3fdba97e9039f0c721): Keep your inventory in check right on your Trello boards.\n- [Wordefy](https://trello.com/power-ups/6581c70b87b87e0084fef959): Convert Trello cards into Word documents instantly.\n- [Notefy](https://trello.com/power-ups/65ff3341d29d309b5d4cc8b1): Create private notes within your Trello cards.\n- [Tablefy](https://trello.com/power-ups/661940264ed8568e464060d1): Add powerful tables to your Trello cards.\n- [Easy Fields](https://trello.com/power-ups/664a47ac4346bf4424851478): Customize your cards with user-defined fields.\n- [Card Progress](https://trello.com/power-ups/67155970753de9d084c798b2): Easily track and visualize the progress of your cards.\n\n---\n\n### Privacy & Security\n\nYour board data is safe with us. We never even see it. View our [privacy policy](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/privacy) here.\n\n---\n\n### Feedback & Support\n\nWe value your feedback and are dedicated to continuous improvement!\n\n**Report Bugs**: Encountered an issue while using Power-up? We want to fix it for you!\n**Share Suggestions**: Have an idea to make Power-up even better? We're all ears!\n\n[Contact Us](mailto:smallpowerup@gmail.com) or visit us on our [website](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com) for more information.\n\n---\n",
-                        "overview": "Export Trello Boards and Cards, Including Custom Fields, to Excel, CSV, PDF, Word, XML, JSON, and More with Just a Few Clicks."
-                    },
-                    "isCompliantWithPrivacyStandards": null,
-                    "usageBrackets": {
-                        "boards": 1000
-                    }
-                },
-                "board": {
-                    "id": "672b9bbc97c86d6599920565",
-                    "name": "Maturitätsarbeit",
-                    "shortLink": "dUL17l6j"
-                }
-            },
-            "appCreator": null,
-            "type": "disablePlugin",
-            "date": "2024-12-19T19:52:05.070Z",
-            "limits": null,
-            "memberCreator": {
-                "id": "667ffbc68f223b79aad3ae96",
-                "activityBlocked": false,
-                "avatarHash": "dd73c57ec6f674855503711969402766",
-                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
-                "fullName": "Leo Junghans",
-                "idMemberReferrer": null,
-                "initials": "LJ",
-                "nonPublic": {},
-                "nonPublicAvailable": true,
-                "username": "leojunghans1"
-            }
-        },
-        {
-            "id": "6764796074e0dac18ed62702",
-            "idMemberCreator": "667ffbc68f223b79aad3ae96",
-            "data": {
-                "plugin": {
-                    "id": "55a5d917446f517774210011",
-                    "idOrganizationOwner": "5a999cd36066c584c097f193",
-                    "author": "Trello Inc",
-                    "capabilities": [],
-                    "capabilitiesOptions": [],
-                    "categories": [
-                        "board-utilities",
-                        "communication-collaboration"
-                    ],
-                    "iframeConnectorUrl": "https://calendar.trello.services/",
-                    "name": "Kalender-Power-Up",
-                    "privacyUrl": "https://trello.com/privacy",
-                    "public": true,
-                    "moderatedState": null,
-                    "supportEmail": "https://trello.com/contact#/",
-                    "url": "https://calendar.trello.services/manifest.json",
-                    "tags": [
-                        "staff-pick",
-                        "made-by-trello"
-                    ],
-                    "heroImageUrl": {
-                        "@2x": "https://trello-attachments.s3.amazonaws.com/5b56280b7694ac008082fe38/5b5628c7fcbdca04e2d6334c/4025fdb1f203e43f2cd5997b29e53e65/calendar%402x.jpg",
-                        "_id": "5b5629bd96d94a97675090c7",
-                        "@1x": "https://trello-attachments.s3.amazonaws.com/5b56280b7694ac008082fe38/5b5628c7fcbdca04e2d6334c/f52b4188bdca53cf13a9036efb95eced/calendar.jpg"
-                    },
-                    "claimedDomains": [],
-                    "icon": {
-                        "url": "https://calendar.trello.services/images/calendar-icon.svg"
-                    },
-                    "listing": {
-                        "name": "Kalender-Power-Up",
-                        "locale": "de",
-                        "description": "Erhalten Sie einen Überblick über Fälligkeitsdaten mit dem Kalender-Power-Up für Trello. Egal, ob Sie eine Konferenz planen, einen Redaktionskalender verwalten oder einen Familienurlaub planen: Mit dem Kalender-Power-Up können Sie Karten mit Fälligkeitsdaten in einer wöchentlichen oder monatlichen Kalenderansicht anzeigen. Priorisieren Sie Karten ganz einfach, indem Sie sie in den Kalender ziehen und dort ablegen, um ihre Fälligkeitsdaten automatisch zu aktualisieren. Exportieren Sie Ihren Trello-Kalender an Apps von Drittanbietern mithilfe eines iCalendar-Links.\n\n- Präsentieren und filtern Sie Karten mit Fälligkeitsdatum in einer Wochen- oder Monatskalenderansicht.\n\n- Verwalten Sie Fälligkeitsdaten, indem Sie Karten in den Kalender ziehen und dort ablegen.\n\n- Sie erkennen erledigte Aufgaben einfach, indem Sie Fälligkeitsdaten als erledigt markieren.\n\n- Exportieren Sie den Kalender eines Boards an Kalender von Drittanbietern mithilfe des eindeutigen iCalendar-Links eines Boards.\n\n- Das Kalender Power-Up wird im Internet sowie auf iOS- und Android-Mobilgeräten unterstützt.\n\n![Screenshot](https://calendar.trello.services/images/Calendar_1.jpg)\n![Screenshot](https://calendar.trello.services/images/Calendar_2.jpg)\n![Screenshot](https://calendar.trello.services/images/Calendar_3.jpg)\n![Screenshot](https://calendar.trello.services/images/Calendar_4.jpg)",
-                        "overview": "Visualisieren Sie Trello-Karten in einer Kalenderansicht."
-                    },
-                    "isCompliantWithPrivacyStandards": null,
-                    "usageBrackets": {
-                        "boards": 12000000
-                    }
-                },
-                "board": {
-                    "id": "672b9bbc97c86d6599920565",
-                    "name": "Maturitätsarbeit",
-                    "shortLink": "dUL17l6j"
-                }
-            },
-            "appCreator": null,
-            "type": "disablePlugin",
-            "date": "2024-12-19T19:52:00.167Z",
-            "limits": null,
-            "memberCreator": {
-                "id": "667ffbc68f223b79aad3ae96",
-                "activityBlocked": false,
-                "avatarHash": "dd73c57ec6f674855503711969402766",
-                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
-                "fullName": "Leo Junghans",
-                "idMemberReferrer": null,
-                "initials": "LJ",
-                "nonPublic": {},
-                "nonPublicAvailable": true,
-                "username": "leojunghans1"
-            }
-        },
-        {
-            "id": "67647958c0d5e572a19a93f5",
-            "idMemberCreator": "667ffbc68f223b79aad3ae96",
-            "data": {
-                "plugin": {
-                    "id": "664a47ac4346bf4424851478",
-                    "idOrganizationOwner": "653505962cd6a4bb83022129",
-                    "author": "small power up",
-                    "capabilities": [
-                        "card-back-section",
-                        "card-buttons",
-                        "board-buttons",
-                        "card-badges",
-                        "card-detail-badges"
-                    ],
-                    "capabilitiesOptions": [],
-                    "categories": [
-                        "board-utilities",
-                        "it-project-management"
-                    ],
-                    "iframeConnectorUrl": "https://easy-fields.d1hgvjm9dk1ut.amplifyapp.com/",
-                    "name": "Easy Fields ( Customize Cards, Your Way - Free )",
-                    "privacyUrl": "https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/privacy",
-                    "public": true,
-                    "moderatedState": null,
-                    "supportEmail": "smallpowerup@gmail.com",
-                    "tags": [],
-                    "heroImageUrl": null,
-                    "claimedDomains": [],
-                    "icon": {
-                        "url": "https://notefy.d1hgvjm9dk1ut.amplifyapp.com/icons/notes.svg"
-                    },
-                    "listing": {
-                        "name": "Easy Fields ( Customize Cards, Your Way - Free )",
-                        "locale": "en-US",
-                        "description": "### Enhance Trello Cards with [Easy Fields](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/power-ups/easy-fields) — With External Data Integration!\n\nCustomize your Trello workflow with [**Easy Fields**](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/power-ups/easy-fields), a powerful Power-Up that allows you to customize your Trello cards like never before. Whether you’re managing simple tasks or complex projects, **Easy Fields** helps you capture, display, and organize the exact data you need with ease.\n\n![Check out the Power-Up](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/easy-fields/intro.gif)\n\n---\n\n### [**Watch the Demo Video**](https://www.youtube.com/watch?v=RYQ5yao1EAA)\n\n---\n\n### Available Field Types\n\n- **Header Text**: Highlight key sections with bold headings.\n- **Label**: Color-coded labels for better task organization.\n- **Paragraph**: Add detailed descriptions or notes.\n- **Text Input**: Perfect for capturing names, short notes, or custom entries.\n- **Multi-line Input**: Great for longer comments or detailed notes.\n- **Number Input**: Track numerical data like budgets, quantities, or KPIs.\n- **Rating**: Rate tasks, projects, or feedback items.\n- **Date**: Keep track of deadlines and event dates.\n- **Signature**: Capture approvals with digital signatures.\n- **Website**: Link to external references or resources.\n- **Range Slider**: Interactively adjust values with a slider.\n- **Dropdown**: Simplify selections with predefined options, now supporting API data.\n- **Tags**: Categorize tasks or data with dynamic tag support via APIs.\n- **Checkboxes**: Track progress with customizable checkboxes, including API integration.\n- **Multiple Choice**: Present lists of options with dynamic external data support.\n- **Multi-Column Row**: Combine multiple fields in a single row.\n\n---\n\n### How to Use Easy Fields:\n\n1. **Open Your Trello Card**: Navigate to the card you want to customize.\n2. **Enable Easy Fields**: Click the ‘Show Easy Fields’ button.\n3. **Access Field Options**: Use the ‘Add/Edit Fields’ button to start customizing.\n4. **Select Field Types**: Choose from a wide variety of field options.\n5. **Configure Your Fields**: Set names, default values, and API integrations.\n6. **Save & Preview**: See your changes in real time before applying them.\n7. **Start Entering Data**: Your fields are ready to use directly on the card.\n\n![Add Fields](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/easy-fields/add-fields.gif)\n\n---\n\n### Real-Time External Data Integration\n\nWith **Easy Fields**, you can dynamically populate dropdowns, checkboxes, or tags from external APIs.\n\n![External Data Integration](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/easy-fields/external-data.gif)\n\n### Example API Response:\n\n```json\n[\n  { \"text\": \"Option 1\", \"value\": \"1\" },\n  { \"text\": \"Option 2\", \"value\": \"2\" },\n  { \"text\": \"Option 3\", \"value\": \"3\" }\n]\n```\n\n---\n\n### Features\n\n- **Card Control**: Show or hide Easy Fields on each card.\n- **API Integration**: Populate fields with real-time external data via API for up-to-date information.\n- **Shared Fields Across Boards**: Share and use custom fields across all of your team’s boards.\n- **Export**: Export Easy fields to Excel, Word, PDF, CSV, or JSON with [Exportefy](https://trello.com/power-ups/660acb2d30346a892c44b4ae).\n- **Badge Control**: Show or hide Easy Fields summaries on card covers.\n- **Unlimited Custom Fields (Pro)**: Create as many fields as you need for each Trello card.\n- **Find more features and updates at** [Easy Fields](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/power-ups/easy-fields).\n\n---\n\n### Real-Life Use Cases:\n\n1. **Quick Task Data Capture**  \n   ![Quick Field Addition](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/easy-fields/example-2.gif)\n\n2. **Organized Project Data**  \n   ![Project Data Management](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/easy-fields/example-3.png)\n\n3. **Detailed Data Tracking**  \n   ![Detailed Notes](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/easy-fields/example-1.gif)\n\n4. **Multi-Field Rows**  \n   ![Multi-Field Layout](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/easy-fields/example-4.png)\n\n---\n\n### Export Easy Fields with [Exportefy](https://trello.com/power-ups/660acb2d30346a892c44b4ae)\n\nExportefy makes it easy to export Trello cards in various formats, supporting a wide range of fields including Easy Fields, Custom Fields, Members, Attachments, Labels and more.\n\n### Create Tables on Cards with [Tablefy](https://trello.com/power-ups/661940264ed8568e464060d1)\n\nTablefy empowers you to build clear, organized tables directly within Trello cards, centralizing all project data and making it easily accessible for your team.\n\n---\n\n### Unlock the Full Potential of Easy Fields for Free!\n\nStart with our **Free Plan**, which includes:\n\n- Up to **5 fields per board** on **5 boards**.\n\nNeed more? Upgrade anytime to unlock **unlimited fields** and advanced features!\n\n---\n\n### Pricing\n\n**Every plan begins with a 7-day free trial!** Experience full access with the freedom to cancel anytime at no cost. For more details, check out our [pricing page](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/pricing).\n\n**Note:** Each plan is available under the Individual Membership Subscription.\n\n---\n\n**Single Power-Up Pricing:**\n\nUnlock **Full Access to Single Power-Up**.\n\n- **$2.99/month**\n- **$29.99/year** (Best value for annual access!)\n\n---\n\n**All Power-Ups Pricing:**\n\nUnlock **Full Access to All Power-Ups** with a single subscription.\n\n- **$4.99/month**\n- **$49.99/year** (Great value for long-term access!).\n\nWith the All Power-Ups subscription, you gain access to every tool available across your Trello boards, including:\n\n- [Excelefy](https://trello.com/power-ups/657747ad4e8996a85c1630f2): Export and Import cards to Excel\n- [Exportefy](https://trello.com/power-ups/660acb2d30346a892c44b4ae): Export board to Excel, CSV, Word, PDF and more\n- [Expensefy](https://trello.com/power-ups/65350632b8805ead7ce68a27): Manage expenses directly on your Trello cards.\n- [Invoicefy](https://trello.com/power-ups/65898d97efdb94fc69551ef5): Track and manage invoices with ease.\n- [Inventoryefy](https://trello.com/power-ups/66103d3fdba97e9039f0c721): Keep your inventory in check right on your Trello boards.\n- [Wordefy](https://trello.com/power-ups/6581c70b87b87e0084fef959): Convert Trello cards into Word documents instantly.\n- [Notefy](https://trello.com/power-ups/65ff3341d29d309b5d4cc8b1): Create private notes within your Trello cards.\n- [Tablefy](https://trello.com/power-ups/661940264ed8568e464060d1): Add powerful tables to your Trello cards.\n- [Easy Fields](https://trello.com/power-ups/664a47ac4346bf4424851478): Customize your cards with user-defined fields.\n- [Card Progress](https://trello.com/power-ups/67155970753de9d084c798b2): Easily track and visualize the progress of your cards.\n\n---\n\n### Privacy & Security\n\nYour board data is safe with us. We never even see it. View our [privacy policy](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com/privacy) here.\n\n---\n\n### Feedback & Support\n\nWe value your feedback and are dedicated to continuous improvement!\n\n**Report Bugs**: Encountered an issue while using Power-up? We want to fix it for you!\n**Share Suggestions**: Have an idea to make Power-up even better? We're all ears!\n\n[Contact Us](mailto:smallpowerup@gmail.com) or visit us on our [website](https://smallpowerups.d1hgvjm9dk1ut.amplifyapp.com) for more information.\n\n---\n",
-                        "overview": "Enhance your Trello cards with Easy Fields, allowing you to create custom fields for your project’s specific needs."
-                    },
-                    "isCompliantWithPrivacyStandards": null,
-                    "usageBrackets": {
-                        "boards": 500
-                    }
-                },
-                "board": {
-                    "id": "672b9bbc97c86d6599920565",
-                    "name": "Maturitätsarbeit",
-                    "shortLink": "dUL17l6j"
-                }
-            },
-            "appCreator": null,
-            "type": "disablePlugin",
-            "date": "2024-12-19T19:51:52.172Z",
-            "limits": null,
-            "memberCreator": {
-                "id": "667ffbc68f223b79aad3ae96",
-                "activityBlocked": false,
-                "avatarHash": "dd73c57ec6f674855503711969402766",
-                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
-                "fullName": "Leo Junghans",
-                "idMemberReferrer": null,
-                "initials": "LJ",
-                "nonPublic": {},
-                "nonPublicAvailable": true,
-                "username": "leojunghans1"
-            }
-        },
-        {
-            "id": "676478f8ca84f3dab83d6ae1",
-            "idMemberCreator": "667ffbc68f223b79aad3ae96",
-            "data": {
-                "card": {
-                    "id": "672b9e1941737ad252007bcd",
-                    "name": "Planung",
-                    "idShort": 5,
-                    "shortLink": "vXEPbLUC"
-                },
-                "checklist": {
-                    "id": "676478f8ca84f3dab83d6ad7",
-                    "name": "Timetracker"
-                },
-                "board": {
-                    "id": "672b9bbc97c86d6599920565",
-                    "name": "Maturitätsarbeit",
-                    "shortLink": "dUL17l6j"
-                }
-            },
-            "appCreator": null,
-            "type": "addChecklistToCard",
-            "date": "2024-12-19T19:50:16.212Z",
-            "limits": null,
-            "memberCreator": {
-                "id": "667ffbc68f223b79aad3ae96",
-                "activityBlocked": false,
-                "avatarHash": "dd73c57ec6f674855503711969402766",
-                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
-                "fullName": "Leo Junghans",
-                "idMemberReferrer": null,
-                "initials": "LJ",
-                "nonPublic": {},
-                "nonPublicAvailable": true,
-                "username": "leojunghans1"
-            }
-        },
-        {
-            "id": "676478cd0b719bfef2a606b6",
-            "idMemberCreator": "667ffbc68f223b79aad3ae96",
-            "data": {
-                "card": {
-                    "id": "67646a9a01db58fa8a82ec0a",
-                    "name": "Aktivierung der Trello API, Erstellung von Token und API Key",
-                    "idShort": 66,
-                    "shortLink": "vBJOxGZM"
-                },
-                "checklist": {
-                    "id": "676478cd0b719bfef2a606aa",
-                    "name": "Timetracker"
-                },
-                "board": {
-                    "id": "672b9bbc97c86d6599920565",
-                    "name": "Maturitätsarbeit",
-                    "shortLink": "dUL17l6j"
-                }
-            },
-            "appCreator": null,
-            "type": "addChecklistToCard",
-            "date": "2024-12-19T19:49:33.099Z",
-            "limits": null,
-            "memberCreator": {
-                "id": "667ffbc68f223b79aad3ae96",
-                "activityBlocked": false,
-                "avatarHash": "dd73c57ec6f674855503711969402766",
-                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
-                "fullName": "Leo Junghans",
-                "idMemberReferrer": null,
-                "initials": "LJ",
-                "nonPublic": {},
-                "nonPublicAvailable": true,
-                "username": "leojunghans1"
-            }
-        },
-        {
-            "id": "676478c2eb6572891136391d",
-            "idMemberCreator": "667ffbc68f223b79aad3ae96",
-            "data": {
-                "card": {
-                    "id": "67646a9a01db58fa8a82ec0a",
-                    "name": "Aktivierung der Trello API, Erstellung von Token und API Key",
-                    "idShort": 66,
-                    "shortLink": "vBJOxGZM"
-                },
-                "checklist": {
-                    "id": "676478c2eb65728911363913",
-                    "name": "Timetracker"
-                },
-                "board": {
-                    "id": "672b9bbc97c86d6599920565",
-                    "name": "Maturitätsarbeit",
-                    "shortLink": "dUL17l6j"
-                }
-            },
-            "appCreator": null,
-            "type": "addChecklistToCard",
-            "date": "2024-12-19T19:49:22.750Z",
-            "limits": null,
-            "memberCreator": {
-                "id": "667ffbc68f223b79aad3ae96",
-                "activityBlocked": false,
-                "avatarHash": "dd73c57ec6f674855503711969402766",
-                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
-                "fullName": "Leo Junghans",
-                "idMemberReferrer": null,
-                "initials": "LJ",
-                "nonPublic": {},
-                "nonPublicAvailable": true,
-                "username": "leojunghans1"
-            }
-        },
-        {
-            "id": "676476895dc11607df89a1b8",
-            "idMemberCreator": "667ffbc68f223b79aad3ae96",
-            "data": {
-                "plugin": {
-                    "id": "64591ba2ede771264144195c",
-                    "idOrganizationOwner": "61791bd12e15872f9d6385a9",
-                    "author": "ThunderModules",
-                    "capabilities": [
-                        "board-buttons",
-                        "card-badges",
-                        "card-detail-badges",
-                        "on-enable",
-                        "show-settings",
-                        "authorization-status",
-                        "show-authorization",
-                        "on-disable"
-                    ],
-                    "capabilitiesOptions": [],
-                    "categories": [
-                        "automation",
-                        "it-project-management"
-                    ],
-                    "iframeConnectorUrl": "https://app.cardstatus.thundermodules.com/",
-                    "name": "Statuses & Workflow",
-                    "privacyUrl": "https://www.thundermodules.com/privacy-policy",
-                    "public": true,
-                    "moderatedState": null,
-                    "supportEmail": "cardstatus@thundermodules.com",
-                    "tags": [
-                        "featured"
-                    ],
-                    "heroImageUrl": {
-                        "@1x": "https://trello-server--pup-assets.us-east-1.prod.public.atl-paas.net/64591ba2ede771264144195c/hero-images/@1x.png",
-                        "@2x": "https://trello-server--pup-assets.us-east-1.prod.public.atl-paas.net/64591ba2ede771264144195c/hero-images/@2x.png",
-                        "_id": "674f1482bd8e80211599bb5e"
-                    },
-                    "claimedDomains": [],
-                    "icon": {
-                        "url": "https://app.cardstatus.thundermodules.com/images/cs-logo.png"
-                    },
-                    "listing": {
-                        "name": "Statuses & Workflow",
-                        "locale": "en-US",
-                        "description": "🎉 Statuses & Workflow is [one of the FASTEST GROWING](https://www.bluecatreports.com/blog/power-up-stats-2023) power-ups of 2023 🎉\n\n# Manage statuses and workflow with ease 🧞‍♂️\n\n💙 FREE to go\n💡 Fits any team and process\n⚡️ Easy to set up\n🤖 Advanced PRO features\n\n![Demo](https://card-status.nyc3.cdn.digitaloceanspaces.com/images/store/demo.webp)\n\n## What is it about?\nStatuses & Workflow provides an ultimate solution for Statuses and Workflow management: it makes your process intuitive and easy to follow – this is exactly what you’ve been waiting for! Not only does it maintain the Workflow of your Trello board, but it can do handy *automation* for you, like moving a card to a specific list, managing card members, setting due date, completing checklists, and doing whatever you want with joy. The best part is that the product has been in active development all this time, and we still have a lot of features to implement, stay tuned! 😉\n\n![How does it work?](https://card-status.nyc3.cdn.digitaloceanspaces.com/images/store/how-it-works.gif)\n\n🧡 Statuses & Workflow is designed and developed by ThunderModules – fastest growing new publisher of 2022 🧡\n\n## Enhance your workflow with our solutions!\nTry [Card Done](https://trello.com/power-ups/6244a5a256399f22036820cb) to complete your Trello cards in just one click ✅\nTry [Tables & Spreadsheets](https://trello.com/power-ups/65c7808c749e34145008f9b4) to create tables directly within your Trello cards 🦖\n\n---\n\n# Statuses 💥\nYep, that’s exactly what you are thinking of – the tool to keep your workflow’s statuses up to date, organized, and transparent!\n\n![Status creation](https://card-status.nyc3.cdn.digitaloceanspaces.com/images/store/status-creation.webp)\n\nCreate, update, and drag & drop your Statuses, set up unique to your team flow with special colors and icons. We also support Status enabling|disabling and the ability to hide a Status from a card’s front side. Statuses are not related to Trello lists and do not depend on them (you can keep cards with a variety of statuses in one Trello list).\n\n![Status settings](https://card-status.nyc3.cdn.digitaloceanspaces.com/images/store/status-settings.png)\n\n**Default List** – сhange statuses with just a swipe! Yeah, as easy as it sounds!\nThe default list can be set from the status settings – select any list in a board you want. Then, any card that appears in that list will have status and actions applied to it.\n\n**Easy Switch** – we understand that working with complicated processes is not easy. That's why we introduce a painkiller – Easy Switch!\nSelect as many statuses as you want to be listed as Card Buttons so that you can switch to that statuses right from a card view by simply pressing a Button. You are welcome to specify a unique set of easy-switch statuses for each status.\n\n**Description** – want to leave a note for teammates? – Description is the tool! \nIt's visible in a status header on the Statuses page and improves onboarding with your custom notes about status usage. Members can hover over a description to get into the process.\n\n# Actions 🤖\nAutomation that is triggered on a card when you select a status – we call it Action. We prepared a lot of them!\n\n![Dates-members-labels](https://card-status.nyc3.cdn.digitaloceanspaces.com/images/store/actions-dates-members-labels.png)\n\n### Dates Actions 🗓\nAlways wanted to keep your team accountable for timelines? Add due dates to cards based on Status.\n\nDue date automation (on Status selection):\n- Set due date to now;\n- Set due date on a specific date or in a particular timeline;\n- Ask member to select due date on Status selection;\n- Remove due date;\n- Mark due date as (in)complete.\n\n### Members Actions 👥\nAssign work on specific members based on a card Status!\n\nMembers automation (on Status selection):\n- Remove|add all members from|to a card;\n- Remove|add status changer from|to a card;\n- Remove|add particular members from|to a card;\n\n### Labels Actions 🏷\nNearly-native way to keep the right labels assigned to the right cards! You can select to remove all labels from a card or to add a specific set of labels. Either way, we keep labels up to date with your board settings so no need to update labels in the power-up settings.\n\n### Checklists and Other Actions ✅\n![Move-comment-checklists](https://card-status.nyc3.cdn.digitaloceanspaces.com/images/store/actions-move-comment-checklists.png)\n\nAutomating checklists can be annoying, that’s why we put additional effort to make them easy to setup and use.\n\nChecklists automation (on Status selection):\n- Add a new checklist with checklists to a card;\n- Complete a checklist in a card, also you can select to complete all checklists in a card;\n- Remove a checklist in a card, remove all checklists in a card;\nMore to come!\n\n### Other Actions\nSmaller, but still useful actions:\n\n- **Comment** – designed to automatically leave a comment in a card, you can also ask member to leave a comment during status selection;\n- **Move** – it moves a card to a selected list in your workspace (any public board);\n- **Remove** – allows you to archive or delete a card on status selection;\n\n# Analytics 📊\nWhat's an average time per status? Which statuses are used most frequently? Do you want to dive deeper into the data?\n\nFour amazing charts to help you in the investigation!\n![Analytics demo](https://card-status.nyc3.cdn.digitaloceanspaces.com/images/store/analytics.png)\n\n**Statuses Now Chart** – сards with statuses currently on your board. It’s as simple as that! Helps to understand the current state of a board and the cards in it. You can filter that chart by status to hide some of them.\n\n**Timeline Chart** is designed to show the average time per status and identify potential blockers in your process. Use it to make your workflow smoother! BTW, you can filter that chart by a time range to see how the timeline has changed over time.\n\n**Usage Chart** – want to know which statuses are used most frequently? Statuses Usage is the tool for you! Check how many statuses have been applied, which ones, and when. Maybe it’s time to groom rarely-used statuses or even let them go.\n\n**Transitions Chart** – if you want to investigate a status or learn more about its’ transitions, try the Transitions chart! Simply select a status to analyze and view all the transitions In and Out!\n\n---\n\n# Pricing\nThe power-up is FREE forever.\n\nPRO subscription pricing is **1.99 USD/month** per unique member on all connected boards within a workspace.\n*With a minimum of 3.98 USD per workspace. And maximum of 19.9 USD.*\n\n*Note:*\n\n* We support enterprise – shoot us an email at cardstatus@thundermodules.com\n* Yearly-based subscription can be provided on demand. With an addition discount.\n* We have additional discounts for non-profits.\n* Only workspace members can manage power-up and subscription.\n\n---\n\n# Roadmap\nWe are excited to continue working on Statuses & Workflow power up and here is **the plan**:\n\n![Roadmap](https://card-status.nyc3.cdn.digitaloceanspaces.com/images/store/roadmap.png)\n\n**We will add new features as soon as they are tested and ready to go**. Also, the priority of features depends on your feedback. In this way, we can learn from you, analyze your interest in the Statuses & Workflow power-up, and grow wisely with excellent quality!\n\nIf you want to help us deliver faster, please share the power-up with your fellows!\n\n## Let’s talk!\n[![Feedback](https://card-status.nyc3.cdn.digitaloceanspaces.com/images/store/customer-interview.png)](https://xzlp910bk4i.typeform.com/to/BIUvtD34?utm_source=store-page&utm_campaign=public-beta)\n\nHave feedback? Found a bug? Looking for support? Interested in a partnership? Good start!\nShoot us an email at cardstatus@thundermodules.com\n\n## Release history\n- 1.4.2: Minor bug fixes, stabilization improvements *(May 2024)* 🛠\n- 1.4.1: Added ability to select private boards for the Move action *(Jan 2024)* 🛠\n- 1.4.0: **Freemium support** *(Dec 2023)* 🧞‍♂️\n- 1.3.1: Minor bug fixes, stabilization improvements *(Nov 2023)* 🛠\n- 1.3.0: **Feedback & Help pages**: Convenient way to leave feedback and ask for help *(Oct 2023)* 🎙\n- 1.2.0: **Quality of life**: Onboarding carousel, feature highlights, and rebuilt statuses selector *(Sep 2023)* 🤩\n- 1.1.0: **Announcements**: Non-disturbing notifications to keep you updated with the latest features and discounts *(Sep 2023)*  🔔\n- 1.0.0: **V1 release**: Fully equipped ready-to-go solution for the workflow and status management *(Aug 2023)* 🚀\n- 0.3.0: **Analytics**: Statuses Now, Usage, Transitions, and Timeline charts *(July 2023)* 📊\n- 0.2.1: Hotfixes for screens <800px in height *(June 2023)* 🛠\n- 0.2.0: **Workflow improvements**: Default list, Easy switch, Description, Copy *(June 2023)* 🕹\n- 0.1.0: Post-release fixes, UX&UI improvements *(June 2023)* 🛠\n- 0.0.0: **Public Beta started** *(May 2023)* 🎉\n\n![Divider](https://app.cardstatus.thundermodules.com/images/store/divider.png)",
-                        "overview": "🧞‍♂️ Manage statuses and workflow with ease! Includes automation and more ⚡️"
-                    },
-                    "isCompliantWithPrivacyStandards": true,
-                    "usageBrackets": {
-                        "boards": 10000
-                    }
-                },
-                "board": {
-                    "id": "672b9bbc97c86d6599920565",
-                    "name": "Maturitätsarbeit",
-                    "shortLink": "dUL17l6j"
-                }
-            },
-            "appCreator": null,
-            "type": "disablePlugin",
-            "date": "2024-12-19T19:39:53.148Z",
-            "limits": null,
-            "memberCreator": {
-                "id": "667ffbc68f223b79aad3ae96",
-                "activityBlocked": false,
-                "avatarHash": "dd73c57ec6f674855503711969402766",
-                "avatarUrl": "https://trello-members.s3.amazonaws.com/667ffbc68f223b79aad3ae96/dd73c57ec6f674855503711969402766",
-                "fullName": "Leo Junghans",
-                "idMemberReferrer": null,
-                "initials": "LJ",
-                "nonPublic": {},
-                "nonPublicAvailable": true,
-                "username": "leojunghans1"
-            }
         }
     ],
     "cards": [
@@ -2415,7 +2285,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 }
             ],
             "idLabels": [
@@ -2913,7 +2783,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 }
             ],
             "idLabels": [
@@ -2991,7 +2861,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 }
             ],
             "idLabels": [
@@ -3069,7 +2939,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 }
             ],
             "idLabels": [
@@ -3147,7 +3017,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 }
             ],
             "idLabels": [
@@ -3225,7 +3095,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 }
             ],
             "idLabels": [
@@ -3303,7 +3173,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 }
             ],
             "idLabels": [
@@ -3459,7 +3329,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 }
             ],
             "idLabels": [
@@ -3773,7 +3643,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 }
             ],
             "idLabels": [
@@ -3851,7 +3721,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 }
             ],
             "idLabels": [
@@ -3929,7 +3799,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 }
             ],
             "idLabels": [
@@ -4085,7 +3955,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 }
             ],
             "idLabels": [
@@ -4163,7 +4033,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 }
             ],
             "idLabels": [
@@ -4241,7 +4111,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 }
             ],
             "idLabels": [
@@ -4319,7 +4189,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 }
             ],
             "idLabels": [
@@ -4334,84 +4204,6 @@
             "start": null,
             "subscribed": false,
             "url": "https://trello.com/c/9PyVkkhV/62-dokumentieren-was-man-bei-der-literaturrecherche-herausgefunden-hat-mit-zitaten",
-            "cover": {
-                "idAttachment": null,
-                "color": "yellow",
-                "idUploadedBackground": null,
-                "size": "normal",
-                "brightness": "light",
-                "idPlugin": null
-            },
-            "isTemplate": false,
-            "cardRole": null
-        },
-        {
-            "id": "6762cf1cf2bf188965ef2d89",
-            "badges": {
-                "attachmentsByType": {
-                    "trello": {
-                        "board": 0,
-                        "card": 0
-                    }
-                },
-                "externalSource": null,
-                "location": false,
-                "votes": 0,
-                "viewingMemberVoted": false,
-                "subscribed": false,
-                "attachments": 0,
-                "fogbugz": "",
-                "checkItems": 0,
-                "checkItemsChecked": 0,
-                "checkItemsEarliestDue": null,
-                "comments": 0,
-                "description": false,
-                "due": null,
-                "dueComplete": false,
-                "lastUpdatedByAi": false,
-                "start": null
-            },
-            "checkItemStates": [],
-            "closed": false,
-            "dueComplete": false,
-            "dateLastActivity": "2024-12-18T13:33:16.523Z",
-            "desc": "",
-            "descData": {
-                "emoji": {}
-            },
-            "due": null,
-            "dueReminder": null,
-            "email": null,
-            "idBoard": "672b9bbc97c86d6599920565",
-            "idChecklists": [],
-            "idList": "672b9bbc97c86d659992056c",
-            "idMembers": [],
-            "idMembersVoted": [],
-            "idShort": 63,
-            "idAttachmentCover": null,
-            "labels": [
-                {
-                    "id": "672b9eaf51b67e143c4cc2b4",
-                    "idBoard": "672b9bbc97c86d6599920565",
-                    "idOrganization": "672b9b0d486e657b89f77780",
-                    "name": "Organisatorisch",
-                    "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
-                    "color": "yellow_light",
-                    "uses": 24
-                }
-            ],
-            "idLabels": [
-                "672b9eaf51b67e143c4cc2b4"
-            ],
-            "manualCoverAttachment": true,
-            "name": "ein File erstellen, in das man Überlegungen einfügt, also wirklich ein Gedankenprotokoll",
-            "pinned": false,
-            "pos": 487424,
-            "shortLink": "cSmbMg38",
-            "shortUrl": "https://trello.com/c/cSmbMg38",
-            "start": null,
-            "subscribed": false,
-            "url": "https://trello.com/c/cSmbMg38/63-ein-file-erstellen-in-das-man-%C3%BCberlegungen-einf%C3%BCgt-also-wirklich-ein-gedankenprotokoll",
             "cover": {
                 "idAttachment": null,
                 "color": "yellow",
@@ -4475,7 +4267,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 }
             ],
             "idLabels": [
@@ -4493,6 +4285,86 @@
             "cover": {
                 "idAttachment": null,
                 "color": "yellow",
+                "idUploadedBackground": null,
+                "size": "normal",
+                "brightness": "light",
+                "idPlugin": null
+            },
+            "isTemplate": false,
+            "cardRole": null
+        },
+        {
+            "id": "676481a503bb208a62ad2ae7",
+            "badges": {
+                "attachmentsByType": {
+                    "trello": {
+                        "board": 0,
+                        "card": 0
+                    }
+                },
+                "externalSource": null,
+                "location": false,
+                "votes": 0,
+                "viewingMemberVoted": false,
+                "subscribed": false,
+                "attachments": 0,
+                "fogbugz": "",
+                "checkItems": 2,
+                "checkItemsChecked": 0,
+                "checkItemsEarliestDue": null,
+                "comments": 0,
+                "description": false,
+                "due": null,
+                "dueComplete": false,
+                "lastUpdatedByAi": false,
+                "start": null
+            },
+            "checkItemStates": [],
+            "closed": false,
+            "dueComplete": false,
+            "dateLastActivity": "2024-12-19T20:29:02.050Z",
+            "desc": "",
+            "descData": {
+                "emoji": {}
+            },
+            "due": null,
+            "dueReminder": null,
+            "email": null,
+            "idBoard": "672b9bbc97c86d6599920565",
+            "idChecklists": [
+                "676481a503bb208a62ad2b22"
+            ],
+            "idList": "672b9bbc97c86d659992056d",
+            "idMembers": [],
+            "idMembersVoted": [],
+            "idShort": 74,
+            "idAttachmentCover": null,
+            "labels": [
+                {
+                    "id": "672b9bbc0386316c6b40e53d",
+                    "idBoard": "672b9bbc97c86d6599920565",
+                    "idOrganization": "672b9b0d486e657b89f77780",
+                    "name": "Programmierung",
+                    "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
+                    "color": "blue",
+                    "uses": 28
+                }
+            ],
+            "idLabels": [
+                "672b9bbc0386316c6b40e53d"
+            ],
+            "manualCoverAttachment": true,
+            "name": "Erstellung einer Funkton, die das trello-json lädt und ein hübsches excel sheet daraus erstellt. Enthalten sein sollen: Name der Karte, wohin die Karte verschoben wurde, Kommentare der Karte, die geschätzte Zeit, die benötigte Zeit und das Datum",
+            "pinned": false,
+            "pos": 16384,
+            "shortLink": "AbprJ0aw",
+            "shortUrl": "https://trello.com/c/AbprJ0aw",
+            "start": null,
+            "subscribed": false,
+            "url": "https://trello.com/c/AbprJ0aw/74-erstellung-einer-funkton-die-das-trello-json-l%C3%A4dt-und-ein-h%C3%BCbsches-excel-sheet-daraus-erstellt-enthalten-sein-sollen-name-der-ka",
+            "cover": {
+                "idAttachment": null,
+                "color": "blue",
                 "idUploadedBackground": null,
                 "size": "normal",
                 "brightness": "light",
@@ -4555,7 +4427,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 }
             ],
             "idLabels": [
@@ -4598,7 +4470,7 @@
                 "attachments": 0,
                 "fogbugz": "",
                 "checkItems": 2,
-                "checkItemsChecked": 0,
+                "checkItemsChecked": 2,
                 "checkItemsEarliestDue": null,
                 "comments": 1,
                 "description": true,
@@ -4607,10 +4479,19 @@
                 "lastUpdatedByAi": false,
                 "start": null
             },
-            "checkItemStates": [],
+            "checkItemStates": [
+                {
+                    "idCheckItem": "67647dcbe8bbfd7cf8f4bbb6",
+                    "state": "complete"
+                },
+                {
+                    "idCheckItem": "67647dcbe8bbfd7cf8f4bbb7",
+                    "state": "complete"
+                }
+            ],
             "closed": false,
             "dueComplete": true,
-            "dateLastActivity": "2024-12-19T20:11:10.369Z",
+            "dateLastActivity": "2024-12-19T20:29:43.701Z",
             "desc": "‌\n\n---\n[Planyway Data - do not delete this link](https://planyway.com?cardData=eJxlkMFugzAQRP9lz6iiaUIpNxRaNZdWAtpLVUWLvbRWjB3ZJhKK+Pcu0FO42W9nZ0dzhQs5r6yBDC5biEBiwM8FHSRkD3E8M6oGI+rhTKyr6rysj/lbcSw+nnnl7JR1KgyQsVb0PtiuYBfIriDQydLqaWufl8XkTy32OlTWhXcn+RDLxgg66hr+3GKBmozE9UArH9YQG9JrjznRiyIt9xzHL9m+vnnyS+J0CNTdcGODapXAwCX4BWllTv9P8kF18+zV9tOR+G6zi4Ar+FEG9eQ1NQfJY7JN8Anje9ns0hZTTDckYoRx/AMwL4BX)",
             "descData": {
                 "emoji": {}
@@ -4635,7 +4516,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -4723,7 +4604,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -4811,7 +4692,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -4987,7 +4868,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -5075,7 +4956,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -5163,7 +5044,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -5251,7 +5132,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -5339,7 +5220,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -5427,7 +5308,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -5595,7 +5476,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -5683,7 +5564,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -5771,7 +5652,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -5861,7 +5742,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -5949,7 +5830,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -6037,7 +5918,7 @@
                     "name": "Organisatorisch",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9eaf51b67e143c4cc2b4",
                     "color": "yellow_light",
-                    "uses": 24
+                    "uses": 23
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -6090,7 +5971,7 @@
                 "attachments": 0,
                 "fogbugz": "",
                 "checkItems": 2,
-                "checkItemsChecked": 0,
+                "checkItemsChecked": 2,
                 "checkItemsEarliestDue": null,
                 "comments": 0,
                 "description": true,
@@ -6099,10 +5980,19 @@
                 "lastUpdatedByAi": false,
                 "start": null
             },
-            "checkItemStates": [],
+            "checkItemStates": [
+                {
+                    "idCheckItem": "67647cbad0b2f494aae47bf2",
+                    "state": "complete"
+                },
+                {
+                    "idCheckItem": "67647cbad0b2f494aae47bf3",
+                    "state": "complete"
+                }
+            ],
             "closed": false,
             "dueComplete": true,
-            "dateLastActivity": "2024-12-19T20:20:41.868Z",
+            "dateLastActivity": "2024-12-19T20:29:49.152Z",
             "desc": "[https://chatgpt.com/c/67647fbe-62d8-800b-afef-b693803f7d11](https://chatgpt.com/c/67647fbe-62d8-800b-afef-b693803f7d11 \"smartCard-inline\")  Chat GPT wurde vewrwendet, um DocStrings generieren zu lassen und für eine bessere Kommentierung",
             "descData": {
                 "emoji": {}
@@ -6127,7 +6017,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -6215,7 +6105,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -6303,7 +6193,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -6391,7 +6281,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -6479,7 +6369,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -6567,7 +6457,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -6655,7 +6545,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -6743,7 +6633,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -6831,7 +6721,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -6919,7 +6809,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -7007,7 +6897,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -7095,7 +6985,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -7183,7 +7073,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -7271,7 +7161,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -7359,7 +7249,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -7447,7 +7337,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -7535,7 +7425,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -7623,7 +7513,7 @@
                     "name": "Programmierung",
                     "nodeId": "ari:cloud:trello::label/workspace/672b9b0d486e657b89f77780/672b9bbc0386316c6b40e53d",
                     "color": "blue",
-                    "uses": 27
+                    "uses": 28
                 },
                 {
                     "id": "672b9bbc0386316c6b40e53e",
@@ -7673,14 +7563,14 @@
             "idBoard": "672b9bbc97c86d6599920565",
             "name": "Programmierung",
             "color": "blue",
-            "uses": 27
+            "uses": 28
         },
         {
             "id": "672b9eaf51b67e143c4cc2b4",
             "idBoard": "672b9bbc97c86d6599920565",
             "name": "Organisatorisch",
             "color": "yellow_light",
-            "uses": 24
+            "uses": 23
         },
         {
             "id": "672b9bbc0386316c6b40e534",
@@ -7827,76 +7717,6 @@
     ],
     "checklists": [
         {
-            "id": "67647cbad0b2f494aae47bf1",
-            "name": "Timetracker",
-            "idBoard": "672b9bbc97c86d6599920565",
-            "idCard": "67647cbad0b2f494aae47bb6",
-            "pos": 16384,
-            "checkItems": [
-                {
-                    "id": "67647cbad0b2f494aae47bf2",
-                    "name": "Geschätzte Bearbeitungszeit: 0.5",
-                    "nameData": {
-                        "emoji": {}
-                    },
-                    "pos": 16384,
-                    "state": "incomplete",
-                    "due": null,
-                    "dueReminder": null,
-                    "idMember": null,
-                    "idChecklist": "67647cbad0b2f494aae47bf1"
-                },
-                {
-                    "id": "67647cbad0b2f494aae47bf3",
-                    "name": "Benötigte Bearbeitungszeit 0.5",
-                    "nameData": {
-                        "emoji": {}
-                    },
-                    "pos": 32768,
-                    "state": "incomplete",
-                    "due": null,
-                    "dueReminder": null,
-                    "idMember": null,
-                    "idChecklist": "67647cbad0b2f494aae47bf1"
-                }
-            ]
-        },
-        {
-            "id": "67647bf93392af848315b774",
-            "name": "Timetracker",
-            "idBoard": "672b9bbc97c86d6599920565",
-            "idCard": "672b9d7822b1aa2096e20883",
-            "pos": 16384,
-            "checkItems": [
-                {
-                    "id": "67647c00f70c0d2c3398f8c0",
-                    "name": "Geschätzte Bearbeitungszeit:",
-                    "nameData": {
-                        "emoji": {}
-                    },
-                    "pos": 16384,
-                    "state": "incomplete",
-                    "due": null,
-                    "dueReminder": null,
-                    "idMember": null,
-                    "idChecklist": "67647bf93392af848315b774"
-                },
-                {
-                    "id": "67647c0d3c002d5b48c76611",
-                    "name": "Benötigte Bearbeitungszeit",
-                    "nameData": {
-                        "emoji": {}
-                    },
-                    "pos": 32768,
-                    "state": "incomplete",
-                    "due": null,
-                    "dueReminder": null,
-                    "idMember": null,
-                    "idChecklist": "67647bf93392af848315b774"
-                }
-            ]
-        },
-        {
             "id": "672b9c2c48f9eee74d9934fb",
             "name": "Checkliste",
             "idBoard": "672b9bbc97c86d6599920565",
@@ -7967,6 +7787,111 @@
             ]
         },
         {
+            "id": "67647cbad0b2f494aae47bf1",
+            "name": "Timetracker",
+            "idBoard": "672b9bbc97c86d6599920565",
+            "idCard": "67647cbad0b2f494aae47bb6",
+            "pos": 16384,
+            "checkItems": [
+                {
+                    "id": "67647cbad0b2f494aae47bf2",
+                    "name": "Geschätzte Bearbeitungszeit: 0.5",
+                    "nameData": {
+                        "emoji": {}
+                    },
+                    "pos": 16384,
+                    "state": "complete",
+                    "due": null,
+                    "dueReminder": null,
+                    "idMember": null,
+                    "idChecklist": "67647cbad0b2f494aae47bf1"
+                },
+                {
+                    "id": "67647cbad0b2f494aae47bf3",
+                    "name": "Benötigte Bearbeitungszeit 0.5",
+                    "nameData": {
+                        "emoji": {}
+                    },
+                    "pos": 32768,
+                    "state": "complete",
+                    "due": null,
+                    "dueReminder": null,
+                    "idMember": null,
+                    "idChecklist": "67647cbad0b2f494aae47bf1"
+                }
+            ]
+        },
+        {
+            "id": "676481a503bb208a62ad2b22",
+            "name": "Timetracker",
+            "idBoard": "672b9bbc97c86d6599920565",
+            "idCard": "676481a503bb208a62ad2ae7",
+            "pos": 16384,
+            "checkItems": [
+                {
+                    "id": "676481a503bb208a62ad2b23",
+                    "name": "Geschätzte Bearbeitungszeit: 2",
+                    "nameData": {
+                        "emoji": {}
+                    },
+                    "pos": 16384,
+                    "state": "incomplete",
+                    "due": null,
+                    "dueReminder": null,
+                    "idMember": null,
+                    "idChecklist": "676481a503bb208a62ad2b22"
+                },
+                {
+                    "id": "676481a503bb208a62ad2b24",
+                    "name": "Benötigte Bearbeitungszeit",
+                    "nameData": {
+                        "emoji": {}
+                    },
+                    "pos": 32768,
+                    "state": "incomplete",
+                    "due": null,
+                    "dueReminder": null,
+                    "idMember": null,
+                    "idChecklist": "676481a503bb208a62ad2b22"
+                }
+            ]
+        },
+        {
+            "id": "67647c7cd172296b2d05a2d8",
+            "name": "Timetracker",
+            "idBoard": "672b9bbc97c86d6599920565",
+            "idCard": "672ba4999c80f9571589384d",
+            "pos": 16384,
+            "checkItems": [
+                {
+                    "id": "67647c7cd172296b2d05a2d9",
+                    "name": "Geschätzte Bearbeitungszeit:",
+                    "nameData": {
+                        "emoji": {}
+                    },
+                    "pos": 16384,
+                    "state": "incomplete",
+                    "due": null,
+                    "dueReminder": null,
+                    "idMember": null,
+                    "idChecklist": "67647c7cd172296b2d05a2d8"
+                },
+                {
+                    "id": "67647c7cd172296b2d05a2da",
+                    "name": "Benötigte Bearbeitungszeit:",
+                    "nameData": {
+                        "emoji": {}
+                    },
+                    "pos": 32768,
+                    "state": "incomplete",
+                    "due": null,
+                    "dueReminder": null,
+                    "idMember": null,
+                    "idChecklist": "67647c7cd172296b2d05a2d8"
+                }
+            ]
+        },
+        {
             "id": "676478f8ca84f3dab83d6ad7",
             "name": "Timetracker",
             "idBoard": "672b9bbc97c86d6599920565",
@@ -8015,7 +7940,7 @@
                         "emoji": {}
                     },
                     "pos": 16384,
-                    "state": "incomplete",
+                    "state": "complete",
                     "due": null,
                     "dueReminder": null,
                     "idMember": null,
@@ -8028,7 +7953,7 @@
                         "emoji": {}
                     },
                     "pos": 32768,
-                    "state": "incomplete",
+                    "state": "complete",
                     "due": null,
                     "dueReminder": null,
                     "idMember": null,
@@ -8037,14 +7962,14 @@
             ]
         },
         {
-            "id": "67647c7cd172296b2d05a2d8",
+            "id": "67647bf93392af848315b774",
             "name": "Timetracker",
             "idBoard": "672b9bbc97c86d6599920565",
-            "idCard": "672ba4999c80f9571589384d",
+            "idCard": "672b9d7822b1aa2096e20883",
             "pos": 16384,
             "checkItems": [
                 {
-                    "id": "67647c7cd172296b2d05a2d9",
+                    "id": "67647c00f70c0d2c3398f8c0",
                     "name": "Geschätzte Bearbeitungszeit:",
                     "nameData": {
                         "emoji": {}
@@ -8054,11 +7979,11 @@
                     "due": null,
                     "dueReminder": null,
                     "idMember": null,
-                    "idChecklist": "67647c7cd172296b2d05a2d8"
+                    "idChecklist": "67647bf93392af848315b774"
                 },
                 {
-                    "id": "67647c7cd172296b2d05a2da",
-                    "name": "Benötigte Bearbeitungszeit:",
+                    "id": "67647c0d3c002d5b48c76611",
+                    "name": "Benötigte Bearbeitungszeit",
                     "nameData": {
                         "emoji": {}
                     },
@@ -8067,7 +7992,7 @@
                     "due": null,
                     "dueReminder": null,
                     "idMember": null,
-                    "idChecklist": "67647c7cd172296b2d05a2d8"
+                    "idChecklist": "67647bf93392af848315b774"
                 }
             ]
         }
