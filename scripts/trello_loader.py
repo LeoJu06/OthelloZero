@@ -3,6 +3,8 @@ import json
 from dotenv import load_dotenv
 import os
 
+path_to_json_file = "data/trello_board.json"
+
 # Load environment variables from the .env file to securely access sensitive information
 load_dotenv()
 
@@ -105,8 +107,16 @@ def main():
 
     # If the board data was successfully fetched, save it to a JSON file
     if board_json:
-        save_json_to_file(board_json, "data/trello_board.json")
+        save_json_to_file(board_json, path_to_json_file)
 
+
+def load_trello_as_json():
+
+    # Öffne das JSON, das durch trello_loader heruntergeladen wurde
+    with open(path_to_json_file, "r") as file:
+        trello_json = json.load(file)
+
+    return trello_json
 
 # This ensures the main function is executed only when the script is run directly
 if __name__ == "__main__":
