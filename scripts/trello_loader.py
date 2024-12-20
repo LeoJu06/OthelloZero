@@ -9,28 +9,13 @@ path_to_json_file = "data/trello_board.json"
 load_dotenv()
 
 # Retrieve the Trello API key, token, and board ID from environment variables
-# These values should be stored securely and not hardcoded in the script
 api_key = os.getenv("API_KEY")
 token = os.getenv("TOKEN")
 board_id = os.getenv("BOARD_ID")
 
-
 def fetch_trello_board_json(api_key, token, board_id):
     """
-    Fetch detailed information about a Trello board using the Trello API.
-
-    This function makes a GET request to the Trello API to retrieve various details of a board,
-    such as lists, cards, labels, members, checklists, custom fields, and actions. The data is
-    returned as a dictionary if the request is successful, or None if an error occurs.
-
-    Args:
-        api_key (str): The Trello API key used for authentication.
-        token (str): The Trello API token used for authentication.
-        board_id (str): The ID of the Trello board from which data will be fetched.
-
-    Returns:
-        dict or None: A dictionary containing the board data if the request is successful,
-                      or None if there was an error with the request.
+    Fetch detailed information about a Trello board using the Trello API, with pagination.
     """
     # Define the URL for the Trello API endpoint to fetch board details
     url = f"https://api.trello.com/1/boards/{board_id}"
@@ -41,66 +26,74 @@ def fetch_trello_board_json(api_key, token, board_id):
         'token': token,          # API token for authentication
         'fields': 'all',         # Request all fields related to the board (lists, cards, etc.)
         'lists': 'all',          # Include all lists in the board
-        'cards': 'all',          # Include all cards within the board
         'labels': 'all',         # Include all labels assigned to cards
-        'member': 'true',        # Include member information (who is assigned to cards)
+        'members': 'true',       # Include member information (who is assigned to cards)
         'checklists': 'all',     # Include all checklists within cards
         'customFields': 'true',  # Include all custom fields defined for the board
         'actions': 'all',        # Include all actions (history of changes) related to the board
     }
 
-    try:
+    all_cards = []
+    page = 1
+    limit = 100  # Set the limit for the number of cards per page
+
+    while True:
+        # Set the pagination parameters for cards
+        params['limit'] = limit
+        params['page'] = page
+
         # Make a GET request to the Trello API to fetch the board's data
-        response = requests.get(url, params=params)
+        response = requests.get(f"{url}/cards", params=params)
 
-        # Check if the request was successful (status code 200)
         if response.status_code == 200:
-            return response.json()  # Return the board data as a JSON object
-        else:
-            # Print an error message if the request was not successful
-            print(f"Error fetching the board: {response.status_code} - {response.text}")
-            return None
-    except requests.exceptions.RequestException as e:
-        # Catch any network-related or request errors and print the error message
-        print(f"An error occurred: {e}")
-        return None
+            cards = response.json()
+            all_cards.extend(cards)
 
+            # If fewer than 'limit' cards are returned, we have reached the end
+            if len(cards) < limit:
+                break
+
+            # Otherwise, move to the next page
+            page += 1
+        else:
+            print(f"Error fetching cards: {response.status_code} - {response.text}")
+            break
+
+    # Fetch lists, labels, members, etc.
+    lists_response = requests.get(f"{url}/lists", params=params)
+    labels_response = requests.get(f"{url}/labels", params=params)
+    members_response = requests.get(f"{url}/members", params=params)
+
+    # Check if these requests were successful and retrieve the data
+    lists = lists_response.json() if lists_response.status_code == 200 else []
+    labels = labels_response.json() if labels_response.status_code == 200 else []
+    members = members_response.json() if members_response.status_code == 200 else []
+
+    # Combine all data in a single dictionary
+    board_data = {
+        'cards': all_cards,
+        'lists': lists,
+        'labels': labels,
+        'members': members,
+    }
+
+    return board_data
 
 def save_json_to_file(data, filename):
     """
     Save the provided data to a JSON file with proper formatting.
-
-    This function creates any necessary directories if they don't already exist
-    and writes the provided data to the specified file in a human-readable format.
-
-    Args:
-        data (dict): The data to be saved to the JSON file.
-        filename (str): The path of the file where the data will be saved.
-
-    Returns:
-        None
     """
-    # Ensure the directory for the file exists, and create it if necessary
     os.makedirs(os.path.dirname(filename), exist_ok=True)
 
-    # Open the file in write mode and save the data as a pretty-printed JSON
+    # Save data to JSON file
     with open(filename, 'w', encoding='utf-8') as file:
         json.dump(data, file, indent=4, ensure_ascii=False)
 
-    # Print a message confirming that the data has been saved successfully
     print(f"JSON data has been saved to {filename}")
-
 
 def main():
     """
     Main function to load a Trello board's data and save it to a JSON file.
-
-    This function calls the `fetch_trello_board_json` function to retrieve the board's data
-    and then saves it to a file using the `save_json_to_file` function. The file is saved in the
-    'data' directory with the filename 'trello_board.json'.
-
-    Returns:
-        None
     """
     # Fetch the Trello board's data using the provided API key, token, and board ID
     board_json = fetch_trello_board_json(api_key, token, board_id)
@@ -109,15 +102,13 @@ def main():
     if board_json:
         save_json_to_file(board_json, path_to_json_file)
 
+def load_trello_json():
 
-def load_trello_as_json():
-
-    # Öffne das JSON, das durch trello_loader heruntergeladen wurde
     with open(path_to_json_file, "r") as file:
-        trello_json = json.load(file)
 
-    return trello_json
+        data = json.load(file)
+    
+    return data
 
-# This ensures the main function is executed only when the script is run directly
 if __name__ == "__main__":
     main()
