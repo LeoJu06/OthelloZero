@@ -2,10 +2,11 @@ import pygame
 import os
 from src.othello.game_settings import SQUARE_SIZE
 
+
 class AnimationManager:
     """
     Manages animations for the Othello game, such as flipping stones with an animated transition.
-    
+
     Attributes:
         square_size (int): The size of each square on the board, used to scale images.
         rotation_images (list): Preloaded and scaled images for the flipping animation.
@@ -39,7 +40,7 @@ class AnimationManager:
             screen (pygame.Surface): The Pygame surface where the animation will be rendered.
             draw_board (function): A function to draw the current state of the game board.
             speed (int): Delay (in milliseconds) between animation frames.
-        
+
         Behavior:
             This method iterates through the preloaded rotation images, updating the game board and rendering
             each frame of the animation for the stones being flipped.
