@@ -1,82 +1,103 @@
 import json
 import pandas as pd
-from openpyxl import Workbook
-from trello_loader import path_to_json_file, load_trello_as_json  # Hier verwenden wir die Pfadvariable aus trello_loader
-import trello_loader  # Import der trello_loader-Bibliothek, die das JSON lädt
+import re
 
-
-def create_excel_from_trello_json(trello_json, output_file="trello_workflow.xlsx"):
+def extract_time(time_str):
     """
-    Creates an Excel sheet from a Trello JSON containing information about cards, their movements,
-    comments, estimated and actual time, and dates.
+    Extracts the first decimal number from a given string.
 
     Args:
-        trello_json (dict): The Trello board data in JSON format.
-        output_file (str): The file path where the Excel sheet will be saved. Default is "trello_data.xlsx".
+        time_str (str): Input string that may contain a time value.
 
     Returns:
-        None: This function saves the Excel file to the specified path.
+        float: The extracted number as a float, or None if no number is found.
     """
+    match = re.search(r'\d+(\.\d+)?', time_str)
+    return float(match.group()) if match else None
 
-    # Initialize an empty list to store card data for each row
-    data = []
+def parse_trello_actions(file_path, output_file):
+    """
+    Parses Trello JSON data to extract workflow details and exports them to an Excel file.
 
-    # Extract relevant data for each card
-    for card in trello_json.get("cards", []):
-        # Extract card name
-        card_name = card.get("name", "No Name")
-        
-        # Get the list the card is currently in (if available)
-        current_list = card.get("list", {}).get("name", "No List")
-        
-        # Get comments (activity) associated with the card
-        comments = []
-        for action in trello_json.get("actions", []):
-            if action.get("data", {}).get("card", {}).get("id") == card.get("id"):
-                if action.get("type") == "commentCard":
-                    comments.append(action.get("data", {}).get("text", "No comment"))
-        
-        # Extract estimated time and actual time (custom field values, if present)
-        estimated_time = None
-        actual_time = None
-        for field in card.get("customFields", []):
-            if field.get("name") == "Geschätzte Zeit":
-                estimated_time = field.get("value", {}).get("text", "Not Set")
-            if field.get("name") == "Benötigte Zeit":
-                actual_time = field.get("value", {}).get("text", "Not Set")
-        
-        # Get the date from actions (if available)
-        action_dates = []
-        for action in trello_json.get("actions", []):
-            if action.get("data", {}).get("card", {}).get("id") == card.get("id"):
-                action_dates.append(action.get("date"))
+    Args:
+        file_path (str): Path to the Trello JSON file.
+        output_file (str): Path to the output Excel file.
 
-        # Collect all information into a row
-        data.append({
-            "Card Name": card_name,
-            "Current List": current_list,
-            "Comments": "\n".join(comments) if comments else "No Comments",
-            "Estimated Time": estimated_time,
-            "Actual Time": actual_time,
-            "Date": ", ".join(action_dates) if action_dates else "No Date"
-        })
+    Returns:
+        None
+    """
+    # Load JSON data from file
+    with open(file_path, "r") as file:
+        data = json.load(file)
+
+    # Initialize a list to store workflow data
+    workflow_data = []
+
+    # Iterate over each action in the JSON
+    for action in data.get("actions", []):
+        action_type = action.get("type")
+        member_creator = action.get("memberCreator", {}).get("fullName", "Unbekannt")
+        date = action.get("date")
+
+        card = action.get("data", {}).get("card", {})
+        card_name = card.get("name", "Unbekannte Karte")
+        card_desc = card.get("desc", "")
+
+        # Handle comments added to cards
+        if action_type == "commentCard":
+            comment_text = action["data"].get("text", "")
+            workflow_data.append({
+                "Aktion": "Kommentar hinzugefügt",
+                "Kartenname": card_name,
+                "Beschreibung": card_desc,
+                "Kommentar": comment_text,
+                "Mitglied": member_creator,
+                "Datum": date,
+                "Geschätzte Zeit": None,
+                "Benötigte Zeit": None,
+            })
+
+        # Extract times from checklist items
+        checklist_item = action.get("data", {}).get("checkItem", {}).get("name", "")
+        estimated_time = extract_time(checklist_item) if "Geschätzte" in checklist_item else None
+        required_time = extract_time(checklist_item) if "Benötigte" in checklist_item else None
+
+        # Handle card-related actions
+        if action_type in ["copyCard", "updateCard", "updateCheckItemStateOnCard"]:
+            list_name = action.get("data", {}).get("list", {}).get("name", "Keine Liste")
+            board_name = action.get("data", {}).get("board", {}).get("name", "Unbekannt")
+
+            workflow_data.append({
+                "Aktion": "Karte kopiert" if action_type == "copyCard" else
+                          "Karte verschoben" if action_type == "updateCard" else
+                          "Checkliste aktualisiert",
+                "Kartenname": card_name,
+                "Beschreibung": card_desc,
+                "Liste": list_name,
+                "Board": board_name,
+                "Mitglied": member_creator,
+                "Datum": date,
+                "Geschätzte Zeit": estimated_time,
+                "Benötigte Zeit": required_time,
+            })
 
     # Create a DataFrame from the collected data
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(workflow_data)
 
-    # Write the data to an Excel file
-    df.to_excel(output_file, index=False, engine='openpyxl')
+    # Convert the 'Datum' column to datetime and remove timezone information
+    df["Datum"] = pd.to_datetime(df["Datum"]).dt.tz_localize(None)
 
-    print(f"Excel file has been created and saved as '{output_file}'")
+    # Sort data by date in descending order
+    df = df.sort_values(by="Datum", ascending=False)
 
+    # Export the DataFrame to an Excel file
+    df.to_excel(output_file, index=False, sheet_name="Workflow")
+    print(f"Workflow successfully exported to {output_file}.")
 
 if __name__ == "__main__":
-    # Läd das JSON vom Trello Board durch die trello_loader main Funktion
-    trello_loader.main()
+    # Input and output file paths
+    input_file = "data/trello_board_latest.json"
+    output_file = "trello_workflow.xlsx"
 
-    # Öffne das JSON, das durch trello_loader heruntergeladen wurde
-    trello_json = load_trello_as_json()
-    
-    # Rufe die Funktion auf, um die Excel-Datei zu erstellen
-    create_excel_from_trello_json(trello_json)
-
+    # Parse the Trello actions and export workflow data
+    parse_trello_actions(input_file, output_file)
