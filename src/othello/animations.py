@@ -22,7 +22,7 @@ class AnimationManager:
 
         # Construct the path to the images directory
         path_to_images = os.path.join(
-            os.path.dirname(__file__), "images", "animation_images"
+            os.path.dirname(__file__), "images", "transition_images"
         )
 
         # Load and scale rotation images for flipping animation
