@@ -8,7 +8,7 @@ import pygame.locals
 from src.othello.board import Board
 import src.othello.game_constants as const
 from src.othello.game_settings import WIDTH, HEIGHT, ROWS, COLS, SQUARE_SIZE
-from src.othello.game_settings import BACKGROUND_COLOR, GRID_COLOR
+from src.othello.game_settings import BACKGROUND_COLOR, GRID_COLOR, FPS
 from src.othello.animations import AnimationManager
 
 import os
@@ -52,7 +52,11 @@ class Game:
             self.board.apply_move(row, col)
             flipped_stones = self.board.update(row, col)
             self.animation_manager.play_flip_animation(
-                flipped_stones, self.screen, self.draw_board
+                flipped_stones,
+                self.screen,
+                self.draw_board,
+                self.board.player,
+                self.clock,
             )
 
     def update(self):
@@ -83,12 +87,12 @@ class Game:
                         self.image_white_stone, (col * SQUARE_SIZE, row * SQUARE_SIZE)
                     )
 
-    def run(self, FPS=60):
+    def run(self, fps=FPS):
         while self.running:
             self.handle_events()
             self.update()
             self.draw()
-            self.clock.tick(FPS)
+            self.clock.tick(fps)
 
 
 # Initialize Pygame and game settings
