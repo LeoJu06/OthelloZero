@@ -1,7 +1,7 @@
 import pygame
 import os
 from src.othello.game_settings import SQUARE_SIZE
-from game_constants import PlayerColor
+from src.othello.game_constants import PlayerColor
 from src.othello.game_settings import FPS
 
 
@@ -28,11 +28,11 @@ class AnimationManager:
         # Load and scale rotation images for flipping animation
         self.rotation_images_black_to_white = [
             pygame.image.load(os.path.join(path_to_images, f"black_to_white_{i}.png"))
-            for i in range(14)
+            for i in range(14)  # 14  transition images exist
         ]
-        for i in range(len(self.rotation_images_black_to_white)):
+        for i, image in enumerate(self.rotation_images_black_to_white):
             self.rotation_images_black_to_white[i] = pygame.transform.smoothscale(
-                self.rotation_images_black_to_white[i],
+                image,
                 (self.square_size, self.square_size),
             )
 
