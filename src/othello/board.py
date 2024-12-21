@@ -38,8 +38,8 @@ class Board:
         if board is None:
             self.board = np.array(const.EMPTY_BOARD)
         else:
-            self.board = np.array(board) 
-            
+            self.board = np.array(board)
+
         self.player = player
 
         # Calculate empty cells if not provided
