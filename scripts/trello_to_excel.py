@@ -2,6 +2,7 @@ import json
 import pandas as pd
 import re
 
+
 def extract_time(time_str):
     """
     Extracts the first decimal number from a given string.
@@ -12,8 +13,9 @@ def extract_time(time_str):
     Returns:
         float: The extracted number as a float, or None if no number is found.
     """
-    match = re.search(r'\d+(\.\d+)?', time_str)
+    match = re.search(r"\d+(\.\d+)?", time_str)
     return float(match.group()) if match else None
+
 
 def parse_trello_actions(file_path, output_file):
     """
@@ -46,40 +48,63 @@ def parse_trello_actions(file_path, output_file):
         # Handle comments added to cards
         if action_type == "commentCard":
             comment_text = action["data"].get("text", "")
-            workflow_data.append({
-                "Aktion": "Kommentar hinzugefügt",
-                "Kartenname": card_name,
-                "Beschreibung": card_desc,
-                "Kommentar": comment_text,
-                "Mitglied": member_creator,
-                "Datum": date,
-                "Geschätzte Zeit": None,
-                "Benötigte Zeit": None,
-            })
+            workflow_data.append(
+                {
+                    "Aktion": "Kommentar hinzugefügt",
+                    "Kartenname": card_name,
+                    "Beschreibung": card_desc,
+                    "Kommentar": comment_text,
+                    "Mitglied": member_creator,
+                    "Datum": date,
+                    "Geschätzte Zeit": None,
+                    "Benötigte Zeit": None,
+                }
+            )
 
         # Extract times from checklist items
         checklist_item = action.get("data", {}).get("checkItem", {}).get("name", "")
-        estimated_time = extract_time(checklist_item) if "Geschätzte" in checklist_item else None
-        required_time = extract_time(checklist_item) if "Benötigte" in checklist_item else None
+        estimated_time = (
+            extract_time(checklist_item) if "Geschätzte" in checklist_item else None
+        )
+        required_time = (
+            extract_time(checklist_item) if "Benötigte" in checklist_item else None
+        )
 
         # Handle card-related actions
-        if action_type in ["copyCard", "updateCard", "updateCheckItemStateOnCard"]:
-            list_name = action.get("data", {}).get("list", {}).get("name", "Keine Liste")
-            board_name = action.get("data", {}).get("board", {}).get("name", "Unbekannt")
+        if action_type in [
+            "copyCard",
+            "createCard",
+            "updateCard",
+            "updateCheckItemStateOnCard",
+        ]:
+            list_name = (
+                action.get("data", {}).get("list", {}).get("name", "Keine Liste")
+            )
+            board_name = (
+                action.get("data", {}).get("board", {}).get("name", "Unbekannt")
+            )
 
-            workflow_data.append({
-                "Aktion": "Karte kopiert" if action_type == "copyCard" else
-                          "Karte verschoben" if action_type == "updateCard" else
-                          "Checkliste aktualisiert",
-                "Kartenname": card_name,
-                "Beschreibung": card_desc,
-                "Liste": list_name,
-                "Board": board_name,
-                "Mitglied": member_creator,
-                "Datum": date,
-                "Geschätzte Zeit": estimated_time,
-                "Benötigte Zeit": required_time,
-            })
+            # Skip entries with "Keine Liste" and no estimated or required time
+            if list_name == "Keine Liste" and not estimated_time and not required_time:
+                continue
+
+            workflow_data.append(
+                {
+                    "Aktion": "Karte erstellt"
+                    if action_type == "copyCard"
+                    else "Karte verschoben"
+                    if action_type == "updateCard"
+                    else "Checkliste aktualisiert",
+                    "Kartenname": card_name,
+                    "Beschreibung": card_desc,
+                    "Liste": list_name,
+                    "Board": board_name,
+                    "Mitglied": member_creator,
+                    "Datum": date,
+                    "Geschätzte Zeit": estimated_time,
+                    "Benötigte Zeit": required_time,
+                }
+            )
 
     # Create a DataFrame from the collected data
     df = pd.DataFrame(workflow_data)
@@ -93,6 +118,7 @@ def parse_trello_actions(file_path, output_file):
     # Export the DataFrame to an Excel file
     df.to_excel(output_file, index=False, sheet_name="Workflow")
     print(f"Workflow successfully exported to {output_file}.")
+
 
 if __name__ == "__main__":
     # Input and output file paths
