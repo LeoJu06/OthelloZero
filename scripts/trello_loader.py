@@ -13,6 +13,7 @@ api_key = os.getenv("API_KEY")
 token = os.getenv("TOKEN")
 board_id = os.getenv("BOARD_ID")
 
+
 def fetch_trello_board_json(api_key, token, board_id):
     """
     Fetch detailed information about a Trello board using the Trello API, with pagination.
@@ -22,15 +23,15 @@ def fetch_trello_board_json(api_key, token, board_id):
 
     # Set up the parameters to specify which data to fetch from the board
     params = {
-        'key': api_key,          # API key for authentication
-        'token': token,          # API token for authentication
-        'fields': 'all',         # Request all fields related to the board (lists, cards, etc.)
-        'lists': 'all',          # Include all lists in the board
-        'labels': 'all',         # Include all labels assigned to cards
-        'members': 'true',       # Include member information (who is assigned to cards)
-        'checklists': 'all',     # Include all checklists within cards
-        'customFields': 'true',  # Include all custom fields defined for the board
-        'actions': 'all',        # Include all actions (history of changes) related to the board
+        "key": api_key,  # API key for authentication
+        "token": token,  # API token for authentication
+        "fields": "all",  # Request all fields related to the board (lists, cards, etc.)
+        "lists": "all",  # Include all lists in the board
+        "labels": "all",  # Include all labels assigned to cards
+        "members": "true",  # Include member information (who is assigned to cards)
+        "checklists": "all",  # Include all checklists within cards
+        "customFields": "true",  # Include all custom fields defined for the board
+        "actions": "all",  # Include all actions (history of changes) related to the board
     }
 
     all_cards = []
@@ -39,8 +40,8 @@ def fetch_trello_board_json(api_key, token, board_id):
 
     while True:
         # Set the pagination parameters for cards
-        params['limit'] = limit
-        params['page'] = page
+        params["limit"] = limit
+        params["page"] = page
 
         # Make a GET request to the Trello API to fetch the board's data
         response = requests.get(f"{url}/cards", params=params)
@@ -71,13 +72,14 @@ def fetch_trello_board_json(api_key, token, board_id):
 
     # Combine all data in a single dictionary
     board_data = {
-        'cards': all_cards,
-        'lists': lists,
-        'labels': labels,
-        'members': members,
+        "cards": all_cards,
+        "lists": lists,
+        "labels": labels,
+        "members": members,
     }
 
     return board_data
+
 
 def save_json_to_file(data, filename):
     """
@@ -86,10 +88,11 @@ def save_json_to_file(data, filename):
     os.makedirs(os.path.dirname(filename), exist_ok=True)
 
     # Save data to JSON file
-    with open(filename, 'w', encoding='utf-8') as file:
+    with open(filename, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=4, ensure_ascii=False)
 
     print(f"JSON data has been saved to {filename}")
+
 
 def main():
     """
@@ -102,13 +105,13 @@ def main():
     if board_json:
         save_json_to_file(board_json, path_to_json_file)
 
+
 def load_trello_json():
-
     with open(path_to_json_file, "r") as file:
-
         data = json.load(file)
-    
+
     return data
+
 
 if __name__ == "__main__":
     main()
