@@ -14,4 +14,4 @@
 
 
 ## Neural Network Heatmap
-A visual heatmap overlay of the current board that highlights the neural network's evaluation for each possible move. Brighter colors could indicate better moves.
+A visual heatmap overlay of the current board that highlights the neural network's evaluation for each possible move. Brighter colors could indicate better moves. For this heatmap should somewhat of a scale be displayed, so the user can understand the underlying principle. blue for low probability and red for high probability.
