@@ -57,7 +57,6 @@ class GamePvsP:
                 self.clock,
             )
 
-
     def draw(self):
         self.draw_board()
         pygame.display.flip()

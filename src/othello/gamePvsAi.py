@@ -12,6 +12,7 @@ from src.othello.animations import AnimationManager
 from src.othello.gamePvsP import *
 from random import choice  # For random moves
 
+
 class GamePvsAi(GamePvsP):
     """
     Extension of the GamePvsP class for a Player-vs-AI Othello game.
