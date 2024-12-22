@@ -90,6 +90,7 @@ class GamePvsAi(GamePvsP):
             fps: The game's frame rate (frames per second).
         """
         while self.running:
+            
             self.handle_events()
             self.draw()
             self.clock.tick(fps)
