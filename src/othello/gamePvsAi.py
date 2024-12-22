@@ -50,8 +50,8 @@ class GamePvsAi:
             if event.type == pygame.QUIT:
                 self.running = False  # Exit the game
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                self.handle_mouse_click(event.pos)
-                self.activate_ai()  # Once the player moves, activate the AI
+                if self.process_player_move(event.pos):
+                    self.activate_ai()  # Once the player moves, activate the AI
 
     def handle_ai_turn(self):
         """
@@ -81,12 +81,15 @@ class GamePvsAi:
         self.game_renderer.draw_board(self.board.board)
         pygame.display.flip()  # Update the display
 
-    def handle_mouse_click(self, position):
+    def process_player_move(self, position):
         """
         Processes a mouse click on the board.
 
         Args:
             position (tuple): The (x, y) position of the mouse click.
+        
+        Returns: 
+            True if the move was valid, False otherwise
         """
         x, y = position
         col = x // SQUARE_SIZE
@@ -98,6 +101,9 @@ class GamePvsAi:
             flipped_stones = self.board.update(row, col)  # Flip stones
             # Trigger animation for flipped stones
             self.game_renderer.play_flip_animation(self.board.board, flipped_stones, self.board.player)
+
+            return True
+        return False
 
     def run(self, fps=FPS):
         """
