@@ -8,12 +8,11 @@ from src.othello.board import Board
 import src.othello.game_constants as const
 from src.othello.game_settings import WIDTH, HEIGHT, ROWS, COLS, SQUARE_SIZE
 from src.othello.game_settings import BACKGROUND_COLOR, GRID_COLOR, FPS
-from src.othello.animations import AnimationManager
-from src.othello.gamePvsP import *
+from src.othello.game_visuals import GameVisuals
 from random import choice  # For random moves
 
 
-class GamePvsAi(GamePvsP):
+class GamePvsAi:
     """
     Extension of the GamePvsP class for a Player-vs-AI Othello game.
 
@@ -21,7 +20,7 @@ class GamePvsAi(GamePvsP):
     The player and AI take turns, with the AI automatically executing its moves.
     """
 
-    def __init__(self, screen, animation_manager, board=None):
+    def __init__(self, screen, board=None):
         """
         Initialize the Player-vs-AI game.
 
@@ -30,8 +29,16 @@ class GamePvsAi(GamePvsP):
             animation_manager: Manager for animations, such as flipping stones.
             board: Optionally, an existing board instance. A new board is created if not provided.
         """
-        super().__init__(screen, animation_manager, board)
-        self.is_ai_turn = False  # The AI does not start; the player goes first.
+        self.clock = pygame.time.Clock()
+        self.board = Board(board)
+        self.screen = screen
+        self.game_renderer = GameVisuals(screen, self.clock)
+
+        self.running = True
+
+        self.is_ai_turn = choice(
+            [True, False]
+        )  # The AI does not start; the player goes first.
 
     def handle_events(self):
         """
@@ -65,12 +72,8 @@ class GamePvsAi(GamePvsP):
             row, col = choice(valid_moves)
             self.board.apply_move(row, col)
             flipped_stones = self.board.update(row, col)
-            self.animation_manager.play_flip_animation(
-                flipped_stones,
-                self.screen,
-                self.draw_board,
-                self.board.player,
-                self.clock,
+            self.game_renderer.play_flip_animation(
+                self.board.board, flipped_stones, self.board.player
             )
         self.deactivate_ai()  # After the AI's move, activate the player's turn
 
@@ -82,6 +85,34 @@ class GamePvsAi(GamePvsP):
         """Activate AI's turn."""
         self.is_ai_turn = True
 
+    def draw(self):
+        """
+        Redraws the game screen and updates the display.
+        """
+        self.game_renderer.draw_board(self.board.board)
+        pygame.display.flip()  # Update the display
+
+    def handle_mouse_click(self, position):
+        """
+        Processes a mouse click on the board.
+
+        Args:
+            position (tuple): The (x, y) position of the mouse click.
+        """
+        x, y = position
+        col = x // SQUARE_SIZE
+        row = y // SQUARE_SIZE
+
+        # Check if the clicked position is a valid move
+        if (row, col) in self.board.valid_moves():
+            self.board.apply_move(row, col)  # Update the board state
+            flipped_stones = self.board.update(row, col)  # Flip stones
+
+            # Trigger animation for flipped stones
+            self.game_renderer.play_flip_animation(
+                self.board.board, flipped_stones, self.board.player
+            )
+
     def run(self, fps=FPS):
         """
         Main game loop with player and AI support.
@@ -90,25 +121,22 @@ class GamePvsAi(GamePvsP):
             fps: The game's frame rate (frames per second).
         """
         while self.running:
-            
             self.handle_events()
             self.draw()
             self.clock.tick(fps)
 
 
-# Initialize Pygame and game settings
-pygame.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Othello")
-
-# Initialize the animation manager
-animation_manager = AnimationManager()
-
-# Create the game instance
-game = GamePvsAi(screen, animation_manager)
-
 # Run the game
 if __name__ == "__main__":
+    # Initialize Pygame and game settings
+    pygame.init()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Othello")
+
+    # Initialize the animation manager
+
+    # Create the game instance
+    game = GamePvsAi(screen)
     game.run()
 
     # Quit Pygame when the game ends
