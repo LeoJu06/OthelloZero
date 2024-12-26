@@ -5,7 +5,7 @@ This file contains the Board class, which represents an Othello board with all i
 import sys
 import numpy as np
 import src.othello.game_constants as const
-import src.logger_config as lg
+import src.utils.logger_config as lg
 
 
 class Board:

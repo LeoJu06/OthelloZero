@@ -1,7 +1,7 @@
 """Test for logger_config.py"""
 
 import os
-from src.logger_config import logger_config
+from src.utils.logger_config import logger_config
 
 
 def test_logger_config():
