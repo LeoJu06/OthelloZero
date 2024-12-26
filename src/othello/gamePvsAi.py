@@ -117,6 +117,34 @@ class GamePvsAi:
             self.draw()  # Redraw the board
             self.clock.tick(fps)  # Maintain consistent frame rate
 
+def run_game(board=None, activate_ai = False):
+
+    """Function to run a Demo of the game. This function should not be 
+    used for real purpose"""
+    
+    
+        
+
+    # Initialize Pygame and game settings
+    pygame.init()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Othello")
+
+    if board is not None:
+        b = board
+    
+
+    # Create the game instance
+    game = GamePvsAi(screen, board=b)
+    
+    if activate_ai:
+        game.activate_ai()
+    else:
+        game.deactivate_ai()
+    game.run()
+
+    # Quit Pygame when the game ends
+    pygame.quit()
 # Run the game
 if __name__ == "__main__":
     # Initialize Pygame and game settings
