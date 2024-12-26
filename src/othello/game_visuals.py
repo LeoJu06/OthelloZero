@@ -51,7 +51,7 @@ class GameVisuals:
         Returns:
             tuple: Scaled images for black and white stones.
         """
-        path_to_stone_images = os.path.join(os.path.dirname(__file__), "images")  # Path to images folder
+        path_to_stone_images = os.path.join(os.path.dirname(__file__), "assets")  # Path to images folder
         
         # Load and scale the black stone image
         image_black_stone = pygame.transform.smoothscale(
@@ -75,7 +75,7 @@ class GameVisuals:
             tuple: Two lists of images for black-to-white and white-to-black transitions.
         """
         path_to_images = os.path.join(
-            os.path.dirname(__file__), "images", "transition_images"
+            os.path.dirname(__file__), "assets", "transition_images"
         )  # Path to transition images folder
         
         # Load and scale the black-to-white flipping images
