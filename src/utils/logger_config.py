@@ -41,3 +41,4 @@ def logger_config(name: str, log_filename: str):
 
 
 logger_board = logger_config("Logger_board", "logger_board.log")
+logger_mcts = logger_config("Logger_MCTS", "logger_MCTS.log")

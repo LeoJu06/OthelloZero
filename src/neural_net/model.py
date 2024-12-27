@@ -1,4 +1,3 @@
-
 import random
 from src.utils.coordinates_to_index import coordinates_to_index
 import multiprocessing as mp
@@ -17,7 +16,9 @@ def dummy_model_predict(board):
     action_probs = [0 for _ in range(64)]
     for x in range(8):
         for y in range(8):
-            action_probs[coordinates_to_index(x, y)] = random.choice([x / 10 for x in range(1, 11)])
+            action_probs[coordinates_to_index(x, y)] = random.choice(
+                [x / 10 for x in range(1, 11)]
+            )
     return action_probs, value_head
 
 
@@ -36,11 +37,14 @@ class NeuralNetwork(nn.Module):
         value = self.value(x)  # Scalar value
         return torch.softmax(policy, dim=-1), torch.tanh(value)
 
+
 def neural_network_evaluate(batch, model, device):
     """
     Evaluates a batch of board states using the neural network.
     """
     with torch.no_grad():
-        states = torch.tensor(np.array(batch), dtype=torch.float32).unsqueeze(1).to(device)  # Add channel dim
-        policies, values = model(states) 
+        states = (
+            torch.tensor(np.array(batch), dtype=torch.float32).unsqueeze(1).to(device)
+        )  # Add channel dim
+        policies, values = model(states)
         return policies.cpu().numpy(), values.cpu().numpy()

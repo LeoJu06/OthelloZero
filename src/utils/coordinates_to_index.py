@@ -12,6 +12,7 @@ def coordinates_to_index(row, col, board_size=8):
     """
     return row * board_size + col
 
+
 if __name__ == "__main__":
     # Examples
     print(coordinates_to_index(0, 0))  # Output: 0

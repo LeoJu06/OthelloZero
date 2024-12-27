@@ -37,7 +37,7 @@ class GameVisuals:
 
         # Load the images for black and white stones
         self.image_black_stone, self.image_white_stone = self._load_stone_images()
-        
+
         # Load the transition images for the flipping animation
         (
             self.rotation_images_black_to_white,
@@ -51,20 +51,22 @@ class GameVisuals:
         Returns:
             tuple: Scaled images for black and white stones.
         """
-        path_to_stone_images = os.path.join(os.path.dirname(__file__), "assets")  # Path to images folder
-        
+        path_to_stone_images = os.path.join(
+            os.path.dirname(__file__), "assets"
+        )  # Path to images folder
+
         # Load and scale the black stone image
         image_black_stone = pygame.transform.smoothscale(
             pygame.image.load(os.path.join(path_to_stone_images, "black_stone.png")),
             (SQUARE_SIZE, SQUARE_SIZE),  # Scale to fit the square size
         )
-        
+
         # Load and scale the white stone image
         image_white_stone = pygame.transform.smoothscale(
             pygame.image.load(os.path.join(path_to_stone_images, "white_stone.png")),
             (SQUARE_SIZE, SQUARE_SIZE),  # Scale to fit the square size
         )
-        
+
         return image_black_stone, image_white_stone
 
     def _load_transition_images(self):
@@ -77,7 +79,7 @@ class GameVisuals:
         path_to_images = os.path.join(
             os.path.dirname(__file__), "assets", "transition_images"
         )  # Path to transition images folder
-        
+
         # Load and scale the black-to-white flipping images
         rotation_images_black_to_white = [
             pygame.image.load(os.path.join(path_to_images, f"black_to_white_{i}.png"))
@@ -87,7 +89,7 @@ class GameVisuals:
             pygame.transform.smoothscale(image, (self.square_size, self.square_size))
             for image in rotation_images_black_to_white
         ]
-        
+
         # Reverse and flip the images for the white-to-black transition
         rotation_images_white_to_black = [
             pygame.transform.flip(frame, False, True)
@@ -132,7 +134,9 @@ class GameVisuals:
         Args:
             board (list): The current state of the game board.
         """
-        self.screen.fill(BACKGROUND_COLOR)  # Fill the background with the specified color
+        self.screen.fill(
+            BACKGROUND_COLOR
+        )  # Fill the background with the specified color
 
         # Loop through each row and column of the board to draw the grid and pieces
         for row in range(ROWS):

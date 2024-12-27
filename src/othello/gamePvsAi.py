@@ -63,7 +63,9 @@ class GamePvsAi:
             row, col = choice(valid_moves)
             self.board.apply_move(row, col)
             flipped_stones = self.board.update(row, col)
-            self.game_renderer.play_flip_animation(self.board.board, flipped_stones, self.board.player)
+            self.game_renderer.play_flip_animation(
+                self.board.board, flipped_stones, self.board.player
+            )
         self.deactivate_ai()  # After the AI's move, it's the player's turn
 
     def deactivate_ai(self):
@@ -87,8 +89,8 @@ class GamePvsAi:
 
         Args:
             position (tuple): The (x, y) position of the mouse click.
-        
-        Returns: 
+
+        Returns:
             True if the move was valid, False otherwise
         """
         x, y = position
@@ -100,7 +102,9 @@ class GamePvsAi:
             self.board.apply_move(row, col)  # Update the board state
             flipped_stones = self.board.update(row, col)  # Flip stones
             # Trigger animation for flipped stones
-            self.game_renderer.play_flip_animation(self.board.board, flipped_stones, self.board.player)
+            self.game_renderer.play_flip_animation(
+                self.board.board, flipped_stones, self.board.player
+            )
 
             return True
         return False
@@ -117,13 +121,10 @@ class GamePvsAi:
             self.draw()  # Redraw the board
             self.clock.tick(fps)  # Maintain consistent frame rate
 
-def run_game(board=None, activate_ai = False):
 
-    """Function to run a Demo of the game. This function should not be 
+def run_game(board=None, activate_ai=False):
+    """Function to run a Demo of the game. This function should not be
     used for real purpose"""
-    
-    
-        
 
     # Initialize Pygame and game settings
     pygame.init()
@@ -132,11 +133,10 @@ def run_game(board=None, activate_ai = False):
 
     if board is not None:
         b = board
-    
 
     # Create the game instance
     game = GamePvsAi(screen, board=b)
-    
+
     if activate_ai:
         game.activate_ai()
     else:
@@ -145,6 +145,8 @@ def run_game(board=None, activate_ai = False):
 
     # Quit Pygame when the game ends
     pygame.quit()
+
+
 # Run the game
 if __name__ == "__main__":
     # Initialize Pygame and game settings

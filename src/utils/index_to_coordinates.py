@@ -9,11 +9,11 @@ def index_to_coordinates(index, board_size=8):
     Returns:
         tuple: A tuple (row, col) representing the 2D coordinates.
     """
-    
 
     row = index // board_size
     col = index % board_size
     return row, col
+
 
 if __name__ == "__main__":
     # Examples
