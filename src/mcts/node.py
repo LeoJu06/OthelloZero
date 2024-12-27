@@ -1,20 +1,12 @@
 from src.othello.board import Board
 from src.utils.index_to_coordinates import index_to_coordinates
-from src.utils.coordinates_to_index import coordinates_to_index
+from src.neural_net.model import dummy_model_predict
 import numpy as np
 import random
 import time
 import math
 
-def dummy_model_predict(board):
-    """
-    A dummy prediction model that returns random action probabilities and a random value.
-    """
-    value_head = random.choice([x / 10 for x in range(1, 11)])
-    action_probs = [0 for _ in range(64)]
-    for x, y in board.valid_moves():
-        action_probs[coordinates_to_index(x, y)] = random.choice([x / 10 for x in range(1, 11)])
-    return action_probs, value_head
+
 
 def ucb_score(parent, child, exploration_weight=1.0):
     """
@@ -29,9 +21,13 @@ class Node:
     A Node in the Monte Carlo Tree Search.
     """
 
-    def __init__(self, prior, board):
+    def __init__(self, prior, board=None):
         self.prior = prior  # Probability of playing this move
-        self.board = board  # Board object representing the game state
+        if board is None:
+            self.board = Board()  # Create a new Board instance if none is passed
+        else:
+            self.board = board  # If a board is passed, assign it directly
+
         self.children = {}  # Dictionary of children nodes
         self.value = 0      # Accumulated value of the node
         self.visits = 0     # Number of visits to the node
@@ -40,15 +36,17 @@ class Node:
         """
         Expands the node by creating child nodes for valid moves.
         """
+        valid_moves = self.board.valid_moves()
         for action, prob in enumerate(action_probs):
             if prob > 0:
                 x, y = index_to_coordinates(action)
-                child_board = Board(board=np.copy(self.board.board))
-                child_board.apply_move(x, y)
-                child_board.update(x, y)
+                if (x, y) in valid_moves:
+                    child_board = Board(board=np.copy(self.board.board))
+                    child_board.apply_move(x, y)
+                    child_board.update(x, y)
 
-                child = Node(prior=prob, board=child_board)
-                self.children[action] = child
+                    child = Node(prior=prob, board=child_board)
+                    self.children[action] = child
 
     def select_child(self):
         """
@@ -83,10 +81,9 @@ class Node:
 if __name__ == "__main__":
 
     # Main MCTS Simulation
-    num_simulations = 1000
+    num_simulations = 1200
     start = time.time()
-    board = Board()
-    root = Node(prior=float("inf"), board=board)
+    root = Node(prior=float("inf"))
 
     # Expand the root node
     action_probs, _ = dummy_model_predict(root.board)
@@ -121,4 +118,4 @@ if __name__ == "__main__":
     print(f"Time needed for {num_simulations} iterations => {time.time() - start:.2f} seconds")
 
     for move, child in root.children.items():
-        print(f"Move => {move}, Visits => {child.visits}, Value => {child.value}, UCB Score => {ucb_score(root, child):.2f}")
+        print(f"Move => {move}, Visits => {child.visits}, Value => {child.value:.2f}, UCB Score => {ucb_score(root, child):.2f}")
