@@ -14,15 +14,18 @@ def parse_cards(cards):
     for card in cards:
         card_info = {
             "name": card.get("name"),
-            "description": card.get("desc", ""),
+            "description": card.get("desc", "Nicht benötigt"),
             "dateLastActivity": card.get("dateLastActivity"),
             "checklist": []
         }
+        print(card_info["name"])
+        print(card_info["description"])
         checklists = card.get("checklists", [])
         for checklist in checklists:
             items = []
             for item in checklist.get("checkItems", []):
                 item_name = item.get("name", "")
+                
                 if "Geschätzte Bearbeitungszeit" in item_name:
                     try:
                         total_estimated_time += float(''.join(filter(str.isdigit, item_name)))
