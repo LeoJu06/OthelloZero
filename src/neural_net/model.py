@@ -1,5 +1,6 @@
 import random
 from src.utils.coordinates_to_index import coordinates_to_index
+from src.config.hyperparameters import Hyperparameters
 import multiprocessing as mp
 import torch
 import torch.nn as nn
@@ -38,7 +39,7 @@ class NeuralNetwork(nn.Module):
         return torch.softmax(policy, dim=-1), torch.tanh(value)
 
 
-def neural_network_evaluate(batch, model, device):
+def neural_network_evaluate(batch, model, device=Hyperparameters.Neural_Network["device"]):
     """
     Evaluates a batch of board states using the neural network.
     """
