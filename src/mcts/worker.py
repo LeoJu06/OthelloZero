@@ -5,7 +5,6 @@ from src.mcts.node import Node
 from src.config.hyperparameters import Hyperparameters
 
 
-
 class Worker:
     def __init__(self, worker_id, root_node=None):
         self.worker_id = worker_id
@@ -17,10 +16,14 @@ class Worker:
         else:
             self.mcts = MCTS(root_node=root_node)
 
-    def run_mcts_search(self, request_queue, response_queue, num_simulations=Hyperparameters.MCTS["num_simulations"]):
+    def run_mcts_search(
+        self,
+        request_queue,
+        response_queue,
+        num_simulations=Hyperparameters.MCTS["num_simulations"],
+    ):
         for _ in range(num_simulations):
-
-            #print(f"Worker={self.worker_id}, simulation={_}")
+            # print(f"Worker={self.worker_id}, simulation={_}")
             node = self.mcts.root_node
             search_path = [node]
 
@@ -50,7 +53,3 @@ class Worker:
                 node.visits += 1
 
         print(f"Woker={self.worker_id} finished")
-
-
-
-

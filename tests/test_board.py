@@ -22,8 +22,8 @@ def test_board():
         new_valid_moves == new_expected_moves
     ), f"Expected new valid moves {new_expected_moves}, but got {new_valid_moves}"
 
-def test_board_is_terminal_state():
 
+def test_board_is_terminal_state():
     board = Board(const.EMPTY_BOARD)
 
     for x in range(8):
@@ -31,6 +31,3 @@ def test_board_is_terminal_state():
             board.board[x][y] = const.PlayerColor.BLACK.value
 
     assert board.is_terminal_state() == True, "Board should be terminal"
-
-
-

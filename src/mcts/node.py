@@ -7,7 +7,10 @@ import time
 import math
 from src.utils.print_green import print_green
 
-def ucb_score(parent, child, exploration_weight=Hyperparameters.MCTS["exploration_weight"]):
+
+def ucb_score(
+    parent, child, exploration_weight=Hyperparameters.MCTS["exploration_weight"]
+):
     """
     Computes the Upper Confidence Bound (UCB) score for a child node.
 
@@ -72,12 +75,10 @@ class Node:
 
     def _expand_pass_node(self):
         """Handles the case where the current player must pass."""
-        child_board = Board(
-            board=np.copy(self.board.board), player=self.board.player
-        )
+        child_board = Board(board=np.copy(self.board.board), player=self.board.player)
         child_board.update()  # Switch to the opponent's turn
-        child = Node(prior=1.0, board=child_board)  # Default prior for passing
-        self.children[-1] = child
+        child = Node(prior=Hyperparameters.Node["prior_passing"], board=child_board)  # Default prior for passing
+        self.children[Hyperparameters.Node["key_passing"]] = child
 
     def _expand_valid_moves(self, action_probs, valid_moves):
         """
@@ -103,9 +104,7 @@ class Node:
             x (int): X-coordinate of the move.
             y (int): Y-coordinate of the move.
         """
-        child_board = Board(
-            board=np.copy(self.board.board), player=self.board.player
-        )
+        child_board = Board(board=np.copy(self.board.board), player=self.board.player)
         child_board.apply_move(x, y)
         child_board.update(x, y)
         child = Node(prior=prob, board=child_board)
@@ -118,10 +117,7 @@ class Node:
         Returns:
             tuple: (selected_action, selected_child)
         """
-        return max(
-            self.children.items(),
-            key=lambda item: ucb_score(self, item[1])
-        )
+        return max(self.children.items(), key=lambda item: ucb_score(self, item[1]))
 
     def is_expanded(self):
         """

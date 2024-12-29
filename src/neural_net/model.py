@@ -39,7 +39,9 @@ class NeuralNetwork(nn.Module):
         return torch.softmax(policy, dim=-1), torch.tanh(value)
 
 
-def neural_network_evaluate(batch, model, device=Hyperparameters.Neural_Network["device"]):
+def neural_network_evaluate(
+    batch, model, device=Hyperparameters.Neural_Network["device"]
+):
     """
     Evaluates a batch of board states using the neural network.
     """

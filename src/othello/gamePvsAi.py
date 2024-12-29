@@ -8,6 +8,7 @@ from src.othello.game_settings import BACKGROUND_COLOR, GRID_COLOR, FPS
 from src.othello.game_visuals import GameVisuals
 from random import choice
 
+
 class GamePvsAi:
     """
     Extension of the GamePvsP class for a Player-vs-AI Othello game.
@@ -126,13 +127,16 @@ class GamePvsAi:
         while self.running:
             if self.board.is_terminal_state():
                 winner = self.board.determine_winner()
-                print(f"Game Over! Winner: {'Black' if winner == -1 else 'White' if winner == 1 else 'Draw'}")
+                print(
+                    f"Game Over! Winner: {'Black' if winner == -1 else 'White' if winner == 1 else 'Draw'}"
+                )
                 self.running = False
                 continue
 
             self.handle_events()
             self.draw()
             self.clock.tick(fps)
+
 
 def run_game(board=None, activate_ai=False):
     """Function to run a Demo of the game."""
@@ -148,6 +152,7 @@ def run_game(board=None, activate_ai=False):
     game.run()
 
     pygame.quit()
+
 
 if __name__ == "__main__":
     pygame.init()

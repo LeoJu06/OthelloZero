@@ -1,7 +1,8 @@
-import torch 
+import torch
 from src.neural_net.model import NeuralNetwork, neural_network_evaluate
 from src.mcts.worker import Worker
 import multiprocessing as mp
+
 
 class Manager:
     def __init__(self, model):
@@ -9,8 +10,6 @@ class Manager:
         Initialize the manager with batching and coordination logic.
         """
         self.model = model
-        
-
 
     def manage_wworkers(self, request_queue, response_queue, batch_size=10):
         while True:
@@ -23,22 +22,16 @@ class Manager:
             if batch:
                 policies, values = neural_network_evaluate(batch, self.model)
                 for worker_id, policy, value in zip(worker_ids, policies, values):
-                    response_queue[worker_id].put({"worker_id": worker_id, "policy": policy, "value": value})
+                    response_queue[worker_id].put(
+                        {"worker_id": worker_id, "policy": policy, "value": value}
+                    )
 
 
 if __name__ == "__main__":
-    
-
-    
-
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = NeuralNetwork().to(device)
     model.eval()
 
-
-
-        
-    
     manager = Manager(model=model)
     mp.set_start_method(
         "spawn"
@@ -49,9 +42,7 @@ if __name__ == "__main__":
     print(f"Num Workers are calculated by int(num_cores*0.85) => {num_workers}")
 
     # Create queues for inter-process communication.
-    request_queue = (
-        mp.Queue()
-    )  # Shared request queue for sending tasks to the manager.
+    request_queue = mp.Queue()  # Shared request queue for sending tasks to the manager.
     response_queues = [
         mp.Queue() for _ in range(num_workers)
     ]  # Separate response queues for each worker.
@@ -65,9 +56,7 @@ if __name__ == "__main__":
     # Start worker processes.
     workers = []
     for i in range(num_workers):
-        worker_mcts = Worker(
-            worker_id=i
-        )  # Create a new MCTS instance for each worker.
+        worker_mcts = Worker(worker_id=i)  # Create a new MCTS instance for each worker.
         worker_process = mp.Process(
             target=worker_mcts.run_mcts_search,
             args=(request_queue, response_queues[i]),
@@ -81,5 +70,3 @@ if __name__ == "__main__":
 
     # Terminate the manager process.
     manager_process.terminate()
-
-   

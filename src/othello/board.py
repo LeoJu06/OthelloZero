@@ -4,10 +4,13 @@ import src.othello.game_constants as const
 import src.utils.logger_config as lg
 import time
 
+
 class Board:
     """The Board class represents the Othello game board and manages all game-related operations."""
 
-    def __init__(self, board=None, player=const.PlayerColor.BLACK.value, empty_cells=None):
+    def __init__(
+        self, board=None, player=const.PlayerColor.BLACK.value, empty_cells=None
+    ):
         if board is None:
             self.board = np.array(const.EMPTY_BOARD)
         else:
@@ -44,9 +47,14 @@ class Board:
         """Calculates which stones must be flipped after a move is played."""
         stones_to_flip = []
         directions = [
-            (-1, -1), (-1, 0), (-1, 1),  # Top-left, Up, Top-right
-            (0, -1),         (0, 1),     # Left, Right
-            (1, -1), (1, 0), (1, 1)      # Bottom-left, Down, Bottom-right
+            (-1, -1),
+            (-1, 0),
+            (-1, 1),  # Top-left, Up, Top-right
+            (0, -1),
+            (0, 1),  # Left, Right
+            (1, -1),
+            (1, 0),
+            (1, 1),  # Bottom-left, Down, Bottom-right
         ]
 
         for dx, dy in directions:
@@ -95,9 +103,14 @@ class Board:
         """Finds all valid moves for the current player."""
         valid_moves = []
         directions = [
-            (-1, -1), (-1, 0), (-1, 1),  # Top-left, Up, Top-right
-            (0, -1),         (0, 1),     # Left, Right
-            (1, -1), (1, 0), (1, 1)      # Bottom-left, Down, Bottom-right
+            (-1, -1),
+            (-1, 0),
+            (-1, 1),  # Top-left, Up, Top-right
+            (0, -1),
+            (0, 1),  # Left, Right
+            (1, -1),
+            (1, 0),
+            (1, 1),  # Bottom-left, Down, Bottom-right
         ]
 
         for x, y in self.empty_cells:
@@ -105,7 +118,9 @@ class Board:
                 nx, ny = x + dx, y + dy
                 found_opponent = False
 
-                while 0 <= nx < 8 and 0 <= ny < 8 and self.board[nx][ny] == -self.player:
+                while (
+                    0 <= nx < 8 and 0 <= ny < 8 and self.board[nx][ny] == -self.player
+                ):
                     found_opponent = True
                     nx += dx
                     ny += dy
@@ -180,6 +195,7 @@ class Board:
                 cells_str += " - "
 
         return cells_str.strip(" -\n")
+
 
 if __name__ == "__main__":
     board = Board()
