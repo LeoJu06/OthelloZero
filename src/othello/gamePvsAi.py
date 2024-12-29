@@ -38,13 +38,15 @@ class GamePvsAi:
         """
         while self.running:
             if self.check_both_players_cannot_move():
-                self.display_winner()
+                
                 self.running = False
                 continue
 
             self.process_turn()
             self.update_display()
             self.clock.tick(fps)
+
+        self.display_winner()
 
     def process_turn(self):
         """Process the current turn based on whose turn it is."""
@@ -61,11 +63,18 @@ class GamePvsAi:
             True if both players cannot move, False otherwise.
         """
         no_moves_player = self.board.must_pass()
-        self.board.switch_player()
+        self.board.switch_player()  # Switch to the other player
         no_moves_ai = self.board.must_pass()
         self.board.switch_player()  # Switch back to the original player
 
-        return no_moves_player and no_moves_ai
+        # If both players must pass, the game should end
+        if no_moves_player and no_moves_ai:
+            self.display_winner()  # Display the winner (or draw)
+            self.running = False  # End the game loop
+            return True
+    
+        return False
+
 
     def handle_player_input(self):
         """Handle player actions during their turn."""
@@ -130,6 +139,7 @@ class GamePvsAi:
     def update_display(self):
         """Redraw the game board and update the screen."""
         self.visuals.draw_board(self.board.board)
+        self.visuals.mark_valid_fields(self.board.valid_moves())
         pygame.display.flip()
 
     def display_winner(self):
