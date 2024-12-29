@@ -5,204 +5,138 @@ from src.config.hyperparameters import Hyperparameters
 import numpy as np
 import time
 import math
+from src.utils.print_green import print_green
 
-
-def ucb_score(
-    parent, child, exploration_weight=Hyperparameters.MCTS["exploration_weight"]
-):
+def ucb_score(parent, child, exploration_weight=Hyperparameters.MCTS["exploration_weight"]):
     """
     Computes the Upper Confidence Bound (UCB) score for a child node.
 
-    The UCB score is calculated using the following formula:
     UCB = value_score + exploration_weight * prior_score
-    where:
-        - value_score = the average value of the child node based on the number of visits
-        - prior_score = the prior probability of selecting the child (scaled by the parent node's visits)
+    - value_score: The average value of the child node based on the number of visits.
+    - prior_score: The prior probability of selecting the child, scaled by parent node visits.
 
     Args:
         parent (Node): The parent node.
         child (Node): The child node.
-        exploration_weight (float): A weight factor for the exploration term (default from Hyperparameters).
+        exploration_weight (float): Weight factor for the exploration term.
 
     Returns:
         float: The UCB score for the child node.
     """
-    # Calculate the prior score
     prior_score = child.prior * math.sqrt(parent.visits) / (child.visits + 1)
-
-    # Calculate the value score
     value_score = (child.value / child.visits) if child.visits > 0 else 0
-
     return value_score + exploration_weight * prior_score
 
 
 class Node:
     """
-    A Node in the Monte Carlo Tree Search (MCTS). If no arguments are given, Node represents a node of
-    a starting game.
-
-    Each node represents a state in the game tree. It contains information about:
-        - The prior probability of the node (based on action probabilities)
-        - The current board state
-        - Child nodes
-        - The accumulated value and number of visits
+    Represents a state in the Monte Carlo Tree Search (MCTS).
 
     Attributes:
-        prior (float): The prior probability of selecting the node.
-        board (Board): The current state of the game board.
-        children (dict): A dictionary of child nodes, indexed by the action taken.
-        value (float): The accumulated value (e.g., win/loss) for the node.
-        visits (int): The number of visits (i.e., simulations) that have passed through this node.
+        prior (float): The prior probability of selecting this node.
+        board (Board): The current game board state.
+        children (dict): Dictionary mapping actions to child nodes.
+        value (float): Accumulated value from simulations.
+        visits (int): Number of visits to this node.
     """
 
     def __init__(self, prior=float("inf"), board=None):
         """
-        Initializes a new node in the MCTS.
+        Initializes a new node for MCTS.
 
         Args:
-            prior (float): The prior probability of selecting the node.
-            board (Board, optional): The current state of the board. If None, a new Board is created.
+            prior (float): Prior probability of selecting this node.
+            board (Board, optional): Current game state. Defaults to a new `Board` instance.
         """
-        self.prior = prior  # Probability of playing this move
-        if board is None:
-            self.board = Board()  # Create a new Board instance if none is passed
-        else:
-            self.board = board  # If a board is passed, assign it directly
-
-        self.children = {}  # Dictionary of children nodes
-        self.value = 0  # Accumulated value of the node
-        self.visits = 0  # Number of visits to the node
+        self.prior = prior
+        self.board = board if board else Board()
+        self.children = {}
+        self.value = 0
+        self.visits = 0
 
     def expand(self, action_probs):
         """
-        Expands the node by creating child nodes for valid moves based on action probabilities.
-
-        For each valid move, a new child node is created with a corresponding prior probability.
+        Expands the node by creating child nodes for valid moves.
+        If the current player has no valid moves, skips their turn.
 
         Args:
-            action_probs (list of float): The action probabilities (prior probabilities for each valid move).
+            action_probs (list[float]): Prior probabilities for each action.
         """
-        valid_moves = (
-            self.board.valid_moves()
-        )  # Get the valid moves for the current board state
-        for action, prob in enumerate(action_probs):
-           
-            if prob > 0:  # Only consider actions with a non-zero probability
-                x, y = index_to_coordinates(
-                    action
-                )  # Convert action index to coordinates
-                if (x, y) in valid_moves:  # Check if the move is valid
-                    child_board = Board(
-                        board=np.copy(self.board.board)
-                    )  # Copy the current board
-                    child_board.apply_move(x, y)  # Apply the move to the child board
-                    child_board.update(x, y)  # Update the board state
+        valid_moves = self.board.valid_moves()
 
-                    # Create a new child node for the selected move
-                    
-                    child = Node(prior=prob, board=child_board)
-                    self.children[
-                        action
-                    ] = child  # Add the child node to the children dictionary
+        if not valid_moves:
+            self._expand_pass_node()
+            return
+
+        self._expand_valid_moves(action_probs, valid_moves)
+
+    def _expand_pass_node(self):
+        """Handles the case where the current player must pass."""
+        child_board = Board(
+            board=np.copy(self.board.board), player=self.board.player
+        )
+        child_board.update()  # Switch to the opponent's turn
+        child = Node(prior=1.0, board=child_board)  # Default prior for passing
+        self.children[-1] = child
+
+    def _expand_valid_moves(self, action_probs, valid_moves):
+        """
+        Expands the node with valid moves.
+
+        Args:
+            action_probs (list[float]): Prior probabilities for actions.
+            valid_moves (list[tuple]): List of valid moves as (x, y) coordinates.
+        """
+        for action, prob in enumerate(action_probs):
+            if prob > 0:
+                x, y = index_to_coordinates(action)
+                if (x, y) in valid_moves:
+                    self._add_child_node(action, prob, x, y)
+
+    def _add_child_node(self, action, prob, x, y):
+        """
+        Adds a child node for a specific action.
+
+        Args:
+            action (int): Action index.
+            prob (float): Prior probability of the action.
+            x (int): X-coordinate of the move.
+            y (int): Y-coordinate of the move.
+        """
+        child_board = Board(
+            board=np.copy(self.board.board), player=self.board.player
+        )
+        child_board.apply_move(x, y)
+        child_board.update(x, y)
+        child = Node(prior=prob, board=child_board)
+        self.children[action] = child
 
     def select_child(self):
         """
-        Selects a child node based on the UCB score.
-
-        The child with the highest UCB score is selected.
+        Selects the child node with the highest UCB score.
 
         Returns:
-            tuple: The selected action and the corresponding child node.
+            tuple: (selected_action, selected_child)
         """
-        max_score = float("-inf")  # Initialize the max score to negative infinity
-        selected_action = None
-        selected_child = None
-
-        # Iterate over each child and compute the UCB score
-        for action, child in self.children.items():
-            score = ucb_score(self, child)  # Compute the UCB score for the child node
-            if score > max_score:
-                max_score = score
-                selected_action = (
-                    action  # Select the action corresponding to the highest score
-                )
-                selected_child = child  # Select the corresponding child node
-
-        return (
-            selected_action,
-            selected_child,
-        )  # Return the selected action and child node
+        return max(
+            self.children.items(),
+            key=lambda item: ucb_score(self, item[1])
+        )
 
     def is_expanded(self):
         """
-        Checks if the node has been expanded (i.e., if it has child nodes).
+        Checks if the node has been expanded (i.e., has children).
 
         Returns:
-            bool: True if the node has child nodes, False otherwise.
+            bool: True if the node has children, False otherwise.
         """
-        return len(self.children) > 0
+        return bool(self.children)
 
     def is_terminal_state(self):
         """
-        Checks if the current board state is a terminal state (e.g., win, loss, or draw).
+        Checks if the current board state is terminal.
 
         Returns:
-            bool: True if the current board state is terminal, False otherwise.
+            bool: True if the state is terminal, False otherwise.
         """
         return self.board.is_terminal_state()
-
-
-if __name__ == "__main__":
-    # Main MCTS Simulation
-    num_simulations = 1200  # Number of MCTS simulations to run
-    start = time.time()  # Record the start time for performance measurement
-    root = Node(
-        prior=float("inf")
-    )  # Create the root node with an infinite prior (starting point)
-
-    # Expand the root node using the action probabilities from the model
-    action_probs, _ = dummy_model_predict(root.board)
-    root.expand(action_probs)
-
-    # Run the MCTS simulations
-    for _ in range(num_simulations):
-        node = root
-        search_path = [node]  # Keep track of the nodes visited in this simulation
-
-        # Selection phase: Traverse the tree to select a node to expand
-        while node.is_expanded():
-            (
-                action,
-                node,
-            ) = node.select_child()  # Select the child node with the highest UCB score
-            search_path.append(node)
-
-        # Evaluation phase: Evaluate the value of the node (either terminal or predicted)
-        value = None
-        if node.is_terminal_state():
-            value = node.board.determine_winner()  # If terminal, use the winner value
-        if value is None:
-            action_probs, value = dummy_model_predict(
-                node.board
-            )  # Predict value using the model if not terminal
-            node.expand(
-                action_probs
-            )  # Expand the node with the new action probabilities
-
-        # Backpropagation phase: Update the value and visit count of the nodes along the search path
-        for node in search_path:
-            node.value += value  # Update node value based on simulation outcome
-            node.visits += 1  # Increment the number of visits to this node
-
-    # Simulation results: Print the results of the MCTS simulations
-    print(f"Root's value => {root.value}")
-    print(f"Root's visits => {root.visits}")
-    print(
-        f"Time needed for {num_simulations} iterations => {time.time() - start:.2f} seconds"
-    )
-
-    # Print details for each move
-    for move, child in root.children.items():
-        print(
-            f"Move => {move}, Visits => {child.visits}, Value => {child.value:.2f}, UCB Score => {ucb_score(root, child):.2f}"
-        )
