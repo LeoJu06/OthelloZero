@@ -4,7 +4,7 @@ ROWS, COLS = 8, 8
 SQUARE_SIZE = HEIGHT // COLS
 
 # Define colors
-BACKGROUND_COLOR = (50-5, 50-5, 50-5)  # Dark green background for a soothing look
+BACKGROUND_COLOR = (55, 55, 55)  # Dark green background for a soothing look
 GRID_COLOR = (200, 200, 200)  # Slate gray grid lines to add sophistication
 COLOR_VALID_FIELDS = (207, 182, 103)  # Light green for valid fields
 
