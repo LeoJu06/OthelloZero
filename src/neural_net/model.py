@@ -9,7 +9,7 @@ import time
 from tqdm import tqdm
 
 
-def dummy_model_predict(board):
+def dummy_model_predict(board=None):
     """
     A dummy prediction model that returns random action probabilities and a random value.
     """
