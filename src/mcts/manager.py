@@ -82,5 +82,4 @@ if __name__ == "__main__":
     # Terminate the manager process.
     manager_process.terminate()
 
-    print(f"Allocated: {torch.cuda.memory_allocated()} bytes")
-    print(f"Cached: {torch.cuda.memory_reserved()} bytes")
+   

@@ -21,7 +21,7 @@ class Worker:
         for _ in range(num_simulations):
 
             #print(f"Worker={self.worker_id}, simulation={_}")
-            node = self.mcts.root
+            node = self.mcts.root_node
             search_path = [node]
 
             # Selection phase
