@@ -6,8 +6,7 @@ import src.othello.game_constants as const
 from src.othello.game_settings import WIDTH, HEIGHT, ROWS, COLS, SQUARE_SIZE
 from src.othello.game_settings import BACKGROUND_COLOR, GRID_COLOR, FPS
 from src.othello.game_visuals import GameVisuals
-from random import choice  # For random moves
-
+from random import choice
 
 class GamePvsAi:
     """
@@ -46,6 +45,12 @@ class GamePvsAi:
         """
         Handle player’s interaction with the game board during their turn.
         """
+        if self.board.must_pass():
+            print("Player passes the turn.")
+            self.board.switch_player()
+            self.activate_ai()
+            return
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False  # Exit the game
@@ -57,16 +62,21 @@ class GamePvsAi:
         """
         Execute the AI's move by selecting a random valid move.
         """
+        if self.board.must_pass():
+            print("AI passes the turn.")
+            self.board.update
+            self.deactivate_ai()
+            return
+
         valid_moves = self.board.valid_moves()
         if valid_moves:
-            # Example: Choose a random valid move
-            row, col = choice(valid_moves)
+            row, col = choice(valid_moves)  # Choose a random move
             self.board.apply_move(row, col)
             flipped_stones = self.board.update(row, col)
             self.game_renderer.play_flip_animation(
                 self.board.board, flipped_stones, self.board.player
             )
-        self.deactivate_ai()  # After the AI's move, it's the player's turn
+        self.deactivate_ai()
 
     def deactivate_ai(self):
         """Deactivate AI's turn and activate the player's turn."""
@@ -97,15 +107,12 @@ class GamePvsAi:
         col = x // SQUARE_SIZE
         row = y // SQUARE_SIZE
 
-        # Check if the clicked position is a valid move
         if (row, col) in self.board.valid_moves():
-            self.board.apply_move(row, col)  # Update the board state
-            flipped_stones = self.board.update(row, col)  # Flip stones
-            # Trigger animation for flipped stones
+            self.board.apply_move(row, col)
+            flipped_stones = self.board.update(row, col)
             self.game_renderer.play_flip_animation(
                 self.board.board, flipped_stones, self.board.player
             )
-
             return True
         return False
 
@@ -117,46 +124,37 @@ class GamePvsAi:
             fps: The game's frame rate (frames per second).
         """
         while self.running:
-            self.handle_events()  # Handle events like player moves and AI turns
-            self.draw()  # Redraw the board
-            self.clock.tick(fps)  # Maintain consistent frame rate
+            if self.board.is_terminal_state():
+                winner = self.board.determine_winner()
+                print(f"Game Over! Winner: {'Black' if winner == -1 else 'White' if winner == 1 else 'Draw'}")
+                self.running = False
+                continue
 
+            self.handle_events()
+            self.draw()
+            self.clock.tick(fps)
 
 def run_game(board=None, activate_ai=False):
-    """Function to run a Demo of the game. This function should not be
-    used for real purpose"""
-
-    # Initialize Pygame and game settings
+    """Function to run a Demo of the game."""
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Othello")
 
-    if board is not None:
-        b = board
-
-    # Create the game instance
-    game = GamePvsAi(screen, board=b)
-
+    game = GamePvsAi(screen, board=board)
     if activate_ai:
         game.activate_ai()
     else:
         game.deactivate_ai()
     game.run()
 
-    # Quit Pygame when the game ends
     pygame.quit()
 
-
-# Run the game
 if __name__ == "__main__":
-    # Initialize Pygame and game settings
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Othello")
 
-    # Create the game instance
     game = GamePvsAi(screen)
     game.run()
 
-    # Quit Pygame when the game ends
     pygame.quit()
