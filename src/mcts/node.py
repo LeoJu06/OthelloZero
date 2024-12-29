@@ -38,7 +38,8 @@ def ucb_score(
 
 class Node:
     """
-    A Node in the Monte Carlo Tree Search (MCTS).
+    A Node in the Monte Carlo Tree Search (MCTS). If no arguments are given, Node represents a node of
+    a starting game.
 
     Each node represents a state in the game tree. It contains information about:
         - The prior probability of the node (based on action probabilities)
@@ -54,7 +55,7 @@ class Node:
         visits (int): The number of visits (i.e., simulations) that have passed through this node.
     """
 
-    def __init__(self, prior, board=None):
+    def __init__(self, prior=float("inf"), board=None):
         """
         Initializes a new node in the MCTS.
 
@@ -85,6 +86,7 @@ class Node:
             self.board.valid_moves()
         )  # Get the valid moves for the current board state
         for action, prob in enumerate(action_probs):
+           
             if prob > 0:  # Only consider actions with a non-zero probability
                 x, y = index_to_coordinates(
                     action
@@ -97,6 +99,7 @@ class Node:
                     child_board.update(x, y)  # Update the board state
 
                     # Create a new child node for the selected move
+                    
                     child = Node(prior=prob, board=child_board)
                     self.children[
                         action
