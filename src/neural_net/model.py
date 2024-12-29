@@ -1,12 +1,9 @@
 import random
 from src.utils.coordinates_to_index import coordinates_to_index
 from src.config.hyperparameters import Hyperparameters
-import multiprocessing as mp
 import torch
 import torch.nn as nn
 import numpy as np
-import time
-from tqdm import tqdm
 
 
 def dummy_model_predict(board=None):

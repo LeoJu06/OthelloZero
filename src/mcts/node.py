@@ -43,7 +43,7 @@ class Node:
         visits (int): Number of visits to this node.
     """
 
-    def __init__(self, prior=float("inf"), board=None):
+    def __init__(self, prior=Hyperparameters.Node["key_passing"], board=None):
         """
         Initializes a new node for MCTS.
 
