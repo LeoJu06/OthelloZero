@@ -51,13 +51,6 @@ class Worker:
 
         print(f"Woker={self.worker_id} finished")
 
-    def perform_self_play(self, request_queue, response_queue):
 
-        while not self.mcts.root.board.is_terminal_state():
-
-            self.run_mcts_search(request_queue=request_queue, response_queue=response_queue)
-            
-            best_move, child = self.mcts.get_best_move()
-            pass
 
 
