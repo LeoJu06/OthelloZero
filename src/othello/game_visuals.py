@@ -4,7 +4,7 @@ from src.othello.game_constants import PlayerColor
 from src.othello.game_settings import FPS
 
 from src.othello.game_settings import BACKGROUND_COLOR, ROWS, COLS
-from src.othello.game_settings import GRID_COLOR, SQUARE_SIZE
+from src.othello.game_settings import GRID_COLOR, SQUARE_SIZE, COLOR_VALID_FIELDS
 import src.othello.game_constants as const
 
 
@@ -159,3 +159,15 @@ class GameVisuals:
                     self.screen.blit(
                         self.image_white_stone, (col * SQUARE_SIZE, row * SQUARE_SIZE)
                     )  # Draw white stone
+
+
+    def mark_valid_fields(self, valid_moves: list):
+        for x, y in valid_moves:
+            # Calculate the position of the rectangle
+            rect_position = (y * SQUARE_SIZE+1, x * SQUARE_SIZE+1) # adding a tiny value for not overdraing the grid lines
+            rect_size = (SQUARE_SIZE-2, SQUARE_SIZE-2) # subtracting a but for not overdrawing the grid lines
+            
+            # Create the rectangle and draw it
+            pygame.draw.rect(self.screen, COLOR_VALID_FIELDS, pygame.Rect(rect_position, rect_size))
+
+
