@@ -1,5 +1,6 @@
 import torch
 from src.neural_net.model import NeuralNetwork, neural_network_evaluate
+from src.config.hyperparameters import Hyperparameters
 from src.mcts.worker import Worker
 import multiprocessing as mp
 
@@ -28,7 +29,7 @@ class Manager:
 
 
 if __name__ == "__main__":
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = Hyperparameters.Neural_Network["device"]
     model = NeuralNetwork().to(device)
     model.eval()
 
