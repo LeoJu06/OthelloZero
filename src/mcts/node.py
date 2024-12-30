@@ -28,7 +28,10 @@ def ucb_score(
     """
     prior_score = child.prior * math.sqrt(parent.visits) / (child.visits + 1)
     value_score = (child.value / child.visits) if child.visits > 0 else 0
-    return value_score + exploration_weight * prior_score
+
+    
+    ucb_value = value_score + exploration_weight * prior_score
+    return ucb_value
 
 
 class Node:
@@ -75,7 +78,9 @@ class Node:
 
     def _expand_pass_node(self):
         """Handles the case where the current player must pass."""
-        child_board = Board(board=np.copy(self.board.board), player=self.board.player)
+        if not self.board.empty_cells:
+            return
+        child_board = Board(board=self.board.board.copy(), player=self.board.player)
         child_board.update()  # Switch to the opponent's turn
         child = Node(prior=Hyperparameters.Node["prior_passing"], board=child_board)  # Default prior for passing
         self.children[Hyperparameters.Node["key_passing"]] = child
