@@ -4,20 +4,40 @@ from src.config.hyperparameters import Hyperparameters
 import torch
 import torch.nn as nn
 import numpy as np
+import torch.nn.functional as F
 
 
-def dummy_model_predict(board=None):
+
+# Example usage in dummy_model_predict
+def dummy_model_predict(leaf_node, model):
     """
-    A dummy prediction model that returns random action probabilities and a random value.
+    Use a neural network to predict action probabilities and board value, with GPU support.
     """
-    value_head = random.choice([x / 10 for x in range(1, 11)])
-    action_probs = [0 for _ in range(64)]
-    for x in range(8):
-        for y in range(8):
-            action_probs[coordinates_to_index(x, y)] = random.choice(
-                [x / 10 for x in range(1, 11)]
-            )
-    return action_probs, value_head
+    # Convert board to tensor format and move to device
+    board_tensor = torch.tensor(
+        leaf_node.board.board, dtype=torch.float32
+    ).unsqueeze(0).unsqueeze(0).to(Hyperparameters.Neural_Network["device"])
+
+    # Forward pass
+    action_logits, value = model(board_tensor)
+
+    # Convert logits to probabilities and handle invalid moves
+    action_probs = F.softmax(action_logits, dim=1).squeeze().detach().cpu().numpy()
+    valid_moves = leaf_node.board.valid_moves()
+    valid_indices = [coordinates_to_index(x, y) for x, y in valid_moves]
+    action_probs = [action_probs[i] if i in valid_indices else 0 for i in range(64)]
+
+    # Normalize probabilities
+    total_prob = sum(action_probs)
+    if total_prob > 0:
+        action_probs = [prob / total_prob for prob in action_probs]
+    else:
+        # Assign uniform distribution if no valid moves
+        action_probs = [1 / len(valid_moves) if i in valid_indices else 0 for i in range(64)]
+
+    return action_probs, value.item()
+
+
 
 
 # Define a simple neural network
