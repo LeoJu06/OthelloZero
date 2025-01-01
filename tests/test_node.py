@@ -254,26 +254,25 @@ def test_expand_with_passing_move():
     # Board setup where black has no valid moves, but white can play
     board_no_valid_move = [
         [-1, -1, -1, -1, -1, -1, -1, -1],
-        [-1,  1,  1,  1,  1,  1, -1, -1],
-        [-1,  1, -1, -1, -1,  1, -1, -1],
-        [-1,  1, -1,  0, -1,  1, -1, -1],  # Empty space (0) for white
-        [-1,  1, -1, -1, -1,  1, -1, -1],
-        [-1,  1,  1,  1,  1,  1, -1, -1],
+        [-1, 1, 1, 1, 1, 1, -1, -1],
+        [-1, 1, -1, -1, -1, 1, -1, -1],
+        [-1, 1, -1, 0, -1, 1, -1, -1],  # Empty space (0) for white
+        [-1, 1, -1, -1, -1, 1, -1, -1],
+        [-1, 1, 1, 1, 1, 1, -1, -1],
         [-1, -1, -1, -1, -1, -1, -1, -1],
-        [-1, -1, -1, -1, -1, -1, -1, -1]
+        [-1, -1, -1, -1, -1, -1, -1, -1],
     ]
 
     # Create a Node with the given board
     node = Node(board=Board(board=board_no_valid_move, player=-1))
 
     # Simulate the expand method, assuming it uses action_probs for expansion
-    action_probs, value  = dummy_model_predict()
+    action_probs, value = dummy_model_predict()
     node.expand(action_probs)
 
     print(node.board.player)
     print(node.children)
     node.board.print_board()
-    
 
     # Assertions to check the pass mechanism works properly
     assert isinstance(node.children[-1], Node), "Child node wasn't created properly"
@@ -286,13 +285,12 @@ def test_expand_with_passing_move():
 
     # 2. Ensure no move was applied to the board
     empty_spaces_after_expand = [
-        (x, y)
-        for x in range(8)
-        for y in range(8)
-        if passed_node.board.board[x][y] == 0
+        (x, y) for x in range(8) for y in range(8) if passed_node.board.board[x][y] == 0
     ]
     expected_empty_spaces = [(3, 3)]  # The empty space remains unchanged
-    assert empty_spaces_after_expand == expected_empty_spaces, "Unexpected changes in board state."
+    assert (
+        empty_spaces_after_expand == expected_empty_spaces
+    ), "Unexpected changes in board state."
 
     # 3. Check if valid moves for the new player (white) are still correct
     valid_moves = passed_node.board.valid_moves()
