@@ -160,14 +160,19 @@ class GameVisuals:
                         self.image_white_stone, (col * SQUARE_SIZE, row * SQUARE_SIZE)
                     )  # Draw white stone
 
-
     def mark_valid_fields(self, valid_moves: list):
         for x, y in valid_moves:
             # Calculate the position of the rectangle
-            rect_position = (y * SQUARE_SIZE+1, x * SQUARE_SIZE+1) # adding a tiny value for not overdraing the grid lines
-            rect_size = (SQUARE_SIZE-2, SQUARE_SIZE-2) # subtracting a but for not overdrawing the grid lines
-            
+            rect_position = (
+                y * SQUARE_SIZE + 1,
+                x * SQUARE_SIZE + 1,
+            )  # adding a tiny value for not overdraing the grid lines
+            rect_size = (
+                SQUARE_SIZE - 2,
+                SQUARE_SIZE - 2,
+            )  # subtracting a but for not overdrawing the grid lines
+
             # Create the rectangle and draw it
-            pygame.draw.rect(self.screen, COLOR_VALID_FIELDS, pygame.Rect(rect_position, rect_size))
-
-
+            pygame.draw.rect(
+                self.screen, COLOR_VALID_FIELDS, pygame.Rect(rect_position, rect_size)
+            )
