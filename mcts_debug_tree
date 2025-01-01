@@ -1,0 +1,97 @@
+digraph {
+	dpi=300
+	130208722755200 [label="Move: None
+Player: -1
+Visits: 20
+Value: -18.24
+Prior: -1.00
+Board:
+
+    0  1  2  3  4  5  6  7
+   -------------------------
+0 | .  B  B  B  B  W  W  W
+1 | W  W  W  W  B  B  B  B
+2 | W  W  W  W  B  W  B  B
+3 | W  W  W  B  W  W  W  W
+4 | W  W  W  W  B  B  W  W
+5 | W  W  W  W  B  W  W  B
+6 | W  W  W  W  W  W  W  B
+7 | B  B  B  B  B  W  .  B
+" shape=box]
+	130208722755200 -> 130205280125008 [label="0 (player=-1)"]
+	130205280125008 [label="Move: None
+Player: 1
+Visits: 1
+Value: -0.00
+Prior: 0.38
+Board:
+
+    0  1  2  3  4  5  6  7
+   -------------------------
+0 | B  B  B  B  B  W  W  W
+1 | B  B  W  W  B  B  B  B
+2 | B  W  B  W  B  W  B  B
+3 | B  W  W  B  W  W  W  W
+4 | B  W  W  W  B  B  W  W
+5 | B  W  W  W  B  W  W  B
+6 | B  W  W  W  W  W  W  B
+7 | B  B  B  B  B  W  .  B
+" shape=box]
+	130205280125008 -> 130205279686288 [label="-1 (player=1)"]
+	130205279686288 [label="Move: None
+Player: -1
+Visits: 0
+Value: 0.00
+Prior: 1.00
+Board:
+
+    0  1  2  3  4  5  6  7
+   -------------------------
+0 | B  B  B  B  B  W  W  W
+1 | B  B  W  W  B  B  B  B
+2 | B  W  B  W  B  W  B  B
+3 | B  W  W  B  W  W  W  W
+4 | B  W  W  W  B  B  W  W
+5 | B  W  W  W  B  W  W  B
+6 | B  W  W  W  W  W  W  B
+7 | B  B  B  B  B  W  .  B
+" shape=box]
+	130208722755200 -> 130205280126608 [label="62 (player=-1)"]
+	130205280126608 [label="Move: None
+Player: 1
+Visits: 39
+Value: 38.24
+Prior: 0.37
+Board:
+
+    0  1  2  3  4  5  6  7
+   -------------------------
+0 | .  B  B  B  B  W  W  W
+1 | W  W  W  W  B  B  B  B
+2 | W  W  W  W  B  W  B  B
+3 | W  W  W  B  W  W  B  W
+4 | W  W  W  W  B  B  B  W
+5 | W  W  W  W  B  W  B  B
+6 | W  W  W  W  W  B  B  B
+7 | B  B  B  B  B  B  B  B
+" shape=box]
+	130205280126608 -> 130205279726064 [label="0 (player=1)"]
+	130205279726064 [label="Move: None
+Player: -1
+Visits: 20
+Value: -20.00
+Prior: 0.75
+Board:
+
+    0  1  2  3  4  5  6  7
+   -------------------------
+0 | W  W  W  W  W  W  W  W
+1 | W  W  W  W  B  B  B  B
+2 | W  W  W  W  B  W  B  B
+3 | W  W  W  B  W  W  B  W
+4 | W  W  W  W  B  B  B  W
+5 | W  W  W  W  B  W  B  B
+6 | W  W  W  W  W  B  B  B
+7 | B  B  B  B  B  B  B  B
+" shape=box]
+}
