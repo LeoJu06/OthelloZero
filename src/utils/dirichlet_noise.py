@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def add_dirichlet_noise(priors, alpha, epsilon):
     """
     Adds Dirichlet noise to the prior probabilities to encourage exploration.
@@ -14,7 +15,7 @@ def add_dirichlet_noise(priors, alpha, epsilon):
     """
     # Generate Dirichlet noise
     dirichlet_noise = np.random.dirichlet([alpha] * len(priors))
-    
+
     # Combine the original priors with the noise
     noisy_priors = (1 - epsilon) * np.array(priors) + epsilon * dirichlet_noise
 
