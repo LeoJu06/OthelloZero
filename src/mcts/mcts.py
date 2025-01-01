@@ -1,5 +1,6 @@
 """MCTS File which contains the MCTS class."""
 import src.utils.logger_config as lg
+from src.othello.game_constants import PlayerColor
 from src.config.hyperparameters import Hyperparameters
 from src.mcts.node import Node
 from src.neural_net.model import dummy_model_predict
@@ -9,11 +10,12 @@ from src.utils.dirichlet_noise import add_dirichlet_noise
 
 model = NeuralNetwork().to(Hyperparameters.Neural_Network["device"])
 
+
 class MCTS:
     """
     Monte Carlo Tree Search (MCTS) implementation for singel core usage.
-    How To Use: 
-        Simply create a MCTS object. Pass a starting node, otherwise the mcts assumes to begin 
+    How To Use:
+        Simply create a MCTS object. Pass a starting node, otherwise the mcts assumes to begin
         from an empty board aka the father of root nodes:).
     """
 
@@ -51,53 +53,59 @@ class MCTS:
         for _ in range(num_simulations):
             #print(f"Simulation {_}/{num_simulations}", end="\r")
             node = self.root_node
-            search_path = [node]  # Keep track of the nodes visited in this simulation
+            search_path = [node]
+            moves_played = [None]  # Keep track of the nodes visited in this simulation
 
             # Selection phase: Traverse the tree to select a node to expand
             while node.is_expanded():
-                action, node = node.select_child()  # Select the child node with the highest UCB score
+                (
+                    action,
+                    node,
+                ) = (
+                    node.select_child()
+                )  # Select the child node with the highest UCB score
+                
                 search_path.append(node)
+                moves_played.append(action)
 
             # Evaluation phase: Evaluate the value of the node (either terminal or predicted)
             value = None
             if node.is_terminal_state():
                 value = node.board.determine_winner()  # Use winner value (-1, 0, +1)
-            if value is None:
-                action_probs, value = dummy_model_predict(node, model)  # Predict value using the model if not terminal
+                if search_path[-1].board.player == PlayerColor.BLACK.value:
+                    value = -value
+
+            else:
+                action_probs, value = dummy_model_predict(node, model)
+                value = max(-1, min(1, value))  # Restrict to valid range
+
                 node.expand(action_probs)
-                #value = node.board.determine_winner()  # Expand the node with the new action probabilities
 
             # Backpropagation phase: Update the value and visit count of the nodes along the search path
-            for node in search_path:
-                #print(f"Node PLayer: {node.board.player}")
-                #print(f"Value before backpropagation: {value}")
-                #print( f"Node value after Backpropagation: {node.value}")
-                node.value += value  # Update node value based on simulation outcome
-                #print( f"Node value after Backpropagation: {node.value}")
-                value = -value
-                node.visits += 1  # Increment the number of visits to this node
-                #print()
-                
+            for node in reversed(search_path):
 
-     
+                
+                node.value += value
+
+                node.visits += 1  #
+
+                value = -value
+
     def show_results(self):
         print(f"Root Node expanded {self.root_node.visits} times")
         print(f"Root's value => {self.root_node.value}")
         print("Stats of children's visits and values:")
         for move, child in self.root_node.children.items():
             print(f"    Move: {move}, Visits: {child.visits}, Value: {child.value:.1f}")
-        
+
         # Log the best move based on visits
         best_move, best_child = self.get_best_move()
-        print(f"Best move chosen: {best_move}, Value of the best child: {best_child.value:.1f}")
+        print(
+            f"Best move chosen: {best_move}, Value of the best child: {best_child.value:.1f}"
+        )
 
-        
-       
-        
 
 if __name__ == "__main__":
-    
-
     mcts = MCTS()
     num_games = 6
     wins = 0
@@ -105,7 +113,6 @@ if __name__ == "__main__":
     move_counter = 0
     for _ in range(num_games):
         while not mcts.root_node.is_terminal_state():
-            move_counter+= 1
             print(f"PLayer {mcts.root_node.board.player} has to move:")
             print("Search Starting...")
             mcts.search()
@@ -118,8 +125,7 @@ if __name__ == "__main__":
             mcts.root_node.board.print_board()
             print()
             print()
-            input()
-            
+            # input()
 
         winner = mcts.root_node.board.determine_winner()
         if winner == 1:
@@ -128,10 +134,8 @@ if __name__ == "__main__":
             draws += 1
 
         print(f"Game finished. Winner: {winner}")
-        input()
+        # input()
         mcts.root_node = Node()  # Reset the root node for the next game
-  
+
     print(f"Total wins: {wins}/{num_games}")
     print(f"Total draws: {draws}/{num_games}")
-
-        
