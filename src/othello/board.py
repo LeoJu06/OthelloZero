@@ -142,6 +142,8 @@ class Board:
 
     def is_terminal_state(self):
         """Determines if the current board state is terminal (game over)."""
+        if not any(self.empty_cells):
+            return True
         if self.must_pass():
             self.switch_player()
             if self.must_pass():
