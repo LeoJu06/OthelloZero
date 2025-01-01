@@ -27,11 +27,8 @@ def ucb_score(
         float: The UCB score for the child node.
     """
     prior_score = child.prior * math.sqrt(parent.visits) / (child.visits + 1)
-    value_score = (child.value / child.visits) if child.visits > 0 else 0
-
-    
-    ucb_value = value_score + exploration_weight * prior_score
-    return ucb_value
+    value_score = child.Q_value()  # Dynamically compute the average value
+    return value_score + exploration_weight * prior_score
 
 
 class Node:
@@ -71,19 +68,24 @@ class Node:
         valid_moves = self.board.valid_moves()
 
         if not valid_moves:
-            self._expand_pass_node()
+            self._expand_pass_node(action_probs)
             return
 
         self._expand_valid_moves(action_probs, valid_moves)
 
-    def _expand_pass_node(self):
+    def _expand_pass_node(self, action_probs):
         """Handles the case where the current player must pass."""
-        if not self.board.empty_cells:
-            return
+        
+        prior = action_probs[64]
         child_board = Board(board=self.board.board.copy(), player=self.board.player)
         child_board.update()  # Switch to the opponent's turn
-        child = Node(prior=Hyperparameters.Node["prior_passing"], board=child_board)  # Default prior for passing
+        child = Node(
+            prior=prior, board=child_board
+        )  # Default prior for passing
         self.children[Hyperparameters.Node["key_passing"]] = child
+        
+
+        # input("Passing node")
 
     def _expand_valid_moves(self, action_probs, valid_moves):
         """
@@ -141,3 +143,21 @@ class Node:
             bool: True if the state is terminal, False otherwise.
         """
         return self.board.is_terminal_state()
+
+    def Q_value(self):
+        """
+        Computes the Q-value for the node as the average accumulated value over visits.
+
+        Returns:
+            float: Q-value.
+        """
+        return self.value / max(self.visits, 1)  # Prevent division by zero
+
+    def N_value(self):
+        return self.visits
+
+    def V_value(self):
+        return self.value
+
+    def __str__(self):
+        return "Node"
