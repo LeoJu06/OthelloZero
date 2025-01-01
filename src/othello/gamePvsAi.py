@@ -2,9 +2,20 @@ import os
 import pygame
 from src.othello.board import Board
 import src.othello.game_constants as const
-from src.othello.game_settings import WIDTH, HEIGHT, SQUARE_SIZE, BACKGROUND_COLOR, GRID_COLOR, FPS
+from src.othello.game_settings import (
+    WIDTH,
+    HEIGHT,
+    SQUARE_SIZE,
+    BACKGROUND_COLOR,
+    GRID_COLOR,
+    FPS,
+)
 from src.othello.game_visuals import GameVisuals
 from random import choice
+from src.mcts.mcts import MCTS
+from src.mcts.node import Node
+from src.utils.index_to_coordinates import index_to_coordinates
+
 
 class GamePvsAi:
     """
@@ -25,6 +36,7 @@ class GamePvsAi:
         self.board = Board(board)
         self.screen = screen
         self.visuals = GameVisuals(screen, self.clock)
+        self.ai = MCTS(Node(board=board))
 
         self.running = True
         self.is_ai_turn = choice([True, False])  # Randomly decide if AI starts
@@ -38,7 +50,6 @@ class GamePvsAi:
         """
         while self.running:
             if self.check_both_players_cannot_move():
-                
                 self.running = False
                 continue
 
@@ -72,9 +83,8 @@ class GamePvsAi:
             self.display_winner()  # Display the winner (or draw)
             self.running = False  # End the game loop
             return True
-    
-        return False
 
+        return False
 
     def handle_player_input(self):
         """Handle player actions during their turn."""
@@ -106,7 +116,9 @@ class GamePvsAi:
         if (row, col) in self.board.valid_moves():
             self.board.apply_move(row, col)
             flipped_stones = self.board.update(row, col)
-            self.visuals.play_flip_animation(self.board.board, flipped_stones, self.board.player)
+            self.visuals.play_flip_animation(
+                self.board.board, flipped_stones, self.board.player
+            )
             return True
 
         print("Invalid move attempted.")
@@ -118,13 +130,17 @@ class GamePvsAi:
             print("AI has no valid moves. Passing turn.")
             self.switch_to_player()
             return
+        self.ai = MCTS(Node(board=Board(board=self.board.board.copy())))
+        self.ai.search()
+        action, child = self.ai.get_best_move()
+        self.ai.root_node = child
 
-        valid_moves = self.board.valid_moves()
-        if valid_moves:
-            row, col = choice(valid_moves)
-            self.board.apply_move(row, col)
-            flipped_stones = self.board.update(row, col)
-            self.visuals.play_flip_animation(self.board.board, flipped_stones, self.board.player)
+        row, col = index_to_coordinates(action)
+        self.board.apply_move(row, col)
+        flipped_stones = self.board.update(row, col)
+        self.visuals.play_flip_animation(
+            self.board.board, flipped_stones, self.board.player
+        )
 
         self.switch_to_player()
 
@@ -160,6 +176,7 @@ def main(board=None):
     game.run_game_loop()
 
     pygame.quit()
+
 
 if __name__ == "__main__":
     main()
