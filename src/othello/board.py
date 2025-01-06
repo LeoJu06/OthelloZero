@@ -1,72 +1,103 @@
-import sys
 import numpy as np
 import src.othello.game_constants as const
 import src.utils.logger_config as lg
-import time
+import random
 
 
-class Board:
-    """The Board class represents the Othello game board and manages all game-related operations."""
+class OthelloGame:
+    """
+    The OthelloGame class encapsulates the game logic for Othello/Reversi.
+    It manages the board, validates moves, determines game states, and handles gameplay.
+    """
 
-    def __init__(
-        self, board=None, player=const.PlayerColor.BLACK.value, empty_cells=None
-    ):
-        if board is None:
-            self.board = np.array(const.EMPTY_BOARD)
-        else:
-            self.board = np.array(board)
+    def __init__(self, rows=8, cols=8):
+        """
+        Initializes the Othello game with an 8x8 board by default.
+        """
+        self.rows = rows
+        self.columns = cols
 
-        self.player = player
+    def get_init_board(self):
+        """
+        Creates the initial board setup for Othello.
 
-        if empty_cells is None:
-            self.empty_cells = [
-                (x, y)
-                for x in range(8)
-                for y in range(8)
-                if self.board[x][y] == const.EMPTY_CELL
-            ]
-        else:
-            self.empty_cells = empty_cells
+        Returns:
+            np.ndarray: 2D array representing the board.
+                        0 = empty, 1 = black stone, -1 = white stone.
+        """
+        board = np.zeros((self.rows, self.columns), dtype=int)
+        board[3][4] = const.PlayerColor.BLACK.value
+        board[3][3] = const.PlayerColor.WHITE.value
+        board[4][3] = const.PlayerColor.BLACK.value
+        board[4][4] = const.PlayerColor.WHITE.value
+        return board
 
-    def apply_move(self, x_pos=None, y_pos=None):
-        """Places a piece on the board, or handles passing if no move is possible."""
-        if x_pos is None and y_pos is None:  # Passing the turn
-            lg.logger_board.debug(f"Player {self.player} passes the turn.")
-            return
+    def get_board_size(self):
+        """
+        Returns the dimensions of the board.
 
-        self.board[x_pos][y_pos] = self.player
-        self._remove_empty_cell(x_pos, y_pos)
+        Returns:
+            tuple: (rows, columns)
+        """
+        return self.rows, self.columns
 
-        lg.logger_board.debug(
-            "Player (%s) places at (%s|%s)", self.player, x_pos, y_pos
-        )
-        lg.logger_board.debug("Remaining empty fields:\n%s", self.print_empty_cells())
-        lg.logger_board.debug("Board:\n%s", self.print_board(to_console=False))
+    def get_action_size(self):
+        """
+        Calculates the total number of actions (cells) on the board.
 
-    def stones_to_flip(self, x_pos, y_pos):
-        """Calculates which stones must be flipped after a move is played."""
+        Returns:
+            int: Total number of cells (rows * columns).
+        """
+        return self.rows * self.columns
+
+    def get_next_state(self, state, player, x_pos, y_pos):
+        """
+        Executes a player's move and returns the updated board state.
+
+        Args:
+            state (np.ndarray): Current board state.
+            player (int): Current player (1 for black, -1 for white).
+            x_pos (int): Row index of the move.
+            y_pos (int): Column index of the move.
+
+        Returns:
+            tuple: (updated board, next player)
+        """
+        next_state = np.copy(state)
+        next_state[x_pos, y_pos] = player
+        stones_to_flip = self._find_stones_to_flip(state, player, x_pos, y_pos)
+        self._flip_stones(next_state, player, stones_to_flip)
+        return next_state, -player
+
+    def _find_stones_to_flip(self, state, player, x_pos, y_pos):
+        """
+        Identifies the stones that need to be flipped after a move.
+
+        Args:
+            state (np.ndarray): Current board state.
+            player (int): Current player.
+            x_pos (int): Row index of the move.
+            y_pos (int): Column index of the move.
+
+        Returns:
+            list: List of (row, column) positions of stones to flip.
+        """
         stones_to_flip = []
         directions = [
-            (-1, -1),
-            (-1, 0),
-            (-1, 1),  # Top-left, Up, Top-right
-            (0, -1),
-            (0, 1),  # Left, Right
-            (1, -1),
-            (1, 0),
-            (1, 1),  # Bottom-left, Down, Bottom-right
+            (-1, -1), (-1, 0), (-1, 1),  # Diagonal and vertical directions.
+            (0, -1),          (0, 1),   # Horizontal directions.
+            (1, -1), (1, 0), (1, 1)     # Diagonal and vertical directions.
         ]
 
         for dx, dy in directions:
             nx, ny = x_pos + dx, y_pos + dy
-            turn = []
+            stones_in_line = []
 
-            while 0 <= nx < 8 and 0 <= ny < 8:
-                if self.board[nx][ny] == -self.player:
-                    turn.append((nx, ny))
-                elif self.board[nx][ny] == self.player:
-                    if turn:
-                        stones_to_flip.extend(turn)
+            while 0 <= nx < self.rows and 0 <= ny < self.columns:
+                if state[nx][ny] == -player:
+                    stones_in_line.append((nx, ny))
+                elif state[nx][ny] == player:
+                    stones_to_flip.extend(stones_in_line)
                     break
                 else:
                     break
@@ -75,130 +106,166 @@ class Board:
 
         return stones_to_flip
 
-    def _flip_stones(self, stones_to_flip):
-        """Flips stones on the board for the current player."""
-        for flip_x, flip_y in stones_to_flip:
-            self.board[flip_x][flip_y] = self.player
+    def _flip_stones(self, state, player, stones_to_flip):
+        """
+        Flips stones for the current player.
 
-    def switch_player(self):
-        """Switches the current player to the opponent."""
-        self.player = -self.player
+        Args:
+            state (np.ndarray): Current board state.
+            player (int): Current player.
+            stones_to_flip (list): Positions of stones to flip.
+        """
+        for x, y in stones_to_flip:
+            state[x][y] = player
 
-    def _remove_empty_cell(self, x_pos, y_pos):
-        """Removes a cell from the list of empty cells."""
-        self.empty_cells.remove((x_pos, y_pos))
+    def get_empty_cells(self, state):
+        """
+        Finds all empty cells on the board.
 
-    def update(self, x_pos=None, y_pos=None):
-        """Updates the board state after a move, Note, A pass move is also a move."""
-        if x_pos is None and y_pos is None:  # Passing the turn
-            self.switch_player()
-            return []
+        Args:
+            state (np.ndarray): Current board state.
 
-        stones_to_flip = self.stones_to_flip(x_pos, y_pos)
-        self._flip_stones(stones_to_flip)
-        self.switch_player()
-        return stones_to_flip
+        Returns:
+            list: List of (row, column) positions for empty cells.
+        """
+        return [(x, y) for x in range(self.rows) for y in range(self.columns) if state[x, y] == 0]
 
-    def valid_moves(self):
-        """Finds all valid moves for the current player."""
+    def get_valid_moves(self, state, player):
+        """
+        Determines all valid moves for a player.
+
+        Args:
+            state (np.ndarray): Current board state.
+            player (int): Current player.
+
+        Returns:
+            list: List of valid move positions (row, column).
+        """
         valid_moves = []
-        directions = [
-            (-1, -1),
-            (-1, 0),
-            (-1, 1),  # Top-left, Up, Top-right
-            (0, -1),
-            (0, 1),  # Left, Right
-            (1, -1),
-            (1, 0),
-            (1, 1),  # Bottom-left, Down, Bottom-right
-        ]
-
-        for x, y in self.empty_cells:
-            for dx, dy in directions:
-                nx, ny = x + dx, y + dy
-                found_opponent = False
-
-                while (
-                    0 <= nx < 8 and 0 <= ny < 8 and self.board[nx][ny] == -self.player
-                ):
-                    found_opponent = True
-                    nx += dx
-                    ny += dy
-
-                if (
-                    found_opponent
-                    and 0 <= nx < 8
-                    and 0 <= ny < 8
-                    and self.board[nx][ny] == self.player
-                ):
-                    valid_moves.append((x, y))
-                    break
-
+        for x, y in self.get_empty_cells(state):
+            if any(self._find_stones_to_flip(state, player, x, y)):
+                valid_moves.append((x, y))
         return valid_moves
 
-    def must_pass(self):
-        """Determines if the current player has no valid moves and must pass."""
-        return not self.valid_moves()
+    def is_terminal_state(self, state):
+        """
+        Checks if the game has ended (no valid moves for both players).
 
-    def is_terminal_state(self):
-        """Determines if the current board state is terminal (game over)."""
-        if not any(self.empty_cells):
-            return True
-        if self.must_pass():
-            self.switch_player()
-            if self.must_pass():
-                self.switch_player()  # Restore original player
-                return True
-            self.switch_player()
-        return False
+        Args:
+            state (np.ndarray): Current board state.
 
-    def determine_winner(self):
-        """Determines the winner of the game."""
-        total_sum = np.sum(self.board)
+        Returns:
+            bool: True if the game is over, False otherwise.
+        """
+        return not any(self.get_valid_moves(state, const.PlayerColor.BLACK.value)) and \
+               not any(self.get_valid_moves(state, const.PlayerColor.WHITE.value))
 
-        if total_sum > 0:
-            return const.PlayerColor.WHITE.value
-        elif total_sum < 0:
+    def determine_winner(self, state):
+        """
+        Determines the winner based on the board state.
+
+        Args:
+            state (np.ndarray): Final board state.
+
+        Returns:
+            int: 1 for black, -1 for white, 0 for a draw.
+        """
+        score = np.sum(state)
+        if score > 0:
             return const.PlayerColor.BLACK.value
-        else:
-            return 0
+        elif score < 0:
+            return const.PlayerColor.WHITE.value
+        return 0
 
-    def print_board(self, to_console=True):
-        """Prints or returns a formatted string representation of the board."""
-        board_str = "\n    " + "  ".join(str(i) for i in range(8)) + "\n"
-        board_str += "   " + "-" * 25 + "\n"
+    def print_board(self, state):
+        """
+        Displays the current board state.
 
-        for row_idx, row in enumerate(self.board):
-            row_str = f"{row_idx} | "
-            for col in row:
-                if col == const.PlayerColor.BLACK.value:
-                    row_str += "B  "
-                elif col == const.PlayerColor.WHITE.value:
-                    row_str += "W  "
-                else:
-                    row_str += ".  "
-            board_str += row_str.strip() + "\n"
+        Args:
+            state (np.ndarray): Current board state.
+        """
+        print("\n    " + "  ".join(map(str, range(self.columns))))
+        print("   " + "-" * (3 * self.columns))
+        for row_idx, row in enumerate(state):
+            row_str = f"{row_idx} | " + "  ".join(
+                "B" if cell == const.PlayerColor.BLACK.value else
+                "W" if cell == const.PlayerColor.WHITE.value else "." for cell in row
+            )
+            print(row_str)
 
-        if to_console:
-            print(board_str)
-        else:
-            return board_str
+        
+    def play_random_move(self, state, player):
+        """
+        Plays a random valid move for the current player.
 
-    def print_empty_cells(self):
-        """Returns a formatted string of all empty cells for logging."""
-        cells_per_line = 6
-        cells_str = ""
+        Args:
+            state (np.ndarray): The current board state.
+            player (int): The current player.
 
-        for i, ec in enumerate(self.empty_cells, start=1):
-            cells_str += f"{ec}"
-            if i % cells_per_line == 0:
-                cells_str += "\n"
-            else:
-                cells_str += " - "
+        Returns:
+            tuple: (updated board, next player), or None if no valid moves are available.
+        """
+        valid_moves = self.get_valid_moves(state, player)
+        if not valid_moves:
+            print(f"Player {player} has no valid moves.")
+            return state, -player  # Skip turn if no valid moves available.
 
-        return cells_str.strip(" -\n")
+        # Choose a random move from the valid moves
+        move = random.choice(valid_moves)
+        print(f"Player {player} plays random move: {move}")
+        return self.get_next_state(state, player, *move)
+    
 
+def play_game_with_random_moves():
+    """
+    Simulates a game of Othello with both players making random moves.
+    """
+    game = OthelloGame()
+    board = game.get_init_board()
+    current_player = const.PlayerColor.BLACK.value
+
+    while not game.is_terminal_state(board):
+        game.print_board(board)
+        board, current_player = game.play_random_move(board, current_player)
+
+    game.print_board(board)
+    winner = game.determine_winner(board)
+    print("The game is a draw!" if winner == 0 else f"Player {winner} wins!")
+
+def play_game():
+    """
+    Main game loop for playing Othello via console input.
+    Handles input, turn-taking, and displays the board state.
+    """
+    game = OthelloGame()
+    board = game.get_init_board()
+    current_player = const.PlayerColor.BLACK.value
+
+    while not game.is_terminal_state(board):
+        game.print_board(board)
+        valid_moves = game.get_valid_moves(board, current_player)
+
+        if not valid_moves:
+            print(f"Player {current_player} has no valid moves. Skipping turn.")
+            current_player = -current_player
+            continue
+
+        print(f"Player {current_player}'s turn. Valid moves: {valid_moves}")
+
+        while True:
+            try:
+                move = input("Enter your move as 'row col': ").strip()
+                x, y = map(int, move.split())
+                if (x, y) in valid_moves:
+                    board, current_player = game.get_next_state(board, current_player, x, y)
+                    break
+                print("Invalid move. Try again.")
+            except ValueError:
+                print("Invalid input. Enter row and column as numbers.")
+
+    game.print_board(board)
+    winner = game.determine_winner(board)
+    print("The game is a draw!" if winner == 0 else f"Player {winner} wins!")
 
 if __name__ == "__main__":
-    board = Board()
-    board.print_board()
+    play_game_with_random_moves()
