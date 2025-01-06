@@ -9,7 +9,7 @@ from src.neural_net.model import NeuralNetwork, dummy_model_predict
 from src.utils.dirichlet_noise import add_dirichlet_noise
 
 model = NeuralNetwork().to(Hyperparameters.Neural_Network["device"])
-#branch
+#branch test
 
 class MCTS:
     """
