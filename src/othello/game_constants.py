@@ -5,6 +5,7 @@ which remain consistent throughout the game.
 """
 
 from enum import Enum
+import numpy as np
 
 
 class PlayerColor(Enum):
@@ -19,7 +20,7 @@ class PlayerColor(Enum):
 
 # Constant for empty fields (no player assigned to this position)
 EMPTY_CELL = 0
-EMPTY_BOARD = [[EMPTY_CELL for x in range(8)] for y in range(8)]
+EMPTY_BOARD = np.zeros((8, 8))
 
 # Placing the starting peaces
 EMPTY_BOARD[3][4] = PlayerColor.BLACK.value
