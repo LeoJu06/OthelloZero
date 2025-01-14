@@ -49,7 +49,7 @@ class OthelloGame:
         Returns:
             int: Total number of cells (rows * columns).
         """
-        return self.rows * self.columns
+        return (self.rows * self.columns) + 1
 
     def get_next_state(self, state, player, x_pos, y_pos):
         """
@@ -162,45 +162,47 @@ class OthelloGame:
         """
         Converts a 2D game board into a 1D array and marks the valid moves.
 
-        This function flattens the initial game board and updates the resulting 
-        1D array by setting the indices corresponding to valid moves to 1. 
+        This function flattens the initial game board and updates the resulting
+        1D array by setting the indices corresponding to valid moves to 1.
         The positions that do not correspond to valid moves remain 0.
 
         Args:
-            state (object): The current state of the game, which may contain information 
-                            such as the current board configuration or game status. 
+            state (object): The current state of the game, which may contain information
+                            such as the current board configuration or game status.
                             The exact structure of `state` depends on the specific game implementation.
-            player (int): The identifier of the player whose valid moves are to be marked. 
+            player (int): The identifier of the player whose valid moves are to be marked.
                         This could be, for example, 1 for player 1 and -1 for player 2.
 
         Returns:
-            numpy.ndarray: A 1D array representing the flattened game board, where 
+            numpy.ndarray: A 1D array representing the flattened game board, where
                         valid moves are marked with 1 and invalid moves are 0.
 
-       """
-        
+        """
+
         # Flatten the initial board
         flattened_board = np.zeros(self.get_action_size())
-        
+
         # Get valid moves
         valid_moves = self.get_valid_moves(state, player)
-        
+
         # Mark valid moves in the flattened board
         for x, y in valid_moves:
             index = coordinates_to_index(x, y)  # Convert 2D coordinates to index
             flattened_board[index] = 1
-        
-        return flattened_board
 
+        if np.sum(flattened_board) == 0:
+            flattened_board[64] = 1
+        #     raise RuntimeError("sum of flattened board shound not be 0")
+
+        return flattened_board
 
     def get_canonical_board(self, state, player):
         return player * state
-    
-    def get_reward_for_player(self, state, player):
 
+    def get_reward_for_player(self, state, player):
         if any(self.get_valid_moves(state, player)):
             return None
-        
+
         elif self.is_terminal_state(state):
             winner = self.determine_winner(state)
 
@@ -208,9 +210,8 @@ class OthelloGame:
                 return 1
             elif winner == -player:
                 return -1
-        
-        return 0 
 
+        return 0
 
     def is_terminal_state(self, state):
         """

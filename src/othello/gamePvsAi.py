@@ -92,22 +92,24 @@ class GamePvsAi:
         """
         x, y = position
         row, col = y // SQUARE_SIZE, x // SQUARE_SIZE
-        
 
         if (row, col) in valid_moves:
-
             # Identify the stones flipped during this move
-            flipped_stones = self.board._find_stones_to_flip(self.game_state, self.current_player, row, col)
+            flipped_stones = self.board._find_stones_to_flip(
+                self.game_state, self.current_player, row, col
+            )
             # Note that it's important to firstly calculate the flipped_stones
             # than process the move
             # and than displaying the flip animation, otherwise it might look strange
-            
+
             self.game_state, self.current_player = self.board.get_next_state(
                 self.game_state, self.current_player, row, col
             )
 
             # Play the flip animation
-            self.visuals.play_flip_animation(self.game_state, flipped_stones, self.current_player)
+            self.visuals.play_flip_animation(
+                self.game_state, flipped_stones, self.current_player
+            )
 
             return True
 
@@ -123,7 +125,6 @@ class GamePvsAi:
             self.game_state, self.current_player
         )
 
-        
         self.switch_turn()
 
     def switch_turn(self):
