@@ -6,6 +6,7 @@ from src.neural_net.model import OthelloZeroModel
 from src.config.hyperparameters import Hyperparameters
 from src.othello.othello_game import OthelloGame
 
+
 def ucb_score(parent, child):
     """
     Calculates the Upper Confidence Bound (UCB) score for a given child node.
@@ -24,7 +25,6 @@ def ucb_score(parent, child):
     else:
         value_score = 0
 
-    
     return value_score + prior_score
 
 
@@ -40,6 +40,7 @@ class Node:
         children (dict): Dictionary of child nodes keyed by actions.
         state (np.ndarray): The board state associated with this node.
     """
+
     def __init__(self, prior, to_play):
         self.visit_count = 0
         self.to_play = to_play
@@ -66,7 +67,7 @@ class Node:
         """
         if self.visit_count == 0:
             return 0
-        return self.value_sum / self.visit_count
+        return float(self.value_sum / self.visit_count)
 
     def select_action(self, temperature):
         """
@@ -80,6 +81,7 @@ class Node:
         """
         visit_counts = np.array([child.visit_count for child in self.children.values()])
         actions = [action for action in self.children.keys()]
+
         if temperature == 0:
             action = actions[np.argmax(visit_counts)]
         elif temperature == float("inf"):
@@ -87,7 +89,9 @@ class Node:
         else:
             # Adjust distribution based on temperature
             visit_count_distribution = visit_counts ** (1 / temperature)
-            visit_count_distribution = visit_count_distribution / sum(visit_count_distribution)
+            visit_count_distribution = visit_count_distribution / sum(
+                visit_count_distribution
+            )
             action = np.random.choice(actions, p=visit_count_distribution)
 
         return action
@@ -105,14 +109,11 @@ class Node:
 
         for action, child in self.children.items():
             score = ucb_score(self, child)
-            
+
             if score > best_score:
                 best_score = score
                 best_action = action
                 best_child = child
-        
-        if best_child is None:
-            print(self.children.keys())
 
         return best_action, best_child
 
@@ -127,8 +128,15 @@ class Node:
         """
         self.to_play = to_play
         self.state = state
-        for move, prob in enumerate(action_probs):
+
+        # Handle the case where no valid moves are available
+        if action_probs[-1] != 0:
             
+            # No valid moves, so the player must pass
+            self.children[-1] = Node(prior=action_probs[-1], to_play=self.to_play * -1)
+            return
+
+        for move, prob in enumerate(action_probs):
             if prob != 0:
                 self.children[move] = Node(prior=prob, to_play=self.to_play * -1)
 
@@ -140,7 +148,9 @@ class Node:
             str: A formatted string representing the node.
         """
         prior = "{0:.2f}".format(self.prior)
-        return "{} Prior: {} Count: {} Value: {}".format(self.state.__str__(), prior, self.visit_count, self.value())
+        return "{} Prior: {} Count: {} Value: {}".format(
+            self.state.__str__(), prior, self.visit_count, self.value()
+        )
 
 
 class MCTS:
@@ -152,10 +162,12 @@ class MCTS:
         model (OthelloZeroModel): The neural network model for predicting action probabilities and values.
         hyperparameters (Hyperparameters): Configuration parameters for the MCTS.
     """
-    def __init__(self, game: OthelloGame, model, hyperparameters):
+
+    def __init__(self, game: OthelloGame, model, hyperparameters, root: Node = None):
         self.game = game
         self.model = model
         self.hyperparameters = hyperparameters
+        self.root = root if root else Node(0, -1)
 
     def run(self, state, to_play):
         """
@@ -168,7 +180,7 @@ class MCTS:
         Returns:
             Node: The root node of the search tree after simulations.
         """
-        root = Node(0, to_play)
+        root = self.root
 
         # EXPAND root
         action_probs, value = self.model.predict(state)
@@ -181,8 +193,6 @@ class MCTS:
             node = root
             search_path = [node]
 
-            print(f"Iter = {_}/{self.hyperparameters.MCTS['num_simulations']}")
-
             # SELECT
             while node.expanded():
                 action, node = node.select_child()
@@ -190,39 +200,48 @@ class MCTS:
 
             parent = search_path[-2]
             state = parent.state
-            # Now we're at a leaf node and we would like to expand
-            # Players always play from their own perspective
-            (x, y) = index_to_coordinates(action)
-            next_state, _ = self.game.get_next_state(state, player=1, x_pos=x, y_pos=y)
-            # Get the board from the perspective of the other player
-            next_state = self.game.get_canonical_board(next_state, player=-1)
 
-            # The value of the new state from the perspective of the other player
-            value = self.game.get_reward_for_player(next_state, player=1)
-            if value is None:
-                # If the game has not ended:
-                # EXPAND
+            # Check for valid moves
+            valid_moves_flattened = self.game.flatten_move_coordinates(
+                state, parent.to_play * -1
+            )
+            # print(valid_moves_flattened)
+            # print(action)
+            if action == -1:
+                # No valid moves, player must pass
+                next_state = self.game.get_canonical_board(
+                    state, player=parent.to_play * -1
+                )
                 action_probs, value = self.model.predict(next_state)
-                valid_moves_flattened = self.game.flatten_move_coordinates(next_state, player=parent.to_play * -1)
-                print(f"parent.to_play: {parent.to_play}, player for valid moves: {parent.to_play * -1}")
-
                 action_probs = mark_valid_moves(action_probs, valid_moves_flattened)
-                print(valid_moves_flattened)
-                if np.sum(action_probs) == 0:
-                    print("Warning: All action probabilities are zero. Assigning uniform probabilities.")
-                    raise RuntimeError
-                    action_probs = np.ones_like(action_probs)
+                # print(action_probs)
                 action_probs /= np.sum(action_probs)
-
-                action_probs /= np.sum(action_probs)
-
-                
-      
                 node.expand(next_state, parent.to_play * -1, action_probs)
+            else:
+                # Now we're at a leaf node and we would like to expand
+                (x, y) = index_to_coordinates(action)
+                next_state, _ = self.game.get_next_state(
+                    state, player=1, x_pos=x, y_pos=y
+                )
+                next_state = self.game.get_canonical_board(next_state, player=-1)
 
+                # Get the reward or expand further
+                value = self.game.get_reward_for_player(next_state, player=1)
+                if value is None:
+                    action_probs, value = self.model.predict(next_state)
+                    action_probs = mark_valid_moves(action_probs, valid_moves_flattened)
+                    action_probs /= np.sum(action_probs)
+                    node.expand(next_state, parent.to_play * -1, action_probs)
+
+            # print("Action taken - ", action)
             self.backpropagate(search_path, value, parent.to_play * -1)
 
         return root
+
+    def new_root(self, root: Node):
+        self.root = root
+
+        self.root = root
 
     def backpropagate(self, search_path, value, to_play):
         """
@@ -243,14 +262,25 @@ if __name__ == "__main__":
     hyperparameters = Hyperparameters()
     game = OthelloGame()
     state = game.get_init_board()
-    model = OthelloZeroModel(game.rows, game.get_action_size(), hyperparameters.Neural_Network["device"])
+    to_play = 1
+    model = OthelloZeroModel(
+        game.rows, game.get_action_size(), hyperparameters.Neural_Network["device"]
+    )
 
+    b = np.array(
+        [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, -1, 0, 0, 0, 0],
+            [0, 0, -1, 1, -1, -1, 0, 0],
+            [0, 0, 0, -1, 0, 0, 0, 0],
+            [0, 0, 0, -1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+        ]
+    )
     # Run MCTS
     mcts = MCTS(game, model, hyperparameters)
-    root = mcts.run(state, 1)
 
-    # Print root node's children
-    for m, child in (root.children.items()):
-        print(f"Move={m}, visits={child.visit_count}, value={child.value_sum}")
-
-    
+    root = mcts.run(b, to_play)
+    print(root)
