@@ -65,9 +65,10 @@ class OthelloGame:
             tuple: (updated board, next player)
         """
         next_state = np.copy(state)
-        next_state[x_pos, y_pos] = player
-        stones_to_flip = self._find_stones_to_flip(state, player, x_pos, y_pos)
-        self._flip_stones(next_state, player, stones_to_flip)
+        if (x_pos != const.PASSING_MOVE or y_pos != const.PASSING_MOVE):
+            next_state[x_pos, y_pos] = player
+            stones_to_flip = self._find_stones_to_flip(state, player, x_pos, y_pos)
+            self._flip_stones(next_state, player, stones_to_flip)
         return next_state, -player
 
     def _find_stones_to_flip(self, state, player, x_pos, y_pos):
