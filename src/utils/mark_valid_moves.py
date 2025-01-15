@@ -1,6 +1,6 @@
 def mark_valid_moves(action_probs, valid_moves_flattened):
     """
-    Marks the valid moves in the action probabilities array by setting 
+    Marks the valid moves in the action probabilities array by setting
     the probability of invalid moves to zero.
 
     Args:
@@ -10,9 +10,9 @@ def mark_valid_moves(action_probs, valid_moves_flattened):
                                                 where each element is either 1 (valid move) or 0 (invalid move).
 
     Returns:
-        numpy.ndarray: A 1D array where the action probabilities are updated such that 
-                        invalid moves (corresponding to 0s in `valid_moves_flattened`) 
-                        are set to 0, while valid moves (corresponding to 1s in `valid_moves_flattened`) 
+        numpy.ndarray: A 1D array where the action probabilities are updated such that
+                        invalid moves (corresponding to 0s in `valid_moves_flattened`)
+                        are set to 0, while valid moves (corresponding to 1s in `valid_moves_flattened`)
                         retain their original probability.
 
     Example:
@@ -21,5 +21,5 @@ def mark_valid_moves(action_probs, valid_moves_flattened):
         marked_probs = mark_valid_moves(action_probs, valid_moves_flattened)
         print(marked_probs)  # Output: [0.1 0.  0.2 0.4]
     """
-    
+
     return action_probs * valid_moves_flattened
