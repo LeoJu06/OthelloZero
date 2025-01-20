@@ -152,7 +152,7 @@ def dummy_console_mcts():
     s = g.get_init_board()
     current_player = -1
     m = OthelloZeroModel(g.rows, g.get_action_size(), h.Neural_Network["device"])
-
+    t = []
     # Run MCTS
     while not g.is_terminal_state(s):
         start_time = time.time()
@@ -164,9 +164,12 @@ def dummy_console_mcts():
 
         g.print_board(s)
         print(f"Move played= {x}, {y}")
-        print(f"Thinking time {time.time() - start_time:.2f} sconds")
+        tn = time.time() - start_time
+        print(f"Thinking time {tn:.2f} sconds")
+        t.append(tn)
     
     g.print_board(s)
+    print(f"Average thinking time {sum(t)/len(t):.4f} seconds")
 
 
 
