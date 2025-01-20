@@ -1,141 +1,179 @@
-"""MCTS File which contains the MCTS class."""
-import src.utils.logger_config as lg
-from src.othello.game_constants import PlayerColor
-from src.config.hyperparameters import Hyperparameters
+"""MCTS file containing the MCTS algorithm for running search"""
+import numpy as np
+from src.utils.mark_valid_moves import mark_valid_moves
+from src.utils.index_to_coordinates import index_to_coordinates
 from src.mcts.node import Node
-from src.neural_net.model import dummy_model_predict
-from tqdm import tqdm
-from src.neural_net.model import NeuralNetwork, dummy_model_predict
-from src.utils.dirichlet_noise import add_dirichlet_noise
+from src.neural_net.model import OthelloZeroModel
+from src.config.hyperparameters import Hyperparameters
+from src.othello.othello_game import OthelloGame
 
-model = NeuralNetwork().to(Hyperparameters.Neural_Network["device"])
-#branch
 
 class MCTS:
     """
-    Monte Carlo Tree Search (MCTS) implementation for singel core usage.
-    How To Use:
-        Simply create a MCTS object. Pass a starting node, otherwise the mcts assumes to begin
-        from an empty board aka the father of root nodes:).
+    Monte Carlo Tree Search implementation.
+
+    Attributes:
+        game (OthelloGame): The game instance for handling game-specific logic.
+        model (OthelloZeroModel): The neural network model for predicting action probabilities and values.
+        hyperparameters (Hyperparameters): Configuration parameters for the MCTS.
     """
 
-    def __init__(self, root_node=None):
+    def __init__(
+        self,
+        game: OthelloGame,
+        model: OthelloZeroModel,
+        hyperparameters: Hyperparameters,
+        root: Node = None,
+    ):
+        self.game = game
+        self.model = model
+        self.hyperparameters = hyperparameters
+        self.root = Node(prior=0, to_play=-1)
+
+    
+
+    def run(self, state: np.ndarray, to_play: int) -> Node:
         """
-        Initialize the MCTS object.
+        Executes MCTS to determine the optimal policy and value.
 
         Args:
-            root_node (Node, optional): The root node of the MCTS tree. If not provided, a new root node is created.
-        """
-        self.root_node = root_node if root_node else Node()
-
-    def get_best_move(self):
-        """
-        Method to return the best move with the corresponding child based on the highest number of visits.
+            state (np.ndarray): The initial game board state.
+            to_play (int): The current player.
 
         Returns:
-            tuple: The best move (action) and the corresponding child node.
+            Node: The updated root node after simulations.
         """
+        self.expand_root(state, to_play)
 
-        # Find the child with the highest visits using max with a key function
-        best_move, best_child = max(
-            self.root_node.children.items(), key=lambda item: item[1].visits
-        )
+        for _ in range(self.hyperparameters.MCTS["num_simulations"]):
+            search_path = self.tree_traverse(self.root)
+            value = self.expand_leaf(search_path[-1], search_path[-2])
+            self.backpropagate(search_path, value)
 
-        return best_move, best_child
+        return self.root
 
-    def search(self):
-        # TODO connect mcts with neural network
-        action_probs, _ = dummy_model_predict(self.root_node, model)
-        self.root_node.expand(action_probs)#add_dirichlet_noise(action_probs, 0.03, 0.25))
-        num_simulations = Hyperparameters.MCTS["num_simulations"]
+    def expand_root(self, state: np.ndarray, to_play: int):
+        """
+        Expands the root node with initial action probabilities.
 
-        # Run the MCTS simulations
-        for _ in range(num_simulations):
-            #print(f"Simulation {_}/{num_simulations}", end="\r")
-            node = self.root_node
-            search_path = [node]
-            moves_played = [None]  # Keep track of the nodes visited in this simulation
+        Args:
+            state (np.ndarray): The initial game board state.
+            to_play (int): The current player.
+        """
+        action_probs, _ = self.model.predict(state)
+        valid_moves = self.get_valid_moves(state, to_play)
+        action_probs = self.normalize_probs(action_probs, valid_moves)
+        self.root.expand(state, to_play, action_probs)
 
-            # Selection phase: Traverse the tree to select a node to expand
-            while node.is_expanded():
-                (
-                    action,
-                    node,
-                ) = (
-                    node.select_child()
-                )  # Select the child node with the highest UCB score
-                
-                search_path.append(node)
-                moves_played.append(action)
+    def tree_traverse(self, node: Node) -> list:
+        """
+        Traversing the tree by selecting child nodes.
 
-            # Evaluation phase: Evaluate the value of the node (either terminal or predicted)
-            value = None
-            if node.is_terminal_state():
-                value = node.board.determine_winner()  # Use winner value (-1, 0, +1)
-                if search_path[-1].board.player == PlayerColor.BLACK.value:
-                    value = -value
+        Args:
+            node (Node): The current node to start the traversing.
 
-            else:
-                action_probs, value = dummy_model_predict(node, model)
-                value = max(-1, min(1, value))  # Restrict to valid range
+        Returns:
+            list: The search path taken during tree traversing.
+        """
+        search_path = [node]
 
-                node.expand(action_probs)
+        while node.expanded():
+            _, node = node.select_child()
+            search_path.append(node)
 
-            # Backpropagation phase: Update the value and visit count of the nodes along the search path
-            for node in reversed(search_path):
+        return search_path
 
-                
-                node.value += value
+    def expand_leaf(self, leaf: Node, parent: Node) -> float:
+        """
+        Expanding a leaf node by evaluating it or determining its value.
 
-                node.visits += 1  #
+        Args:
+            leaf (Node): The leaf node to evaluate.
+            parent (Node): The parent of the leaf node.
 
-                value = -value
+        Returns:
+            float: The evaluated value of the leaf node.
+        """
+        state = parent.state
+        action_probs, value = self.model.predict(state)
+        valid_moves = self.get_valid_moves(state, parent.to_play * -1)
+        action_probs = self.normalize_probs(action_probs, valid_moves)
+        leaf.expand(state, parent.to_play * -1, action_probs)
+        return value
 
-    def show_results(self):
-        print(f"Root Node expanded {self.root_node.visits} times")
-        print(f"Root's value => {self.root_node.value}")
-        print("Stats of children's visits and values:")
-        for move, child in self.root_node.children.items():
-            print(f"    Move: {move}, Visits: {child.visits}, Value: {child.value:.1f}")
+    def get_valid_moves(self, state: np.ndarray, to_play: int) -> np.ndarray:
+        """
+        Retrieves valid moves for a given state and player.
 
-        # Log the best move based on visits
-        best_move, best_child = self.get_best_move()
-        print(
-            f"Best move chosen: {best_move}, Value of the best child: {best_child.value:.1f}"
-        )
+        Args:
+            state (np.ndarray): The board state.
+            to_play (int): The current player.
+
+        Returns:
+            np.ndarray: Flattened array of valid moves.
+        """
+        return self.game.flatten_move_coordinates(state, to_play)
+
+    def normalize_probs(
+        self, action_probs: np.ndarray, valid_moves: np.ndarray
+    ) -> np.ndarray:
+        """
+        Normalizes action probabilities based on valid moves.
+
+        Args:
+            action_probs (np.ndarray): Raw action probabilities.
+            valid_moves (np.ndarray): Valid moves for the current state.
+
+        Returns:
+            np.ndarray: Normalized probabilities.
+        """
+        action_probs = mark_valid_moves(action_probs, valid_moves)
+        return action_probs / action_probs.sum()
+
+    def backpropagate(self, search_path: list, value: float):
+        """
+        Backpropagates the evaluation value up the search path.
+
+        Args:
+            search_path (list): List of nodes in the search path.
+            value (float): The evaluation value to propagate.
+        """
+        to_play = search_path[-1].to_play
+
+        for node in reversed(search_path):
+            node.value_sum += value if node.to_play == to_play else -value
+            node.visit_count += 1
+
+def dummy_console_mcts():
+    import time
+    # Initialize hyperparameters, game, and model
+    h = Hyperparameters()
+    g = OthelloGame()
+    s = g.get_init_board()
+    current_player = -1
+    m = OthelloZeroModel(g.rows, g.get_action_size(), h.Neural_Network["device"])
+    t = []
+    # Run MCTS
+    while not g.is_terminal_state(s):
+        start_time = time.time()
+        mcts = MCTS(g, m, h)
+        r = mcts.run(s, current_player)
+        a = r.select_action(temperature=0)
+        x, y = index_to_coordinates(a)
+        s, current_player = g.get_next_state(s, current_player,x, y )
+
+        g.print_board(s)
+        print(f"Move played= {x}, {y}")
+        tn = time.time() - start_time
+        print(f"Thinking time {tn:.2f} sconds")
+        t.append(tn)
+    
+    g.print_board(s)
+    print(f"Average thinking time {sum(t)/len(t):.4f} seconds")
+
 
 
 if __name__ == "__main__":
-    mcts = MCTS()
-    num_games = 6
-    wins = 0
-    draws = 0
-    move_counter = 0
-    for _ in range(num_games):
-        while not mcts.root_node.is_terminal_state():
-            print(f"PLayer {mcts.root_node.board.player} has to move:")
-            print("Search Starting...")
-            mcts.search()
-            print("Search completed...")
-            print("Results:")
-            mcts.show_results()
-
-            best_move, child = mcts.get_best_move()
-            mcts.root_node = child
-            mcts.root_node.board.print_board()
-            print()
-            print()
-            # input()
-
-        winner = mcts.root_node.board.determine_winner()
-        if winner == 1:
-            wins += 1
-        elif winner == 0:
-            draws += 1
-
-        print(f"Game finished. Winner: {winner}")
-        # input()
-        mcts.root_node = Node()  # Reset the root node for the next game
-
-    print(f"Total wins: {wins}/{num_games}")
-    print(f"Total draws: {draws}/{num_games}")
+    
+    dummy_console_mcts()
+        

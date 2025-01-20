@@ -1,3 +1,5 @@
+from src.othello.game_constants import PASSING_MOVE
+
 def index_to_coordinates(index, board_size=8):
     """
     Converts a single number into 2D coordinates on a board of given size.
@@ -9,6 +11,8 @@ def index_to_coordinates(index, board_size=8):
     Returns:
         tuple: A tuple (row, col) representing the 2D coordinates.
     """
+    if index == -1:
+        return PASSING_MOVE, PASSING_MOVE
 
     row = index // board_size
     col = index % board_size

@@ -1,163 +1,131 @@
-from src.othello.board import Board
-from src.utils.index_to_coordinates import index_to_coordinates
-from src.neural_net.model import dummy_model_predict
-from src.config.hyperparameters import Hyperparameters
 import numpy as np
-import time
 import math
-from src.utils.print_green import print_green
 
 
-def ucb_score(
-    parent, child, exploration_weight=Hyperparameters.MCTS["exploration_weight"]
-):
+def ucb_score(parent: "Node", child: "Node") -> float:
     """
-    Computes the Upper Confidence Bound (UCB) score for a child node.
-
-    UCB = value_score + exploration_weight * prior_score
-    - value_score: The average value of the child node based on the number of visits.
-    - prior_score: The prior probability of selecting the child, scaled by parent node visits.
+    Calculates the Upper Confidence Bound (UCB) score for a given child node.
 
     Args:
-        parent (Node): The parent node.
-        child (Node): The child node.
-        exploration_weight (float): Weight factor for the exploration term.
+        parent (Node): The parent node in the tree.
+        child (Node): The child node for which the UCB score is calculated.
 
     Returns:
-        float: The UCB score for the child node.
+        float: The computed UCB score.
     """
-    prior_score = child.prior * math.sqrt(parent.visits) / (child.visits + 1)
-    value_score = child.Q_value()  # Dynamically compute the average value
-    return value_score + exploration_weight * prior_score
+    prior_score = child.prior * math.sqrt(parent.visit_count) / (child.visit_count + 1)
+    value_score = -child.value() if child.visit_count > 0 else 0
+    return value_score + prior_score
 
 
 class Node:
     """
-    Represents a state in the Monte Carlo Tree Search (MCTS).
+    Represents a single node in the MCTS tree.
 
     Attributes:
+        visit_count (int): Number of times this node has been visited.
+        to_play (int): The player whose turn it is to play at this node.
         prior (float): The prior probability of selecting this node.
-        board (Board): The current game board state.
-        children (dict): Dictionary mapping actions to child nodes.
-        value (float): Accumulated value from simulations.
-        visits (int): Number of visits to this node.
+        value_sum (float): The cumulative value of this node.
+        children (dict): Dictionary of child nodes keyed by actions.
+        state (np.ndarray): The board state associated with this node.
     """
 
-    def __init__(self, prior=Hyperparameters.Node["key_passing"], board=None):
-        """
-        Initializes a new node for MCTS.
-
-        Args:
-            prior (float): Prior probability of selecting this node.
-            board (Board, optional): Current game state. Defaults to a new `Board` instance.
-        """
+    def __init__(self, prior: float, to_play: int):
+        self.visit_count = 0
+        self.to_play = to_play
         self.prior = prior
-        self.board = board if board else Board()
+        self.value_sum = 0
         self.children = {}
-        self.value = 0
-        self.visits = 0
+        self.state = None
 
-    def expand(self, action_probs):
-        """
-        Expands the node by creating child nodes for valid moves.
-        If the current player has no valid moves, skips their turn.
-
-        Args:
-            action_probs (list[float]): Prior probabilities for each action.
-        """
-        valid_moves = self.board.valid_moves()
-
-        if not valid_moves:
-            self._expand_pass_node(action_probs)
-            return
-
-        self._expand_valid_moves(action_probs, valid_moves)
-
-    def _expand_pass_node(self, action_probs):
-        """Handles the case where the current player must pass."""
-        
-        prior = action_probs[64]
-        child_board = Board(board=self.board.board.copy(), player=self.board.player)
-        child_board.update()  # Switch to the opponent's turn
-        child = Node(
-            prior=prior, board=child_board
-        )  # Default prior for passing
-        self.children[Hyperparameters.Node["key_passing"]] = child
-        
-
-        # input("Passing node")
-
-    def _expand_valid_moves(self, action_probs, valid_moves):
-        """
-        Expands the node with valid moves.
-
-        Args:
-            action_probs (list[float]): Prior probabilities for actions.
-            valid_moves (list[tuple]): List of valid moves as (x, y) coordinates.
-        """
-        for action, prob in enumerate(action_probs):
-            if prob > 0:
-                x, y = index_to_coordinates(action)
-                if (x, y) in valid_moves:
-                    self._add_child_node(action, prob, x, y)
-
-    def _add_child_node(self, action, prob, x, y):
-        """
-        Adds a child node for a specific action.
-
-        Args:
-            action (int): Action index.
-            prob (float): Prior probability of the action.
-            x (int): X-coordinate of the move.
-            y (int): Y-coordinate of the move.
-        """
-        child_board = Board(board=np.copy(self.board.board), player=self.board.player)
-        child_board.apply_move(x, y)
-        child_board.update(x, y)
-        child = Node(prior=prob, board=child_board)
-        self.children[action] = child
-
-    def select_child(self):
-        """
-        Selects the child node with the highest UCB score.
-
-        Returns:
-            tuple: (selected_action, selected_child)
-        """
-        return max(self.children.items(), key=lambda item: ucb_score(self, item[1]))
-
-    def is_expanded(self):
+    def expanded(self) -> bool:
         """
         Checks if the node has been expanded (i.e., has children).
 
         Returns:
             bool: True if the node has children, False otherwise.
         """
-        return bool(self.children)
+        return len(self.children) > 0
 
-    def is_terminal_state(self):
+    def value(self) -> float:
         """
-        Checks if the current board state is terminal.
+        Returns the average value of the node.
 
         Returns:
-            bool: True if the state is terminal, False otherwise.
+            float: Average value, or 0 if unvisited.
         """
-        return self.board.is_terminal_state()
+        return 0 if self.visit_count == 0 else self.value_sum / self.visit_count
 
-    def Q_value(self):
+    def select_action(self, temperature: float) -> int:
         """
-        Computes the Q-value for the node as the average accumulated value over visits.
+        Selects an action based on the visit count distribution and a temperature parameter.
+
+        Args:
+            temperature (float): Determines the level of exploration (0 for greedy, inf for random).
 
         Returns:
-            float: Q-value.
+            int: The selected action.
         """
-        return self.value / max(self.visits, 1)  # Prevent division by zero
+        visit_counts = np.array([child.visit_count for child in self.children.values()])
+        actions = list(self.children.keys())
 
-    def N_value(self):
-        return self.visits
+        if temperature == 0:
+            return actions[np.argmax(visit_counts)]
+        elif temperature == float("inf"):
+            return np.random.choice(actions)
+        else:
+            # Adjust distribution based on temperature
+            visit_count_distribution = visit_counts ** (1 / temperature)
+            visit_count_distribution /= visit_count_distribution.sum()
+            return np.random.choice(actions, p=visit_count_distribution)
 
-    def V_value(self):
-        return self.value
+    def select_child(self) -> tuple:
+        """
+        Selects the child with the highest UCB score.
 
-    def __str__(self):
-        return "Node"
+        Returns:
+            tuple: The best action and the corresponding child node.
+        """
+        best_score = -np.inf
+        best_action = None
+        best_child = None
+
+        for action, child in self.children.items():
+            score = ucb_score(self, child)
+            if score > best_score:
+                best_score = score
+                best_action = action
+                best_child = child
+
+        return best_action, best_child
+
+    def expand(self, state: np.ndarray, to_play: int, action_probs: np.ndarray):
+        """
+        Expands the node by creating child nodes for each valid action.
+
+        Args:
+            state (np.ndarray): The board state at this node.
+            to_play (int): The player to play at this node.
+            action_probs (np.ndarray): The prior probabilities for each action.
+        """
+        self.to_play = to_play
+        self.state = state
+
+        if action_probs[-1] != 0:
+            # No valid moves, so the player must pass
+            self.children[-1] = Node(prior=action_probs[-1], to_play=-to_play)
+            return
+
+        for move, prob in enumerate(action_probs):
+            if prob > 0:
+                self.children[move] = Node(prior=prob, to_play=-to_play)
+
+    def __repr__(self):
+        """
+        Provides a string representation of the node for debugging purposes.
+
+        Returns:
+            str: A formatted string representing the node.
+        """
+        return f"State: {self.state} Prior: {self.prior:.2f} Count: {self.visit_count} Value: {self.value()[0]}"
