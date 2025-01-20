@@ -40,5 +40,5 @@ def logger_config(name: str, log_filename: str):
     return setup_logger(name, log_file=log_file_path)
 
 
-logger_board = logger_config("Logger_board", "logger_board.log")
+logger_othello_game = logger_config("Logger_Othello_Game", "logger_Othello_Game.log")
 logger_mcts = logger_config("Logger_MCTS", "logger_MCTS.log")
