@@ -18,6 +18,11 @@ class OthelloGame:
         self.rows = rows
         self.columns = cols
 
+        lg.logger_othello_game.info("%s - Object created", self.__repr__())
+
+    def __repr__(self):
+        return f"Name: {OthelloGame.__name__}, attr: rows={self.rows}, cols={self.columns}"
+
     def get_init_board(self):
         """
         Creates the initial board setup for Othello.
@@ -49,7 +54,7 @@ class OthelloGame:
         Returns:
             int: Total number of cells (rows * columns).
         """
-        return (self.rows * self.columns) + 1
+        return (self.rows * self.columns) + 1 # adding 1 vor a passing move
 
     def get_next_state(self, state, player, x_pos, y_pos):
         """
@@ -64,11 +69,20 @@ class OthelloGame:
         Returns:
             tuple: (updated board, next player)
         """
+        # watch out to create a copy of the state
+        # if the move isn't a passing move, place the player sign at the corresponding position
+        #   and flip the stones
+        # otherwise just directly return the next state with the  switched player
+
+        lg.logger_othello_game.info("Current State:\n%s", self.print_board(state))
+
         next_state = np.copy(state)
         if (x_pos != const.PASSING_MOVE or y_pos != const.PASSING_MOVE):
             next_state[x_pos, y_pos] = player
             stones_to_flip = self._find_stones_to_flip(state, player, x_pos, y_pos)
             self._flip_stones(next_state, player, stones_to_flip)
+        
+        lg.logger_othello_game.info("Next State:\n%s", self.print_board(next_state))
         return next_state, -player
 
     def _find_stones_to_flip(self, state, player, x_pos, y_pos):
@@ -245,15 +259,18 @@ class OthelloGame:
             return const.PlayerColor.WHITE.value
         return 0
 
-    def print_board(self, state):
+    def print_board(self, state, to_cosole=True):
         """
-        Displays the current board state.
+        Generates a string representation of the current board state.
 
         Args:
             state (np.ndarray): Current board state.
+
+        Returns:
+            str: A string representation of the board state.
         """
-        print("\n    " + "  ".join(map(str, range(self.columns))))
-        print("   " + "-" * (3 * self.columns))
+        board_str = "\n    " + "  ".join(map(str, range(self.columns))) + "\n"
+        board_str += "   " + "-" * (3 * self.columns) + "\n"
         for row_idx, row in enumerate(state):
             row_str = f"{row_idx} | " + "  ".join(
                 "B"
@@ -263,7 +280,11 @@ class OthelloGame:
                 else "."
                 for cell in row
             )
-            print(row_str)
+            board_str += row_str + "\n"
+        if to_cosole:
+            print(board_str)
+        return board_str
+
 
     def play_random_move(self, state, player):
         """
