@@ -3,8 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
-class OthelloZeroModel(nn.Module):
 
+class OthelloZeroModel(nn.Module):
     def __init__(self, board_size, action_size, device):
         super(OthelloZeroModel, self).__init__()
 
@@ -13,7 +13,9 @@ class OthelloZeroModel(nn.Module):
         self.action_size = action_size
 
         # Hier verwenden wir die 64 Eingabefelder für das 8x8-Board
-        self.fc1 = nn.Linear(in_features=self.board_size * self.board_size, out_features=64)
+        self.fc1 = nn.Linear(
+            in_features=self.board_size * self.board_size, out_features=64
+        )
         self.fc2 = nn.Linear(in_features=64, out_features=64)
 
         # Zwei Ausgabeköpfe: einer für Aktionen und einer für den Wert
@@ -36,7 +38,9 @@ class OthelloZeroModel(nn.Module):
     def predict(self, board):
         # board ist nun ein 8x8 2D-Array, daher müssen wir es zuerst in ein 1D-Array umwandeln
         board = torch.FloatTensor(board.astype(np.float32)).to(self.device)
-        board = board.view(1, self.board_size * self.board_size)  # Umwandlung zu 1D (64)
+        board = board.view(
+            1, self.board_size * self.board_size
+        )  # Umwandlung zu 1D (64)
         self.eval()
         with torch.no_grad():
             pi, v = self.forward(board)
@@ -45,9 +49,10 @@ class OthelloZeroModel(nn.Module):
 
 
 if __name__ == "__main__":
-
     # Beispiel: Vorhersage eines Modells für das Othello-Spiel
-    model = OthelloZeroModel(board_size=8, action_size=64, device='cuda')  # Beispielgerät: 'cuda'
+    model = OthelloZeroModel(
+        board_size=8, action_size=64, device="cuda"
+    )  # Beispielgerät: 'cuda'
     board = np.zeros((8, 8))  # Ein leeres 8x8-Board als Beispiel
     board[3, 3] = 1  # Ein paar Zellen befüllen, z.B. für Othello
 

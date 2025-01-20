@@ -21,6 +21,7 @@ class PlayerColor(Enum):
 # Constant for empty fields (no player assigned to this position)
 EMPTY_CELL = 0
 EMPTY_BOARD = np.zeros((8, 8))
+PASSING_MOVE = -1
 
 # Placing the starting peaces
 EMPTY_BOARD[3][4] = PlayerColor.BLACK.value

@@ -13,7 +13,12 @@ class Hyperparameters:
         - Neural_Network with keys ["device"]
         - Node with keys ["key_passsing, prior_passing]"""
 
-    MCTS = {"num_simulations": 500, "exploration_weight": 1.0, "temperature_turn_threshold": 1, "temperature": 1}
+    MCTS = {
+        "num_simulations": 1400,
+        "exploration_weight": 1.0,
+        "temperature_turn_threshold": 1,
+        "temperature": 1,
+    }
 
     Neural_Network = {
         "device": torch.device("cuda" if torch.cuda.is_available() else "cpu")
