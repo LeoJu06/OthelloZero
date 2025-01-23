@@ -22,12 +22,11 @@ class MCTS:
         self,
         game: OthelloGame,
         model: OthelloZeroModel,
-        hyperparameters: Hyperparameters,
         root: Node = None,
     ):
         self.game = game
         self.model = model
-        self.hyperparameters = hyperparameters
+        self.hyperparameters = Hyperparameters()
         self.root = Node(prior=0, to_play=-1)
 
     
@@ -46,8 +45,9 @@ class MCTS:
         self.expand_root(state, to_play)
 
         for _ in range(self.hyperparameters.MCTS["num_simulations"]):
-            search_path = self.tree_traverse(self.root)
-            value = self.expand_leaf(search_path[-1], search_path[-2])
+            search_path, action_path = self.tree_traverse(self.root)
+           # print(f"Iter {_}, len of path taken = {len(search_path)}")
+            value = self.expand_leaf(search_path[-1], search_path[-2], action_path[-1])
             self.backpropagate(search_path, value)
 
         return self.root
@@ -60,6 +60,9 @@ class MCTS:
             state (np.ndarray): The initial game board state.
             to_play (int): The current player.
         """
+        self.root.state = state
+        self.root.to_play = to_play
+
         action_probs, _ = self.model.predict(state)
         valid_moves = self.get_valid_moves(state, to_play)
         action_probs = self.normalize_probs(action_probs, valid_moves)
@@ -73,17 +76,20 @@ class MCTS:
             node (Node): The current node to start the traversing.
 
         Returns:
-            list: The search path taken during tree traversing.
+            list: The search path taken during tree traversing and the latest action.
         """
         search_path = [node]
+        action_path = []
 
         while node.expanded():
-            _, node = node.select_child()
+            action, node = node.select_child()
+            
             search_path.append(node)
+            action_path.append(action)
 
-        return search_path
+        return search_path, action_path
 
-    def expand_leaf(self, leaf: Node, parent: Node) -> float:
+    def expand_leaf(self, leaf: Node, parent: Node, action) -> float:
         """
         Expanding a leaf node by evaluating it or determining its value.
 
@@ -95,10 +101,21 @@ class MCTS:
             float: The evaluated value of the leaf node.
         """
         state = parent.state
-        action_probs, value = self.model.predict(state)
-        valid_moves = self.get_valid_moves(state, parent.to_play * -1)
-        action_probs = self.normalize_probs(action_probs, valid_moves)
-        leaf.expand(state, parent.to_play * -1, action_probs)
+        
+        parent_player = parent.to_play
+        leaf_player = parent_player * -1
+
+        (x, y) = index_to_coordinates(action)       
+        next_state, _   = self.game.get_next_state(state, parent_player, x, y)       
+        value = self.game.get_reward_for_player(next_state, leaf_player)
+
+        if value is None:
+            next_state_canonical = self.game.get_canonical_board(next_state, player=leaf_player)
+            action_probs, value = self.model.predict(next_state_canonical)
+            valid_moves = self.get_valid_moves(next_state, leaf_player)
+            action_probs = self.normalize_probs(action_probs, valid_moves)
+            leaf.expand(next_state, leaf_player, action_probs)
+
         return value
 
     def get_valid_moves(self, state: np.ndarray, to_play: int) -> np.ndarray:
@@ -150,13 +167,24 @@ def dummy_console_mcts():
     h = Hyperparameters()
     g = OthelloGame()
     s = g.get_init_board()
+    s = np.array(
+    [
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, -1, 0, 0, 0, 0],
+    [0, 0, -1, 1, -1, -1, 0, 0],
+    [0, 0, 0, -1, 0, 0, 0, 0],
+    [0, 0, 0, -1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    ])
     current_player = -1
     m = OthelloZeroModel(g.rows, g.get_action_size(), h.Neural_Network["device"])
     t = []
     # Run MCTS
     while not g.is_terminal_state(s):
         start_time = time.time()
-        mcts = MCTS(g, m, h)
+        mcts = MCTS(g, m)
         r = mcts.run(s, current_player)
         a = r.select_action(temperature=0)
         x, y = index_to_coordinates(a)
@@ -174,6 +202,8 @@ def dummy_console_mcts():
 
 
 if __name__ == "__main__":
+
+    
     
     dummy_console_mcts()
         
