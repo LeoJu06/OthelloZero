@@ -74,7 +74,7 @@ class OthelloGame:
         #   and flip the stones
         # otherwise just directly return the next state with the  switched player
 
-        lg.logger_othello_game.info("Current State:\n%s", self.print_board(state))
+        lg.logger_othello_game.info("Current State:\n%s", self.print_board(state, to_cosole=False))
 
         next_state = np.copy(state)
         if (x_pos != const.PASSING_MOVE or y_pos != const.PASSING_MOVE):
@@ -82,7 +82,7 @@ class OthelloGame:
             stones_to_flip = self._find_stones_to_flip(state, player, x_pos, y_pos)
             self._flip_stones(next_state, player, stones_to_flip)
         
-        lg.logger_othello_game.info("Next State:\n%s", self.print_board(next_state))
+        lg.logger_othello_game.info("Next State:\n%s", self.print_board(next_state, to_cosole=False))
         return next_state, -player
 
     def _find_stones_to_flip(self, state, player, x_pos, y_pos):
@@ -149,6 +149,7 @@ class OthelloGame:
         Returns:
             list: List of (row, column) positions for empty cells.
         """
+       
         return [
             (x, y)
             for x in range(self.rows)
@@ -212,9 +213,11 @@ class OthelloGame:
         return flattened_board
 
     def get_canonical_board(self, state, player):
-        return player * state
+        return (player * state)
 
     def get_reward_for_player(self, state, player):
+
+       
         if any(self.get_valid_moves(state, player)):
             return None
 
