@@ -55,7 +55,7 @@ class Node:
         Returns:
             float: Average value, or 0 if unvisited.
         """
-        return 0 if self.visit_count == 0 else self.value_sum / self.visit_count
+        return 0 if self.visit_count == 0 else float(self.value_sum / self.visit_count)
 
     def select_action(self, temperature: float) -> int:
         """
@@ -119,7 +119,9 @@ class Node:
 
         for move, prob in enumerate(action_probs):
             if prob > 0:
+                
                 self.children[move] = Node(prior=prob, to_play=-to_play)
+                
 
     def __repr__(self):
         """
@@ -128,4 +130,4 @@ class Node:
         Returns:
             str: A formatted string representing the node.
         """
-        return f"State: {self.state} Prior: {self.prior:.2f} Count: {self.visit_count} Value: {self.value()[0]}"
+        return f"State: {self.state} Prior: {self.prior:.2f} Count: {self.visit_count} Value: {self.value()}"
