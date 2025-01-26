@@ -61,14 +61,14 @@ class MCTS:
 
         return self.root
 
-    def expand_root(self, state: np.ndarray, to_play: int, add_dirichlet_noise: bool = False):
+    def expand_root(self, state: np.ndarray, to_play: int, add_dirichlet_noise: bool):
         """
         Expands the root node with initial action probabilities.
 
         Args:
             state (np.ndarray): The initial game board state.
             to_play (int): The current player.
-            add_dirichlet_noise (bool): Whether to add Dirichlet noise for exploration. Defaults to False.
+            add_dirichlet_noise (bool): Whether to add Dirichlet noise for exploration.
         """
         self.root.state = state
         self.root.to_play = to_play
