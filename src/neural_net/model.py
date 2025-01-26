@@ -25,27 +25,46 @@ class OthelloZeroModel(nn.Module):
         self.to(device)
 
     def forward(self, x):
-        # Eingabe 'x' ist 8x8, aber wir müssen es flach machen (64 Elemente)
-        x = x.view(-1, self.board_size * self.board_size)  # Umwandlung von 8x8 zu 64
+        # Wenn Eingabe ein 2D-Board ist, sicherstellen, dass es 3D wird (Batch-Dimension hinzufügen)
+        if len(x.shape) == 2:  # Einzelnes Board
+            x = x.view(1, -1)  # Hinzufügen einer Batch-Dimension (1, 64)
+        else:  # Batch von Boards
+            x = x.view(x.size(0), -1)  # Batch-Größe bleibt gleich, flach machen
+
+        # Forward-Pass
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
 
         action_logits = self.action_head(x)
         value_logit = self.value_head(x)
 
+        # Softmax für Aktionen, Tanh für den Wert
         return F.softmax(action_logits, dim=1), torch.tanh(value_logit)
 
+
     def predict(self, board):
-        # board ist nun ein 8x8 2D-Array, daher müssen wir es zuerst in ein 1D-Array umwandeln
+        """
+        Macht Vorhersagen für ein einzelnes Board oder ein Batch von Boards.
+
+        Args:
+            board (np.ndarray): 8x8 Board (einzeln) oder Batch von Boards (N, 8, 8).
+
+        Returns:
+            Tuple[np.ndarray, np.ndarray]: Aktionswahrscheinlichkeiten und Werte.
+        """
+        # Konvertiere zu Tensor und prüfe Batch-Dimension
         board = torch.FloatTensor(board.astype(np.float32)).to(self.device)
-        board = board.view(
-            1, self.board_size * self.board_size
-        )  # Umwandlung zu 1D (64)
+
+        if len(board.shape) == 2:  # Einzelzustand (8x8)
+            board = board.unsqueeze(0)  # Hinzufügen der Batch-Dimension (1, 8, 8)
+
+        # Forward-Pass im Auswertungsmodus
         self.eval()
         with torch.no_grad():
             pi, v = self.forward(board)
 
-        return pi.data.cpu().numpy()[0], v.data.cpu().numpy()[0]
+        return pi.data.cpu().numpy(), v.data.cpu().numpy()
+
 
 
 if __name__ == "__main__":
