@@ -2,6 +2,7 @@
 import numpy as np
 from src.utils.mark_valid_moves import mark_valid_moves
 from src.utils.index_to_coordinates import index_to_coordinates
+from src.utils.dirichlet_noise import dirichlet_noise
 from src.mcts.node import Node
 from src.neural_net.model import OthelloZeroModel
 from src.config.hyperparameters import Hyperparameters
@@ -28,10 +29,11 @@ class MCTS:
         self.model = model
         self.hyperparameters = Hyperparameters()
         self.root = Node(prior=0, to_play=-1)
+      
 
     
 
-    def run(self, state: np.ndarray, to_play: int) -> Node:
+    def run(self, state: np.ndarray, to_play: int, add_dirichlet_noise:bool=True) -> Node:
         """
         Executes MCTS to determine the optimal policy and value.
 
@@ -42,7 +44,7 @@ class MCTS:
         Returns:
             Node: The updated root node after simulations.
         """
-        self.expand_root(state, to_play)
+        self.expand_root(state, to_play, add_dirichlet_noise)
 
         for _ in range(self.hyperparameters.MCTS["num_simulations"]):
             search_path, action_path = self.tree_traverse(self.root)
@@ -52,7 +54,7 @@ class MCTS:
 
         return self.root
 
-    def expand_root(self, state: np.ndarray, to_play: int):
+    def expand_root(self, state: np.ndarray, to_play: int, add_dirichlet_noise:bool=False):
         """
         Expands the root node with initial action probabilities.
 
@@ -63,7 +65,13 @@ class MCTS:
         self.root.state = state
         self.root.to_play = to_play
 
-        action_probs, _ = self.model.predict(state)
+        canonical_state = self.game.get_canonical_board(self.root.state, self.root.to_play)
+        action_probs, _ = self.model.predict(canonical_state)
+
+        if add_dirichlet_noise:
+
+            action_probs = dirichlet_noise(action_probs)
+
         valid_moves = self.get_valid_moves(state, to_play)
         action_probs = self.normalize_probs(action_probs, valid_moves)
         self.root.expand(state, to_play, action_probs)
@@ -167,17 +175,6 @@ def dummy_console_mcts():
     h = Hyperparameters()
     g = OthelloGame()
     s = g.get_init_board()
-    s = np.array(
-    [
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, -1, 0, 0, 0, 0],
-    [0, 0, -1, 1, -1, -1, 0, 0],
-    [0, 0, 0, -1, 0, 0, 0, 0],
-    [0, 0, 0, -1, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    ])
     current_player = -1
     m = OthelloZeroModel(g.rows, g.get_action_size(), h.Neural_Network["device"])
     t = []
