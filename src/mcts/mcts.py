@@ -25,101 +25,114 @@ class MCTS:
         model: OthelloZeroModel,
         root: Node = None,
     ):
+        """
+        Initializes the MCTS instance with the game, model, and optional root node.
+
+        Args:
+            game (OthelloGame): Instance of the game being played.
+            model (OthelloZeroModel): Neural network model for predictions.
+            root (Node, optional): Root node for the MCTS tree. Defaults to None.
+        """
         self.game = game
         self.model = model
         self.hyperparameters = Hyperparameters()
-        self.root = Node(prior=0, to_play=-1)
-      
+        self.root = Node(prior=0, to_play=-1)  # Initialize root with default values.
 
-    
-
-    def run(self, state: np.ndarray, to_play: int, add_dirichlet_noise:bool=True) -> Node:
+    def run(self, state: np.ndarray, to_play: int, add_dirichlet_noise: bool = True) -> Node:
         """
         Executes MCTS to determine the optimal policy and value.
 
         Args:
             state (np.ndarray): The initial game board state.
             to_play (int): The current player.
+            add_dirichlet_noise (bool): Whether to add Dirichlet noise for exploration. Defaults to True.
 
         Returns:
             Node: The updated root node after simulations.
         """
+        # Expand the root node with initial probabilities.
         self.expand_root(state, to_play, add_dirichlet_noise)
 
+        # Perform a series of simulations.
         for _ in range(self.hyperparameters.MCTS["num_simulations"]):
-            search_path, action_path = self.tree_traverse(self.root)
-           # print(f"Iter {_}, len of path taken = {len(search_path)}")
-            value = self.expand_leaf(search_path[-1], search_path[-2], action_path[-1])
-            self.backpropagate(search_path, value)
+            search_path, action_path = self.tree_traverse(self.root)  # Traverse tree to a leaf.
+            value = self.expand_leaf(search_path[-1], search_path[-2], action_path[-1])  # Expand the leaf.
+            self.backpropagate(search_path, value)  # Backpropagate the evaluation value.
 
         return self.root
 
-    def expand_root(self, state: np.ndarray, to_play: int, add_dirichlet_noise:bool=False):
+    def expand_root(self, state: np.ndarray, to_play: int, add_dirichlet_noise: bool = False):
         """
         Expands the root node with initial action probabilities.
 
         Args:
             state (np.ndarray): The initial game board state.
             to_play (int): The current player.
+            add_dirichlet_noise (bool): Whether to add Dirichlet noise for exploration. Defaults to False.
         """
         self.root.state = state
         self.root.to_play = to_play
 
+        # Convert the board to canonical form relative to the current player.
         canonical_state = self.game.get_canonical_board(self.root.state, self.root.to_play)
         action_probs, _ = self.model.predict(canonical_state)
 
         if add_dirichlet_noise:
-
+            # Add Dirichlet noise to encourage exploration.
             action_probs = dirichlet_noise(action_probs)
 
-        valid_moves = self.get_valid_moves(state, to_play)
-        action_probs = self.normalize_probs(action_probs, valid_moves)
-        self.root.expand(state, to_play, action_probs)
+        valid_moves = self.get_valid_moves(state, to_play)  # Get valid moves for the current state.
+        action_probs = self.normalize_probs(action_probs, valid_moves)  # Normalize probabilities based on valid moves.
+        self.root.expand(state, to_play, action_probs)  # Expand the root node with action probabilities.
 
     def tree_traverse(self, node: Node) -> list:
         """
-        Traversing the tree by selecting child nodes.
+        Traverses the tree by selecting child nodes based on the highest action score.
 
         Args:
-            node (Node): The current node to start the traversing.
+            node (Node): The current node to start traversing from.
 
         Returns:
-            list: The search path taken during tree traversing and the latest action.
+            list: The search path and the corresponding actions taken during traversal.
         """
         search_path = [node]
         action_path = []
 
         while node.expanded():
+            # Select the best child node and corresponding action.
             action, node = node.select_child()
-            
             search_path.append(node)
             action_path.append(action)
 
         return search_path, action_path
 
-    def expand_leaf(self, leaf: Node, parent: Node, action) -> float:
+    def expand_leaf(self, leaf: Node, parent: Node, action: int) -> float:
         """
-        Expanding a leaf node by evaluating it or determining its value.
+        Expands a leaf node by evaluating it or determining its value.
 
         Args:
             leaf (Node): The leaf node to evaluate.
             parent (Node): The parent of the leaf node.
+            action (int): The action leading to the leaf node.
 
         Returns:
             float: The evaluated value of the leaf node.
         """
         state = parent.state
-        
         parent_player = parent.to_play
         leaf_player = parent_player * -1
 
-        (x, y) = index_to_coordinates(action)       
-        next_state, _   = self.game.get_next_state(state, parent_player, x, y)       
+        # Get the next state based on the action taken.
+        (x, y) = index_to_coordinates(action)
+        next_state, _ = self.game.get_next_state(state, parent_player, x, y)
         value = self.game.get_reward_for_player(next_state, leaf_player)
 
         if value is None:
+            # Predict value and action probabilities for the next state.
             next_state_canonical = self.game.get_canonical_board(next_state, player=leaf_player)
             action_probs, value = self.model.predict(next_state_canonical)
+
+            # Filter probabilities by valid moves and expand the leaf node.
             valid_moves = self.get_valid_moves(next_state, leaf_player)
             action_probs = self.normalize_probs(action_probs, valid_moves)
             leaf.expand(next_state, leaf_player, action_probs)
@@ -139,9 +152,7 @@ class MCTS:
         """
         return self.game.flatten_move_coordinates(state, to_play)
 
-    def normalize_probs(
-        self, action_probs: np.ndarray, valid_moves: np.ndarray
-    ) -> np.ndarray:
+    def normalize_probs(self, action_probs: np.ndarray, valid_moves: np.ndarray) -> np.ndarray:
         """
         Normalizes action probabilities based on valid moves.
 
@@ -166,10 +177,15 @@ class MCTS:
         to_play = search_path[-1].to_play
 
         for node in reversed(search_path):
+            # Update value sum and visit count for each node.
             node.value_sum += value if node.to_play == to_play else -value
             node.visit_count += 1
 
+
 def dummy_console_mcts():
+    """
+    Runs a dummy MCTS example using the console for testing.
+    """
     import time
     # Initialize hyperparameters, game, and model
     h = Hyperparameters()
@@ -178,29 +194,25 @@ def dummy_console_mcts():
     current_player = -1
     m = OthelloZeroModel(g.rows, g.get_action_size(), h.Neural_Network["device"])
     t = []
-    # Run MCTS
+
+    # Run MCTS loop until the game reaches a terminal state.
     while not g.is_terminal_state(s):
         start_time = time.time()
         mcts = MCTS(g, m)
         r = mcts.run(s, current_player)
         a = r.select_action(temperature=0)
         x, y = index_to_coordinates(a)
-        s, current_player = g.get_next_state(s, current_player,x, y )
+        s, current_player = g.get_next_state(s, current_player, x, y)
 
-        g.print_board(s)
+        g.print_board(s)  # Display the current board.
         print(f"Move played= {x}, {y}")
         tn = time.time() - start_time
-        print(f"Thinking time {tn:.2f} sconds")
+        print(f"Thinking time {tn:.2f} seconds")
         t.append(tn)
-    
-    g.print_board(s)
+
+    g.print_board(s)  # Display final board state.
     print(f"Average thinking time {sum(t)/len(t):.4f} seconds")
 
 
-
 if __name__ == "__main__":
-
-    
-    
     dummy_console_mcts()
-        

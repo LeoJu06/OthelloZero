@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def add_dirichlet_noise(priors, alpha, epsilon):
+def dirichlet_noise(priors, alpha=0.03, epsilon=0.25):
     """
     Adds Dirichlet noise to the prior probabilities to encourage exploration.
 
