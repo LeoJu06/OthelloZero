@@ -1,4 +1,5 @@
 """MCTS file containing the MCTS algorithm for running search"""
+import time
 import numpy as np
 from src.utils.mark_valid_moves import mark_valid_moves
 from src.utils.index_to_coordinates import index_to_coordinates
@@ -80,9 +81,12 @@ class MCTS:
         if add_dirichlet_noise:
             # Add Dirichlet noise to encourage exploration.
             action_probs = dirichlet_noise(action_probs)
+        
 
         valid_moves = self.get_valid_moves(state, to_play)  # Get valid moves for the current state.
+        
         action_probs = self.normalize_probs(action_probs, valid_moves)  # Normalize probabilities based on valid moves.
+        
         self.root.expand(state, to_play, action_probs)  # Expand the root node with action probabilities.
 
     def tree_traverse(self, node: Node) -> list:
@@ -130,7 +134,10 @@ class MCTS:
         if value is None:
             # Predict value and action probabilities for the next state.
             next_state_canonical = self.game.get_canonical_board(next_state, player=leaf_player)
+            
+            start = time.time()
             action_probs, value = self.model.predict(next_state_canonical)
+            #print(f"MCTS waited {time.time()-start:4f} seconds for a response")
 
             # Filter probabilities by valid moves and expand the leaf node.
             valid_moves = self.get_valid_moves(next_state, leaf_player)
@@ -212,6 +219,7 @@ def dummy_console_mcts():
 
     g.print_board(s)  # Display final board state.
     print(f"Average thinking time {sum(t)/len(t):.4f} seconds")
+    print(f"Total lenght of game = {sum(t):2f} seconds")
 
 
 if __name__ == "__main__":
