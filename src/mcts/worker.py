@@ -8,31 +8,32 @@ from src.config.hyperparameters import Hyperparameters
 from src.utils.dirichlet_noise import dirichlet_noise
 from src.utils.index_to_coordinates import index_to_coordinates
 
-
 class Worker(MCTS):
-    def __init__(self, worker_id:int, request_queue:mp.Queue, response_queue:mp.Queue):
+    def __init__(self, worker_id, request_queue, response_queue, shared_array):
         super().__init__(game=OthelloGame(), model=None, root=None)
-
         self.worker_id = worker_id
         self.request_queue = request_queue
         self.response_queue = response_queue
+        self.shared_array = shared_array  # Zugriff auf den Shared Memory
 
-    
     def request_manager(self, state):
+        # Schreibe den Zustand des Spiels in den Shared Memory
+        self.shared_array[self.worker_id] = state
 
-        self.request_queue.put((self.worker_id, state))
+        # Sende den Index des Zustands an den Manager
+        self.request_queue.put((self.worker_id, self.worker_id))
+
+        # Warte auf die Antwort vom Manager
         while True:
-            
             try:
-                response = self.response_queue.get_nowait()
-                if response["worker_id"] == self.worker_id:  # Check worker ID
-                    action_probs, value = response["policy"], response["value"]
-                    break
+                response = self.response_queue.get(timeout=0.01)
+                if response["worker_id"] == self.worker_id:
+                    return response["policy"], response["value"]
             except mp.queues.Empty:
-                time.sleep(0.01)  # Avoid busy-waiting
-        
+                continue
 
-        return action_probs, value
+
+
 
     
     def expand_root(self, state: np.ndarray, to_play: int, add_dirichlet_noise: bool):
