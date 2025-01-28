@@ -3,6 +3,7 @@ import time
 from src.neural_net.model import OthelloZeroModel
 from src.othello.othello_game import OthelloGame
 from src.config.hyperparameters import Hyperparameters
+from tqdm import tqdm
 from src.mcts.worker import Worker
 import multiprocessing as mp
 import cProfile
@@ -20,7 +21,7 @@ class Manager:
         self.shared_memory = SharedMemory(create=True, size=np.prod(state_shape) * 23 * np.float64().nbytes)
         self.shared_array = np.ndarray((23, *state_shape), dtype=np.float64, buffer=self.shared_memory.buf)
 
-    def manage_workers(self, request_queue: mp.Queue, response_queues, batch_size=23, timeout=0.001):
+    def manage_workers(self, request_queue: mp.Queue, response_queues, batch_size=20, timeout=0.001):
         while True:
             batch_indices, worker_ids = [], []
             start_time = time.time()
@@ -39,6 +40,8 @@ class Manager:
             if batch_indices:
                 batch_states = self.shared_array[batch_indices]  # Hole die Zustände aus Shared Memory
                 policies, values = self.model.predict_batch(batch_states)
+
+                print(f"Manager is processing {len(batch_states)}", end="\r")
                 
                 # Ergebnisse zurück an die Worker senden
                 for worker_id, policy, value in zip(worker_ids, policies, values):
@@ -74,14 +77,17 @@ def worker_process_function(worker_id, request_queue, response_queue, shared_mem
     worker_mcts = Worker(worker_id=worker_id, request_queue=request_queue, response_queue=response_queue, shared_array=shared_array)
 
     # Initialen Spielzustand abrufen und zuweisen
-    state = np.copy(shared_array[worker_id])  # Jeder Worker hat seinen Index im Shared Memory
+    #state = np.copy(shared_array[worker_id])  # Jeder Worker hat seinen Index im Shared Memory
+    state = OthelloGame().get_init_board()
     to_play = -1  # Beispiel: Spieler -1 beginnt
 
     start = time.time()
     # MCTS-Algorithmus ausführen
-    for i in range(1):
+    for i in tqdm(range(60)):
         worker_mcts.run(state, to_play)
-    print(f"time needed for processing = {time.time() - start} seconds")
+    print(f"__WORKER__ = {worker_id}")
+    print(f"time needed for {i+1} runs = {time.time() - start:4f} seconds")
+    print(f"This leeds to an average time per turn of {(time.time()-start)/(i+1):3f}")
         
 
     # Cleanup (optional)
@@ -103,7 +109,7 @@ def main():
     manager = Manager(model=model, state_shape=state_shape)
     mp.set_start_method("spawn")
 
-    num_workers = 20
+    num_workers = 23
     print(f"Num Workers are calculated by int(num_cores*0.85) => {num_workers}")
 
     request_queue = mp.Queue()
