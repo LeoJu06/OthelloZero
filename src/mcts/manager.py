@@ -21,7 +21,7 @@ class Manager:
         self.shared_memory = SharedMemory(create=True, size=np.prod(state_shape) * 23 * np.float64().nbytes)
         self.shared_array = np.ndarray((23, *state_shape), dtype=np.float64, buffer=self.shared_memory.buf)
 
-    def manage_workers(self, request_queue: mp.Queue, response_queues, batch_size=20, timeout=0.001):
+    def manage_workers(self, request_queue: mp.Queue, response_queues, batch_size=23, timeout=0.001):
         while True:
             batch_indices, worker_ids = [], []
             start_time = time.time()
@@ -83,7 +83,7 @@ def worker_process_function(worker_id, request_queue, response_queue, shared_mem
 
     start = time.time()
     # MCTS-Algorithmus ausführen
-    for i in tqdm(range(60)):
+    for i in tqdm(range(20)):
         worker_mcts.run(state, to_play)
     print(f"__WORKER__ = {worker_id}")
     print(f"time needed for {i+1} runs = {time.time() - start:4f} seconds")
@@ -152,5 +152,5 @@ def main():
 
 if __name__ == "__main__":
 
-    #cProfile.run("main()", sort="time")
-    main()
+    cProfile.run("main()", sort="time")
+    #main()
