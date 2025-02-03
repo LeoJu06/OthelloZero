@@ -189,23 +189,25 @@ class MCTS:
             node.visit_count += 1
 
 
-def dummy_console_mcts():
+def dummy_console_mcts(args):
     """
     Runs a dummy MCTS example using the console for testing.
     """
+    model, process_id = args
+    print(f"Process {process_id}: Model memory address = {id(model)}")
     import time
     # Initialize hyperparameters, game, and model
-    h = Hyperparameters()
+
     g = OthelloGame()
     s = g.get_init_board()
     current_player = -1
-    m = OthelloZeroModel(g.rows, g.get_action_size(), h.Neural_Network["device"])
+ 
     t = []
 
     # Run MCTS loop until the game reaches a terminal state.
     while not g.is_terminal_state(s):
         start_time = time.time()
-        mcts = MCTS(g, m)
+        mcts = MCTS(g, model)
         r = mcts.run(s, current_player)
         a = r.select_action(temperature=0)
         x, y = index_to_coordinates(a)
@@ -216,11 +218,37 @@ def dummy_console_mcts():
         tn = time.time() - start_time
         print(f"Thinking time {tn:.2f} seconds")
         t.append(tn)
-
-    g.print_board(s)  # Display final board state.
+        
+    
+       
+   # g.print_board(s)  # Display final board state.
     print(f"Average thinking time {sum(t)/len(t):.4f} seconds")
     print(f"Total lenght of game = {sum(t):2f} seconds")
 
+    return mcts.root.visit_count
+
+
+
+
+
 
 if __name__ == "__main__":
-    dummy_console_mcts()
+    import multiprocessing
+    import torch.multiprocessing as tmp
+    num_processes = 4  # Anzahl der parallelen MCTS-Instanzen
+    h = Hyperparameters()
+    g = OthelloGame()
+    s = g.get_init_board()
+    current_player = -1
+    
+    tmp.set_start_method("spawn", force=True)
+
+    model = OthelloZeroModel(g.rows, g.get_action_size(), h.Neural_Network["device"])
+    model.eval()
+    model.share_memory()
+    args_list = [(model, i) for i in range(num_processes)]
+    with multiprocessing.Pool(num_processes) as pool:
+        result = pool.map(dummy_console_mcts, args_list)
+    
+    print(result)
+
