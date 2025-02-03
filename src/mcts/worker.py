@@ -2,11 +2,13 @@ import time
 import numpy as np
 from src.mcts.mcts import MCTS
 from src.mcts.node import Node
+import torch
 import multiprocessing as mp
 from src.othello.othello_game import OthelloGame
 from src.config.hyperparameters import Hyperparameters
 from src.utils.dirichlet_noise import dirichlet_noise
 from src.utils.index_to_coordinates import index_to_coordinates
+import queue
 
 class Worker(MCTS):
     def __init__(self, worker_id, request_queue, response_queue, shared_array):
@@ -18,7 +20,8 @@ class Worker(MCTS):
 
     def request_manager(self, state):
         # Schreibe den Zustand des Spiels in den Shared Memory
-        self.shared_array[self.worker_id] = state
+        self.shared_array[self.worker_id] = torch.tensor(state, dtype=torch.float32)
+        
 
         # Sende den Index des Zustands an den Manager
         self.request_queue.put((self.worker_id, self.worker_id))
@@ -26,10 +29,11 @@ class Worker(MCTS):
         # Warte auf die Antwort vom Manager
         while True:
             try:
-                response = self.response_queue.get(timeout=0.01)
+                response = self.response_queue.get(timeout=0.001)
                 if response["worker_id"] == self.worker_id:
                     return response["policy"], response["value"]
-            except mp.queues.Empty:
+            except queue.Empty:
+  
                 continue
 
 
