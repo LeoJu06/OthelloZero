@@ -69,7 +69,7 @@ class OthelloZeroModel(nn.Module):
             Tuple[np.ndarray, np.ndarray]: Action probabilities and values for the batch.
         """
         # Convert to tensor
-        boards = torch.FloatTensor(boards.astype(np.float32)).to(self.device)
+        boards = boards.to(self.device)
 
         # Forward pass in evaluation mode
         self.eval()
