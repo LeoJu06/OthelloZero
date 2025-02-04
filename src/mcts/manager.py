@@ -15,64 +15,70 @@ class Manager:
         self.state_shape = state_shape
         self.num_workers = num_workers
 
-        # Create shared memory for game states using PyTorch
+        # Shared memory for game states
         self.shared_states = torch.zeros((num_workers, *state_shape), dtype=torch.float32)
-        self.shared_states.share_memory_()  # Enable shared memory
+        self.shared_states.share_memory_()
 
-        # Communication queues
+        # Shared memory for responses
+        self.shared_policies = torch.zeros((num_workers, 65))  # Assuming 64 possible actions
+        self.shared_values = torch.zeros((num_workers,))
+        self.shared_policies.share_memory_()
+        self.shared_values.share_memory_()
+
+        # Communication queue for requests
         self.request_queue = mp.Queue()
-        self.response_queues = [mp.Queue() for _ in range(num_workers)]
+
+        # Sync events for worker-manager communication
+        self.response_events = [mp.Event() for _ in range(num_workers)]
 
     def manage_workers(self, timeout=0.001):
-        batch_size = self.num_workers 
         while True:
             batch_indices, worker_ids = [], []
             start_time = time.time()
 
             # Collect batch requests
-            while len(batch_indices) < batch_size:
+            while len(batch_indices) < self.num_workers:
                 try:
-                    worker_id, state_index = self.request_queue.get(block=False)
+                    worker_id, state_index = self.request_queue.get_nowait()
                     batch_indices.append(state_index)
                     worker_ids.append(worker_id)
                 except queue.Empty:
                     if batch_indices or (time.time() - start_time) >= timeout:
                         break
 
-            # Model prediction for batch
+            # Process batch if any requests exist
             if batch_indices:
-            
-                batch_states = self.shared_states[batch_indices]  # Get batch from shared memory
-                
+                batch_states = self.shared_states[batch_indices]  
+
                 with torch.no_grad():
                     policies, values = self.model.predict_batch(batch_states)
 
                 print(f"Manager processing {len(batch_states)} requests", end="\r")
 
-                # Send results back to workers
+                # Store results in shared memory and notify workers
                 for worker_id, policy, value in zip(worker_ids, policies, values):
-                    self.response_queues[worker_id].put(
-                        {"worker_id": worker_id, "policy": policy, "value": value}
-                    )
+                    self.shared_policies[worker_id] = policy
+                    self.shared_values[worker_id] = value
+                    self.response_events[worker_id].set()  # Notify worker
 
 def worker_process_function(worker_id, manager):
     """Worker process function that runs MCTS simulations."""
     shared_states = manager.shared_states  # Access shared memory
-
+    
     worker_mcts = Worker(
         worker_id=worker_id,
         request_queue=manager.request_queue,
-        response_queue=manager.response_queues[worker_id],
-        shared_array=shared_states,
+        shared_states=shared_states,
+        shared_policies=manager.shared_policies,
+        shared_values=manager.shared_values,
+        response_event=manager.response_events[worker_id],
     )
 
     state = OthelloGame().get_init_board()
-  
-
     to_play = -1  # Example: Player -1 starts
     start_time = time.time()
     
-    for i in tqdm(range(10), desc=f"Worker {worker_id}"):
+    for i in tqdm(range(60), desc=f"Worker {worker_id}"):
         worker_mcts.run(state, to_play)
 
     elapsed_time = time.time() - start_time
@@ -87,9 +93,10 @@ def main():
     model.eval()
 
     state_shape = (game.rows, game.columns)
-    num_workers = 20  # Adjust based on CPU cores
+    num_workers = 12  # Adjust based on CPU cores
 
     print(f"Using {num_workers} workers.")
+    mp.set_sharing_strategy('file_system')
 
     mp.set_start_method("spawn", force=True)
 
