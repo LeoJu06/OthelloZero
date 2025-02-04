@@ -119,9 +119,7 @@ class Node:
 
         for move, prob in enumerate(action_probs):
             if prob > 0:
-                
                 self.children[move] = Node(prior=prob, to_play=-to_play)
-                
 
     def __repr__(self):
         """

@@ -9,6 +9,7 @@ from src.othello.othello_game import OthelloGame
 from src.config.hyperparameters import Hyperparameters
 from src.mcts.worker import Worker
 
+
 class Manager:
     def __init__(self, model, state_shape, num_workers):
         self.model = model
@@ -16,7 +17,9 @@ class Manager:
         self.num_workers = num_workers
 
         # Create shared memory for game states using PyTorch
-        self.shared_states = torch.zeros((num_workers, *state_shape), dtype=torch.float32)
+        self.shared_states = torch.zeros(
+            (num_workers, *state_shape), dtype=torch.float32
+        )
         self.shared_states.share_memory_()  # Enable shared memory
 
         # Communication queues
@@ -24,7 +27,7 @@ class Manager:
         self.response_queues = [mp.Queue() for _ in range(num_workers)]
 
     def manage_workers(self, timeout=0.001):
-        batch_size = self.num_workers 
+        batch_size = self.num_workers
         while True:
             batch_indices, worker_ids = [], []
             start_time = time.time()
@@ -41,9 +44,10 @@ class Manager:
 
             # Model prediction for batch
             if batch_indices:
-            
-                batch_states = self.shared_states[batch_indices]  # Get batch from shared memory
-                
+                batch_states = self.shared_states[
+                    batch_indices
+                ]  # Get batch from shared memory
+
                 with torch.no_grad():
                     policies, values = self.model.predict_batch(batch_states)
 
@@ -54,6 +58,7 @@ class Manager:
                     self.response_queues[worker_id].put(
                         {"worker_id": worker_id, "policy": policy, "value": value}
                     )
+
 
 def worker_process_function(worker_id, manager):
     """Worker process function that runs MCTS simulations."""
@@ -67,17 +72,17 @@ def worker_process_function(worker_id, manager):
     )
 
     state = OthelloGame().get_init_board()
-  
 
     to_play = -1  # Example: Player -1 starts
     start_time = time.time()
-    
+
     for i in tqdm(range(10), desc=f"Worker {worker_id}"):
         worker_mcts.run(state, to_play)
 
     elapsed_time = time.time() - start_time
     print(f"Worker {worker_id}: {i+1} runs completed in {elapsed_time:.4f} sec")
     print(f"Worker {worker_id}: Avg time per turn = {(elapsed_time)/(i+1):.3f} sec")
+
 
 def main():
     """Main function to start the manager and worker processes."""
@@ -113,6 +118,7 @@ def main():
 
     # Cleanup
     manager_process.terminate()
+
 
 if __name__ == "__main__":
     main()

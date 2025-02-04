@@ -39,7 +39,9 @@ class MCTS:
         self.hyperparameters = Hyperparameters()
         self.root = Node(prior=0, to_play=-1)  # Initialize root with default values.
 
-    def run(self, state: np.ndarray, to_play: int, add_dirichlet_noise: bool = True) -> Node:
+    def run(
+        self, state: np.ndarray, to_play: int, add_dirichlet_noise: bool = True
+    ) -> Node:
         """
         Executes MCTS to determine the optimal policy and value.
 
@@ -56,9 +58,15 @@ class MCTS:
 
         # Perform a series of simulations.
         for _ in range(self.hyperparameters.MCTS["num_simulations"]):
-            search_path, action_path = self.tree_traverse(self.root)  # Traverse tree to a leaf.
-            value = self.expand_leaf(search_path[-1], search_path[-2], action_path[-1])  # Expand the leaf.
-            self.backpropagate(search_path, value)  # Backpropagate the evaluation value.
+            search_path, action_path = self.tree_traverse(
+                self.root
+            )  # Traverse tree to a leaf.
+            value = self.expand_leaf(
+                search_path[-1], search_path[-2], action_path[-1]
+            )  # Expand the leaf.
+            self.backpropagate(
+                search_path, value
+            )  # Backpropagate the evaluation value.
 
         return self.root
 
@@ -75,19 +83,26 @@ class MCTS:
         self.root.to_play = to_play
 
         # Convert the board to canonical form relative to the current player.
-        canonical_state = self.game.get_canonical_board(self.root.state, self.root.to_play)
+        canonical_state = self.game.get_canonical_board(
+            self.root.state, self.root.to_play
+        )
         action_probs, _ = self.model.predict(canonical_state)
 
         if add_dirichlet_noise:
             # Add Dirichlet noise to encourage exploration.
             action_probs = dirichlet_noise(action_probs)
-        
 
-        valid_moves = self.get_valid_moves(state, to_play)  # Get valid moves for the current state.
-        
-        action_probs = self.normalize_probs(action_probs, valid_moves)  # Normalize probabilities based on valid moves.
-        
-        self.root.expand(state, to_play, action_probs)  # Expand the root node with action probabilities.
+        valid_moves = self.get_valid_moves(
+            state, to_play
+        )  # Get valid moves for the current state.
+
+        action_probs = self.normalize_probs(
+            action_probs, valid_moves
+        )  # Normalize probabilities based on valid moves.
+
+        self.root.expand(
+            state, to_play, action_probs
+        )  # Expand the root node with action probabilities.
 
     def tree_traverse(self, node: Node) -> list:
         """
@@ -133,11 +148,13 @@ class MCTS:
 
         if value is None:
             # Predict value and action probabilities for the next state.
-            next_state_canonical = self.game.get_canonical_board(next_state, player=leaf_player)
-            
+            next_state_canonical = self.game.get_canonical_board(
+                next_state, player=leaf_player
+            )
+
             start = time.time()
             action_probs, value = self.model.predict(next_state_canonical)
-            #print(f"MCTS waited {time.time()-start:4f} seconds for a response")
+            # print(f"MCTS waited {time.time()-start:4f} seconds for a response")
 
             # Filter probabilities by valid moves and expand the leaf node.
             valid_moves = self.get_valid_moves(next_state, leaf_player)
@@ -159,7 +176,9 @@ class MCTS:
         """
         return self.game.flatten_move_coordinates(state, to_play)
 
-    def normalize_probs(self, action_probs: np.ndarray, valid_moves: np.ndarray) -> np.ndarray:
+    def normalize_probs(
+        self, action_probs: np.ndarray, valid_moves: np.ndarray
+    ) -> np.ndarray:
         """
         Normalizes action probabilities based on valid moves.
 
@@ -196,12 +215,13 @@ def dummy_console_mcts(args):
     model, process_id = args
     print(f"Process {process_id}: Model memory address = {id(model)}")
     import time
+
     # Initialize hyperparameters, game, and model
 
     g = OthelloGame()
     s = g.get_init_board()
     current_player = -1
- 
+
     t = []
 
     # Run MCTS loop until the game reaches a terminal state.
@@ -218,29 +238,24 @@ def dummy_console_mcts(args):
         tn = time.time() - start_time
         print(f"Thinking time {tn:.2f} seconds")
         t.append(tn)
-        
-    
-       
-   # g.print_board(s)  # Display final board state.
+
+    # g.print_board(s)  # Display final board state.
     print(f"Average thinking time {sum(t)/len(t):.4f} seconds")
     print(f"Total lenght of game = {sum(t):2f} seconds")
 
     return mcts.root.visit_count
 
 
-
-
-
-
 if __name__ == "__main__":
     import multiprocessing
     import torch.multiprocessing as tmp
+
     num_processes = 4  # Anzahl der parallelen MCTS-Instanzen
     h = Hyperparameters()
     g = OthelloGame()
     s = g.get_init_board()
     current_player = -1
-    
+
     tmp.set_start_method("spawn", force=True)
 
     model = OthelloZeroModel(g.rows, g.get_action_size(), h.Neural_Network["device"])
@@ -249,6 +264,5 @@ if __name__ == "__main__":
     args_list = [(model, i) for i in range(num_processes)]
     with multiprocessing.Pool(num_processes) as pool:
         result = pool.map(dummy_console_mcts, args_list)
-    
-    print(result)
 
+    print(result)
