@@ -76,7 +76,7 @@ class OthelloZeroModel(nn.Module):
         with torch.no_grad():
             pi, v = self.forward(boards)
 
-        return pi.data.cpu().numpy(), v.data.cpu().numpy()
+        return pi.data.cpu(), v.data.cpu()
 
 
 if __name__ == "__main__":
