@@ -14,7 +14,7 @@ class Hyperparameters:
         - Node with keys ["key_passsing, prior_passing]"""
 
     MCTS = {
-        "num_simulations": 1000,
+        "num_simulations": 700,
         "exploration_weight": 1.0,
         "temperature_turn_threshold": 1,
         "temperature": 1,
