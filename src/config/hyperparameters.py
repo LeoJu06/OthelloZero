@@ -9,15 +9,15 @@ class Hyperparameters:
     Simply address them by writing Hyperparamerts.Name["key"]
 
     The Hyperparameter class contains:
-        - MCTS with keys ["num_simulations", "exploration_weight"]
+        - MCTS with keys ["num_simulations", "exploration_weight", "temp_threshold", temperature]
         - Neural_Network with keys ["device"]
         - Node with keys ["key_passsing, prior_passing]"""
 
     MCTS = {
         "num_simulations": 700,
         "exploration_weight": 1.0,
-        "temperature_turn_threshold": 1,
-        "temperature": 1,
+        "temp_threshold": 10,
+        "temp": 1,
     }
 
     Neural_Network = {
