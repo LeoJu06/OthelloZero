@@ -39,6 +39,13 @@ class Node:
         self.children = {}
         self.state = None
 
+    def reset(self):
+
+        self.visit_count = 0
+        self.value_sum = 0
+        self.children = {}
+        self.state = None
+
     def expanded(self) -> bool:
         """
         Checks if the node has been expanded (i.e., has children).
