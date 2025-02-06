@@ -1,5 +1,4 @@
 """MCTS file containing the MCTS algorithm for running search"""
-import time
 import numpy as np
 from src.utils.mark_valid_moves import mark_valid_moves
 from src.utils.index_to_coordinates import index_to_coordinates
@@ -8,6 +7,9 @@ from src.mcts.node import Node
 from src.neural_net.model import OthelloZeroModel
 from src.config.hyperparameters import Hyperparameters
 from src.othello.othello_game import OthelloGame
+import torch
+from torch.multiprocessing import Queue
+import queue
 
 
 class MCTS:
@@ -22,9 +24,7 @@ class MCTS:
 
     def __init__(
         self,
-        game: OthelloGame,
         model: OthelloZeroModel,
-        root: Node = None,
     ):
         """
         Initializes the MCTS instance with the game, model, and optional root node.
@@ -34,7 +34,7 @@ class MCTS:
             model (OthelloZeroModel): Neural network model for predictions.
             root (Node, optional): Root node for the MCTS tree. Defaults to None.
         """
-        self.game = game
+        self.game = OthelloGame()
         self.model = model
         self.hyperparameters = Hyperparameters()
         self.root = Node(prior=0, to_play=-1)  # Initialize root with default values.
@@ -86,7 +86,7 @@ class MCTS:
         canonical_state = self.game.get_canonical_board(
             self.root.state, self.root.to_play
         )
-        action_probs, _ = self.model.predict(canonical_state)
+        action_probs, _ = self.evaluate(canonical_state)
 
         if add_dirichlet_noise:
             # Add Dirichlet noise to encourage exploration.
@@ -151,9 +151,10 @@ class MCTS:
             next_state_canonical = self.game.get_canonical_board(
                 next_state, player=leaf_player
             )
+            action_probs, value = self.evaluate(next_state_canonical)
 
-            start = time.time()
-            action_probs, value = self.model.predict(next_state_canonical)
+      
+            
             # print(f"MCTS waited {time.time()-start:4f} seconds for a response")
 
             # Filter probabilities by valid moves and expand the leaf node.
@@ -161,7 +162,14 @@ class MCTS:
             action_probs = self.normalize_probs(action_probs, valid_moves)
             leaf.expand(next_state, leaf_player, action_probs)
 
+
+
         return value
+    
+    def evaluate(self, canonical_state):
+
+        action_probs, value = self.model.predict(canonical_state)
+        return action_probs, value
 
     def get_valid_moves(self, state: np.ndarray, to_play: int) -> np.ndarray:
         """
@@ -206,6 +214,32 @@ class MCTS:
             # Update value sum and visit count for each node.
             node.value_sum += value if node.to_play == to_play else -value
             node.visit_count += 1
+
+class MultiprocessedMCTS(MCTS):
+
+    def __init__(self, idx, request_queue:Queue, response_queue:Queue, shared_states:torch.Tensor):
+        super().__init__(model=None)
+
+        self.idx = idx
+        self.request_queue = request_queue
+        self.response_queue = response_queue
+        self.shared_states = shared_states  
+
+    def evaluate(self, canonical_state):
+         # Schreibe den Zustand des Spiels in den Shared Memory
+        self.shared_states[self.idx] = torch.tensor(canonical_state, dtype=torch.float32)
+
+        # Sende den Index des Zustands an den Manager
+        self.request_queue.put((self.idx, self.idx))
+
+        # Warte auf die Antwort vom Manager
+        while True:
+            try:
+                response = self.response_queue.get(timeout=0.001)
+                if response["worker_id"] == self.idx:
+                    return response["policy"], response["value"]
+            except queue.Empty:
+                continue
 
 
 def dummy_console_mcts(args):
