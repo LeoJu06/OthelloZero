@@ -8,6 +8,7 @@ from src.neural_net.model import OthelloZeroModel
 from src.othello.othello_game import OthelloGame
 from src.config.hyperparameters import Hyperparameters
 from src.mcts.worker import Worker
+from src.mcts.mcts import MultiprocessedMCTS
 
 
 class Manager:
@@ -64,11 +65,11 @@ def worker_process_function(worker_id, manager):
     """Worker process function that runs MCTS simulations."""
     shared_states = manager.shared_states  # Access shared memory
 
-    worker_mcts = Worker(
-        worker_id=worker_id,
+    worker_mcts = MultiprocessedMCTS(
+        idx=worker_id,
         request_queue=manager.request_queue,
         response_queue=manager.response_queues[worker_id],
-        shared_array=shared_states,
+        shared_states=shared_states,
     )
 
     state = OthelloGame().get_init_board()
