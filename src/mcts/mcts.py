@@ -90,7 +90,8 @@ class MCTS:
 
         if add_dirichlet_noise:
             # Add Dirichlet noise to encourage exploration.
-            action_probs = dirichlet_noise(action_probs)
+            alpha = min(1, 10/len(self.game.get_valid_moves(state, to_play))) #change alpha dynamicly
+            action_probs = dirichlet_noise(action_probs, alpha=alpha)
 
         valid_moves = self.get_valid_moves(
             state, to_play
@@ -261,7 +262,7 @@ def dummy_console_mcts(args):
     # Run MCTS loop until the game reaches a terminal state.
     while not g.is_terminal_state(s):
         start_time = time.time()
-        mcts = MCTS(g, model)
+        mcts = MCTS(model)
         r = mcts.run(s, current_player)
         a = r.select_action(temperature=0)
         x, y = index_to_coordinates(a)
@@ -272,6 +273,7 @@ def dummy_console_mcts(args):
         tn = time.time() - start_time
         print(f"Thinking time {tn:.2f} seconds")
         t.append(tn)
+        time.sleep(5)
 
     # g.print_board(s)  # Display final board state.
     print(f"Average thinking time {sum(t)/len(t):.4f} seconds")
