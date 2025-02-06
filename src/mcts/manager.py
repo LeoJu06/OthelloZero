@@ -7,7 +7,6 @@ from tqdm import tqdm
 from src.neural_net.model import OthelloZeroModel
 from src.othello.othello_game import OthelloGame
 from src.config.hyperparameters import Hyperparameters
-from src.mcts.worker import Worker
 from src.mcts.mcts import MultiprocessedMCTS
 
 
