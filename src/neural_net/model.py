@@ -90,7 +90,7 @@ if __name__ == "__main__":
     single_board[3, 3] = 1  # Example piece placement
 
     # Batch of boards example
-    batch_boards = np.stack([single_board, single_board * -1])  # Two boards in a batch
+    batch_boards = torch.tensor(np.stack([single_board, single_board * -1]), dtype=torch.float32)  # Two boards in a batch
 
     # Single board prediction
     pi_single, v_single = model.predict(single_board)
