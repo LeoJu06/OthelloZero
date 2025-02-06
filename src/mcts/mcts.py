@@ -7,6 +7,7 @@ from src.mcts.node import Node
 from src.neural_net.model import OthelloZeroModel
 from src.config.hyperparameters import Hyperparameters
 from src.othello.othello_game import OthelloGame
+from src.utils.alpha_for_dirichlet import alpha_for_dirichlet
 import torch
 from torch.multiprocessing import Queue
 import queue
@@ -34,8 +35,8 @@ class MCTS:
             model (OthelloZeroModel): Neural network model for predictions.
             root (Node, optional): Root node for the MCTS tree. Defaults to None.
         """
-        self.game = OthelloGame()
         self.model = model
+        self.game = OthelloGame()  
         self.hyperparameters = Hyperparameters()
         self.root = Node(prior=0, to_play=-1)  # Initialize root with default values.
 
@@ -89,8 +90,8 @@ class MCTS:
         action_probs, _ = self.evaluate(canonical_state)
 
         if add_dirichlet_noise:
-            # Add Dirichlet noise to encourage exploration.
-            alpha = min(1, 10/len(self.game.get_valid_moves(state, to_play))) #change alpha dynamicly
+            alpha = alpha_for_dirichlet(len(self.game.get_valid_moves(state, to_play)))
+           
             action_probs = dirichlet_noise(action_probs, alpha=alpha)
 
         valid_moves = self.get_valid_moves(
@@ -227,13 +228,13 @@ class MultiprocessedMCTS(MCTS):
         self.shared_states = shared_states  
 
     def evaluate(self, canonical_state):
-         # Schreibe den Zustand des Spiels in den Shared Memory
+         # Write state into shared memory
         self.shared_states[self.idx] = torch.tensor(canonical_state, dtype=torch.float32)
 
-        # Sende den Index des Zustands an den Manager
+        # Send index to manager
         self.request_queue.put((self.idx, self.idx))
 
-        # Warte auf die Antwort vom Manager
+        # wait for manager to respond
         while True:
             try:
                 response = self.response_queue.get(timeout=0.001)
@@ -273,7 +274,7 @@ def dummy_console_mcts(args):
         tn = time.time() - start_time
         print(f"Thinking time {tn:.2f} seconds")
         t.append(tn)
-        time.sleep(5)
+        #time.sleep(5)
 
     # g.print_board(s)  # Display final board state.
     print(f"Average thinking time {sum(t)/len(t):.4f} seconds")
