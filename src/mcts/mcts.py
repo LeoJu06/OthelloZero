@@ -40,7 +40,7 @@ class MCTS:
         self.hyperparameters = Hyperparameters()
         self.root = Node(prior=0, to_play=-1)  # Initialize root with default values.
 
-    def run(
+    def run_search(
         self, state: np.ndarray, to_play: int, add_dirichlet_noise: bool = True
     ) -> Node:
         """
@@ -217,6 +217,11 @@ class MCTS:
             node.value_sum += value if node.to_play == to_play else -value
             node.visit_count += 1
 
+
+
+
+
+
 class MultiprocessedMCTS(MCTS):
     """
     A multiprocessing-enabled version of the Monte Carlo Tree Search (MCTS) algorithm.
@@ -296,7 +301,7 @@ def dummy_console_mcts(args):
     while not g.is_terminal_state(s):
         start_time = time.time()
         mcts = MCTS(model)
-        r = mcts.run(s, current_player)
+        r = mcts.run_search(s, current_player)
         a = r.select_action(temperature=0)
         x, y = index_to_coordinates(a)
         s, current_player = g.get_next_state(s, current_player, x, y)
@@ -316,22 +321,18 @@ def dummy_console_mcts(args):
 
 
 if __name__ == "__main__":
-    import multiprocessing
-    import torch.multiprocessing as tmp
+    
 
-    num_processes = 4  # Anzahl der parallelen MCTS-Instanzen
+   
     h = Hyperparameters()
     g = OthelloGame()
     s = g.get_init_board()
     current_player = -1
 
-    tmp.set_start_method("spawn", force=True)
 
     model = OthelloZeroModel(g.rows, g.get_action_size(), h.Neural_Network["device"])
-    model.eval()
-    model.share_memory()
-    args_list = [(model, i) for i in range(num_processes)]
-    with multiprocessing.Pool(num_processes) as pool:
-        result = pool.map(dummy_console_mcts, args_list)
+  
+ 
+    dummy_console_mcts(args=(model, 0))
 
-    print(result)
+
