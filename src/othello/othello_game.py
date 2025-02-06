@@ -21,7 +21,9 @@ class OthelloGame:
         lg.logger_othello_game.info("%s - Object created", self.__repr__())
 
     def __repr__(self):
-        return f"Name: {OthelloGame.__name__}, attr: rows={self.rows}, cols={self.columns}"
+        return (
+            f"Name: {OthelloGame.__name__}, attr: rows={self.rows}, cols={self.columns}"
+        )
 
     def get_init_board(self):
         """
@@ -54,7 +56,7 @@ class OthelloGame:
         Returns:
             int: Total number of cells (rows * columns).
         """
-        return (self.rows * self.columns) + 1 # adding 1 vor a passing move
+        return (self.rows * self.columns) + 1  # adding 1 vor a passing move
 
     def get_next_state(self, state, player, x_pos, y_pos):
         """
@@ -74,15 +76,19 @@ class OthelloGame:
         #   and flip the stones
         # otherwise just directly return the next state with the  switched player
 
-        lg.logger_othello_game.info("Current State:\n%s", self.print_board(state, to_cosole=False))
+        lg.logger_othello_game.info(
+            "Current State:\n%s", self.print_board(state, to_cosole=False)
+        )
 
         next_state = np.copy(state)
-        if (x_pos != const.PASSING_MOVE or y_pos != const.PASSING_MOVE):
+        if x_pos != const.PASSING_MOVE or y_pos != const.PASSING_MOVE:
             next_state[x_pos, y_pos] = player
             stones_to_flip = self._find_stones_to_flip(state, player, x_pos, y_pos)
             self._flip_stones(next_state, player, stones_to_flip)
-        
-        lg.logger_othello_game.info("Next State:\n%s", self.print_board(next_state, to_cosole=False))
+
+        lg.logger_othello_game.info(
+            "Next State:\n%s", self.print_board(next_state, to_cosole=False)
+        )
         return next_state, -player
 
     def _find_stones_to_flip(self, state, player, x_pos, y_pos):
@@ -149,7 +155,7 @@ class OthelloGame:
         Returns:
             list: List of (row, column) positions for empty cells.
         """
-       
+
         return [
             (x, y)
             for x in range(self.rows)
@@ -213,11 +219,9 @@ class OthelloGame:
         return flattened_board
 
     def get_canonical_board(self, state, player):
-        return (player * state)
+        return player * state
 
     def get_reward_for_player(self, state, player):
-
-       
         if any(self.get_valid_moves(state, player)):
             return None
 
@@ -287,7 +291,6 @@ class OthelloGame:
         if to_cosole:
             print(board_str)
         return board_str
-
 
     def play_random_move(self, state, player):
         """
