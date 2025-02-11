@@ -1,5 +1,6 @@
 import torch
 import torch.multiprocessing as mp
+import threading
 import queue
 import time
 import numpy as np
@@ -9,7 +10,7 @@ from src.othello.othello_game import OthelloGame
 from src.config.hyperparameters import Hyperparameters
 from src.mcts.mcts import MultiprocessedMCTS
 
-
+mp.set_start_method("spawn", force=True)
 class Manager:
     """
     Manages the communication between worker processes and the neural network model.
@@ -92,6 +93,49 @@ class Manager:
                         {"worker_id": worker_id, "policy": policy, "value": value}
                     )
 
+def init_manager(model:OthelloZeroModel, hyperparameters:Hyperparameters) -> Manager:
+    """Creates a manager object and returns it"""
+
+    game = OthelloGame()
+    state_shape = (game.rows, game.columns)
+    num_workers = hyperparameters.Coach["num_workers"]
+    manager = Manager(model=model, state_shape=state_shape, num_workers=num_workers)
+    return manager
+
+def init_manager_process(manager:Manager):
+
+    """Creates the manager process and starts it with his target function - manager_workers.
+    returns the manager process"""
+
+    #device = Hyperparameters.Neural_Network["device"]
+    #model = OthelloZeroModel(game.rows, game.get_action_size(), device)
+    #model.eval()
+
+ 
+    # Start Manager Process
+    manager_process = mp.Process(target=manager.manage_workers)
+    manager_process.start()
+    return manager_process
+
+def terminate_manager_process(manager_process:mp.Process):
+
+    
+    # Cleanup
+    manager_process.terminate()
+
+def create_multiprocessed_mcts(worker_id, manager):
+    shared_states = manager.shared_states  # Access shared memory
+
+    worker_mcts = MultiprocessedMCTS(
+        idx=worker_id,
+        request_queue=manager.request_queue,
+        response_queue=manager.response_queues[worker_id],
+        shared_states=shared_states,
+    )
+
+    return worker_mcts
+
+
 
 def worker_process_function(worker_id, manager):
     """
@@ -104,14 +148,7 @@ def worker_process_function(worker_id, manager):
         worker_id (int): The unique identifier for this worker process.
         manager (Manager): The Manager instance for communication and shared memory access.
     """
-    shared_states = manager.shared_states  # Access shared memory
-
-    worker_mcts = MultiprocessedMCTS(
-        idx=worker_id,
-        request_queue=manager.request_queue,
-        response_queue=manager.response_queues[worker_id],
-        shared_states=shared_states,
-    )
+    worker_mcts = create_multiprocessed_mcts(worker_id, manager)
 
     state = OthelloGame().get_init_board()
 
@@ -125,6 +162,10 @@ def worker_process_function(worker_id, manager):
     print(f"Worker {worker_id}: {i+1} runs completed in {elapsed_time:.4f} sec")
     print(f"Worker {worker_id}: Avg time per turn = {(elapsed_time)/(i+1):.3f} sec")
 
+    return worker_id
+
+
+
 
 def main():
     """
@@ -133,28 +174,21 @@ def main():
     This function initializes the neural network model, creates the Manager and worker processes,
     and coordinates their execution.
     """
-    device = Hyperparameters.Neural_Network["device"]
-    game = OthelloGame()
-    model = OthelloZeroModel(game.rows, game.get_action_size(), device)
-    model.eval()
+    h = Hyperparameters()
+    g = OthelloGame()
+    s = g.get_init_board()
+    current_player = -1
 
-    state_shape = (game.rows, game.columns)
-    num_workers = 22  # Adjust based on CPU cores
 
-    print(f"Using {num_workers} workers.")
+    model = OthelloZeroModel(g.rows, g.get_action_size(), h.Neural_Network["device"])
+    
 
-    mp.set_start_method("spawn", force=True)
-
-    # Initialize Manager
-    manager = Manager(model=model, state_shape=state_shape, num_workers=num_workers)
-
-    # Start Manager Process
-    manager_process = mp.Process(target=manager.manage_workers)
-    manager_process.start()
+    manager = init_manager(model, h)
+    manager_process = init_manager_process(manager)
 
     # Start Worker Processes
     workers = []
-    for i in range(num_workers):
+    for i in range(4):
         worker_process = mp.Process(target=worker_process_function, args=(i, manager))
         workers.append(worker_process)
         worker_process.start()
@@ -163,8 +197,9 @@ def main():
     for worker in workers:
         worker.join()
 
-    # Cleanup
-    manager_process.terminate()
+    terminate_manager_process(manager_process)
+
+
 
 
 if __name__ == "__main__":
