@@ -28,6 +28,17 @@ class DataManager:
             game_outcome *= -1
 
         return examples
+    
+    def increment_iteration(self):
+
+        pass
+
+    def save_training_examples(self, examples):
+        pass
+
+    def load_best_model(self):
+        best_model = None
+        return best_model
 
         
         
