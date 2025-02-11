@@ -3,14 +3,20 @@ from src.othello.othello_game import OthelloGame
 from src.mcts.mcts import MultiprocessedMCTS, MCTS
 from src.neural_net.model import OthelloZeroModel
 from src.data_manager.data_manager import DataManager
-from src.mcts.manager import Manager
+from src.mcts.manager import init_manager, init_manager_process,terminate_manager_process, create_multiprocessed_mcts
 from src.othello.game_constants import PlayerColor
 from src.utils.index_to_coordinates import index_to_coordinates
+import torch.multiprocessing as mp
+from tqdm import tqdm
+import time
+
 
 class Coach:
     """
-    The Coach class manages self-play episodes, data collection, and training for the Othello Zero model.
+    The Coach class manages self-play episodes, data collection, and training 
+    for the Othello Zero model.
     """
+
     def __init__(self):
         """
         Initializes the Coach with hyperparameters and a data manager.
@@ -18,89 +24,108 @@ class Coach:
         self.hyperparams = Hyperparameters()
         self.data_manager = DataManager()
 
-    def execute_episode(self, mcts: MultiprocessedMCTS):
+    def execute_single_episode(self, mcts: MultiprocessedMCTS):
         """
-        Executes a single self-play episode using MCTS.
+        Runs a single self-play episode using MCTS.
 
         Args:
             mcts (MultiprocessedMCTS): The Monte Carlo Tree Search instance.
 
         Returns:
-            list: A list of training examples generated during the episode.
+            list: Training examples generated during the episode.
         """
-        current_player = PlayerColor.BLACK.value  # Black starts first
-        examples = []  # Stores training examples
-        episode_step = 0  # Tracks the number of moves in the episode
         game = OthelloGame()
         state = game.get_init_board()
+        current_player = PlayerColor.BLACK.value  # Black always starts
+        examples = []  # Training data storage
+        episode_step = 0
         local_data_manager = DataManager()
-        
-        # Play until reaching a terminal state
-        while not game.is_terminal_state(state):
-            # Temperature parameter for exploration
-            temp = int(episode_step < self.hyperparams.MCTS["temp_threshold"])
-            
-            # Run MCTS to get the root node with action probabilities
-            root = mcts.run_search(state, current_player)
-            
-            # Create and store an example
-            example = local_data_manager.create_example(state, current_player, root, temp)
-            examples.append(example)
 
-            # Select an action and get the next state
+        while not game.is_terminal_state(state):
+           # start  = time.time()
+            temp = int(episode_step < self.hyperparams.MCTS["temp_threshold"])
+            root = mcts.run_search(state, current_player)
+
+            # Store training example
+            examples.append(local_data_manager.create_example(state, current_player, root, temp))
+
+            # Select action and update game state
             x_pos, y_pos = index_to_coordinates(root.select_action(temp))
             state, current_player = game.get_next_state(state, current_player, x_pos, y_pos)
-            
+
             episode_step += 1
-            root.reset()  # Reset MCTS root for the next iteration
+            root.reset()
+            end = time.time()
+            #print(f"Time per move {end-start:.2f}")
 
-        # Assign rewards based on game outcome
-        game_outcome = OthelloGame().get_reward_for_player(state, PlayerColor.BLACK.value)
-        examples = local_data_manager.assign_rewards(examples, game_outcome)
+        # Assign rewards based on the game outcome
+        game_outcome = game.get_reward_for_player(state, PlayerColor.BLACK.value)
+        return local_data_manager.assign_rewards(examples, game_outcome)
 
-        return examples
-
-    def policy_iteration_self_play(self):
+    def self_play(self, multi_mcts: MultiprocessedMCTS):
         """
-        Placeholder method for policy iteration through self-play.
+        Runs multiple self-play episodes and collects training examples.
+
+        Args:
+            multi_mcts (MultiprocessedMCTS): The MCTS instance.
+            num_episodes (int): Number of episodes to run.
         """
-        pass
+        all_examples = []
+        iters = self.hyperparams.Coach["episodes_per_worker"]
+        for _ in tqdm(range(iters)):
+            print(f"Episode {_}/{iters}, Worker  {multi_mcts.idx}")
+            all_examples += self.execute_single_episode(multi_mcts)
+
+        # TODO: Implement data saving mechanism
+        self.data_manager.save_training_examples(all_examples)
 
     def learn(self):
         """
-        Executes the learning loop, collecting self-play data and training the model.
+        Runs the reinforcement learning loop, collecting self-play data and training the model.
         """
-        train_examples = []
 
-        # TODO: Define the number of iterations
-        for i in range(1, self.hyperparams):
-            
-            # TODO: Define the number of epochs per iteration
-            for epoch in range(self.hyperparams): 
-                examples = self.execute_episode(mcts=None)  # TODO: Provide a valid MCTS instance
-                self.data_manager.collect(examples)
-            
-            # TODO: Implement data saving mechanism
+        g = OthelloGame()
+        h = self.hyperparams
+        model = OthelloZeroModel(g.rows, g.get_action_size(), h.Neural_Network["device"])
+        for iteration in range(1, self.hyperparams.Coach["iterations"] + 1):
+            start = time.time()
+            print(f"Iteration {iteration}/{self.hyperparams.Coach['iterations']} - Starting self-play...")
+
+            #model = self.data_manager.load_best_model()
+            # Initialize MCTS with multiprocessing
+            manager = init_manager(model, self.hyperparams)
+            manager_process = init_manager_process(manager)
+
+           
+            workers = []
+            for worker_id in range(self.hyperparams.Coach["num_workers"]):
+                multi_mcts = create_multiprocessed_mcts(worker_id, manager)
+                worker_process = mp.Process(target=self.self_play, args=(multi_mcts,))
+                workers.append(worker_process)
+                worker_process.start()
+            for worker in workers:
+                worker.join()
+
+            terminate_manager_process(manager_process)
+
+            print(f"Iteration {iteration} - Self-play complete. Training model...")
+
+            end = time.time()
+            print(f"Iter needed {end-start:.2f}s")
+
             self.train()
 
     def train(self):
         """
-        Placeholder method for training the neural network with collected data.
+        Trains the neural network using collected self-play data.
         """
+        # TODO: Implement training mechanism
         pass
+
 
 if __name__ == "__main__":
     """
     Main execution block to initialize the game, model, and coach, and run a self-play episode.
     """
-    g = OthelloGame()
-    h = Hyperparameters()
-    coach = Coach()
-    
-    # Initialize the model with game parameters
-    model = OthelloZeroModel(g.rows, g.get_action_size(), h.Neural_Network["device"])
-    mcts = MCTS(model)
-    
-    # Run a single episode and print the results
-    examples = coach.execute_episode(mcts)
-    print(examples)
+    coach =  Coach()
+    coach.learn()
