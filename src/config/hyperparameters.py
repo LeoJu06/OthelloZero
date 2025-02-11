@@ -10,6 +10,7 @@ class Hyperparameters:
 
     The Hyperparameter class contains:
         - MCTS with keys ["num_simulations", "exploration_weight", "temp_threshold", temperature]
+        - Coach with keys ["iterations", "episodes", "num_workers"]
         - Neural_Network with keys ["device"]
         - Node with keys ["key_passsing, prior_passing]"""
 
@@ -19,6 +20,10 @@ class Hyperparameters:
         "temp_threshold": 10,
         "temp": 1,
     }
+
+    Coach = {"iterations": 2, 
+             "episodes": 2500,
+             "num_workers" : 22}
 
     Neural_Network = {
         "device": torch.device("cuda" if torch.cuda.is_available() else "cpu")
