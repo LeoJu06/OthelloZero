@@ -12,15 +12,26 @@ class DataManager:
         
         pass
 
-    def create_example(self, current_state, player, root:Node):
+    def create_example(self, current_state, player, root:Node, temperature):
         """Creates an example"""
         
         if player == PlayerColor.BLACK.value:
             current_state = self.game.get_canonical_board(current_state, player)
 
-        return [current_state, root.pi()]
+        return [current_state, root.pi(temperature), None]
     
-    def assign_rewards(self, examples)
+    def assign_rewards(self, examples, game_outcome):
+
+        for situation in examples:
+
+            situation[2] = game_outcome
+            game_outcome *= -1
+
+        return examples
+
+        
+        
+
 
 
 
