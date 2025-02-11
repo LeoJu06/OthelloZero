@@ -1,6 +1,7 @@
 import numpy as np
-import math
 from src.othello.othello_game import OthelloGame
+import math
+
 
 
 def ucb_score(parent: "Node", child: "Node") -> float:
@@ -65,23 +66,24 @@ class Node:
         """
         return 0 if self.visit_count == 0 else float(self.value_sum / self.visit_count)
     
+    def pi(self, temperature:float):
 
-    def pi(self, temperature: float):
-        pi = np.zeros(OthelloGame().get_action_size())  # Use self.action_size instead of hardcoding
+        pi = np.zeros(OthelloGame().get_action_size())
         actions = list(self.children.keys())
         visit_counts = np.array([child.visit_count for child in self.children.values()])
-
         if temperature == 0:
             best_action = actions[np.argmax(visit_counts)]
             pi[best_action] = 1
         else:
             visit_count_distribution = visit_counts ** (1 / temperature)
             visit_count_distribution /= visit_count_distribution.sum()
-            for i, action in enumerate(actions):
-                pi[action] = visit_count_distribution[i]
-                
+            pi[actions] = visit_count_distribution
         return pi
 
+
+
+
+            
 
     def select_action(self, temperature: float) -> int:
         """

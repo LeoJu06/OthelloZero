@@ -52,7 +52,7 @@ class Coach:
         #TODO add iter number
         for i in range(1, self.hyperparams):
             
-            for epoch in range(self.hyperparams): #TODO Add num epochs/num worker
+            for epoch in range(self.hyperparams): #TODO Add num epoch
 
                 examples = self.execute_episode(mcts=None)
                 self.data_manager.collect(examples)

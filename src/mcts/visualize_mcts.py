@@ -79,7 +79,7 @@ if __name__ == "__main__":
         game.rows, game.get_action_size(), hyperparameters.Neural_Network["device"]
     )
     mcts = MCTS(game, model, hyperparameters)
-    root = mcts.run(b, -1)
+    root = mcts.run_search(b, -1)
 
     # Visualize the tree
     tree_graph = visualize_game_tree(root, max_depth=3)
