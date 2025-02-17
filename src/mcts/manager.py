@@ -10,7 +10,7 @@ from src.othello.othello_game import OthelloGame
 from src.config.hyperparameters import Hyperparameters
 from src.mcts.mcts import MultiprocessedMCTS
 
-mp.set_start_method("spawn", force=True)
+
 class Manager:
     """
     Manages the communication between worker processes and the neural network model.
@@ -203,4 +203,5 @@ def main():
 
 
 if __name__ == "__main__":
+    mp.set_start_method("spawn", force=True)
     main()
