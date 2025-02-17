@@ -17,6 +17,8 @@ class Coach:
     for the Othello Zero model.
     """
 
+    mp.set_start_method("spawn", force=True) # set the correct start method
+
     def __init__(self):
         """
         Initializes the Coach with hyperparameters and a data manager.
@@ -72,8 +74,8 @@ class Coach:
         """
         all_examples = []
         iters = self.hyperparams.Coach["episodes_per_worker"]
-        for _ in tqdm(range(iters)):
-            print(f"Episode {_}/{iters}, Worker  {multi_mcts.idx}")
+        for _ in tqdm(range(iters), unit="episode", desc="Self-Play"):
+            #tqdm.write(f"Episode {_}/{iters}, Worker  {multi_mcts.idx}")
             all_examples += self.execute_single_episode(multi_mcts)
 
         # TODO: Implement data saving mechanism
@@ -89,7 +91,7 @@ class Coach:
         model = OthelloZeroModel(g.rows, g.get_action_size(), h.Neural_Network["device"])
         for iteration in range(1, self.hyperparams.Coach["iterations"] + 1):
             start = time.time()
-            print(f"Iteration {iteration}/{self.hyperparams.Coach['iterations']} - Starting self-play...")
+            tqdm.write(f"Iteration {iteration}/{self.hyperparams.Coach['iterations']} - Starting self-play...")
 
             #model = self.data_manager.load_best_model()
             # Initialize MCTS with multiprocessing
@@ -108,10 +110,10 @@ class Coach:
 
             terminate_manager_process(manager_process)
 
-            print(f"Iteration {iteration} - Self-play complete. Training model...")
+            tqdm.write(f"Iteration {iteration} - Self-play complete. Training model...")
 
             end = time.time()
-            print(f"Iter needed {end-start:.2f}s")
+            tqdm.write(f"Iter needed {end-start:.2f}s")
 
             self.train()
 
@@ -127,5 +129,6 @@ if __name__ == "__main__":
     """
     Main execution block to initialize the game, model, and coach, and run a self-play episode.
     """
+   
     coach =  Coach()
     coach.learn()
