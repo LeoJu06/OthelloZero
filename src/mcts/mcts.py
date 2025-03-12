@@ -7,6 +7,7 @@ from src.mcts.node import Node
 from src.neural_net.model import OthelloZeroModel
 from src.config.hyperparameters import Hyperparameters
 from src.othello.othello_game import OthelloGame
+from src.utils.alpha_for_dirichlet import alpha_for_dirichlet
 import torch
 from torch.multiprocessing import Queue
 import queue
@@ -34,12 +35,12 @@ class MCTS:
             model (OthelloZeroModel): Neural network model for predictions.
             root (Node, optional): Root node for the MCTS tree. Defaults to None.
         """
-        self.game = OthelloGame()
         self.model = model
+        self.game = OthelloGame()  
         self.hyperparameters = Hyperparameters()
         self.root = Node(prior=0, to_play=-1)  # Initialize root with default values.
 
-    def run(
+    def run_search(
         self, state: np.ndarray, to_play: int, add_dirichlet_noise: bool = True
     ) -> Node:
         """
@@ -89,8 +90,8 @@ class MCTS:
         action_probs, _ = self.evaluate(canonical_state)
 
         if add_dirichlet_noise:
-            # Add Dirichlet noise to encourage exploration.
-            alpha = min(1, 10/len(self.game.get_valid_moves(state, to_play))) #change alpha dynamicly
+            alpha = alpha_for_dirichlet(len(self.game.get_valid_moves(state, to_play)))
+           
             action_probs = dirichlet_noise(action_probs, alpha=alpha)
 
         valid_moves = self.get_valid_moves(
@@ -216,24 +217,62 @@ class MCTS:
             node.value_sum += value if node.to_play == to_play else -value
             node.visit_count += 1
 
+
+
+
+
+
 class MultiprocessedMCTS(MCTS):
+    """
+    A multiprocessing-enabled version of the Monte Carlo Tree Search (MCTS) algorithm.
 
-    def __init__(self, idx, request_queue:Queue, response_queue:Queue, shared_states:torch.Tensor):
-        super().__init__(model=None)
+    This class extends the base MCTS class to support parallel execution of MCTS simulations
+    across multiple processes. It uses shared memory and queues to communicate with a manager
+    process that handles neural network predictions.
 
+    Attributes:
+        idx (int): The unique identifier for this worker process.
+        request_queue (Queue): A queue for sending prediction requests to the manager process.
+        response_queue (Queue): A queue for receiving prediction results from the manager process.
+        shared_states (torch.Tensor): A shared memory tensor for storing game states to be evaluated.
+    """
+
+    def __init__(self, idx: int, request_queue: Queue, response_queue: Queue, shared_states: torch.Tensor):
+        """
+        Initializes the MultiprocessedMCTS instance.
+
+        Args:
+            idx (int): The unique identifier for this worker process.
+            request_queue (Queue): A queue for sending prediction requests to the manager process.
+            response_queue (Queue): A queue for receiving prediction results from the manager process.
+            shared_states (torch.Tensor): A shared memory tensor for storing game states to be evaluated.
+        """
+        super().__init__(model=None)  # Initialize the base MCTS class without a model.
         self.idx = idx
         self.request_queue = request_queue
         self.response_queue = response_queue
-        self.shared_states = shared_states  
+        self.shared_states = shared_states
 
-    def evaluate(self, canonical_state):
-         # Schreibe den Zustand des Spiels in den Shared Memory
+    def evaluate(self, canonical_state: np.ndarray) -> tuple:
+        """
+        Evaluates a game state by requesting predictions from the manager process.
+
+        This method writes the game state into shared memory, sends a request to the manager process,
+        and waits for the response containing the predicted action probabilities and value.
+
+        Args:
+            canonical_state (np.ndarray): The canonical game state to evaluate.
+
+        Returns:
+            tuple: A tuple containing the predicted action probabilities and the value of the state.
+        """
+        # Write the canonical state into shared memory for the manager process to access.
         self.shared_states[self.idx] = torch.tensor(canonical_state, dtype=torch.float32)
 
-        # Sende den Index des Zustands an den Manager
+        # Send a request to the manager process with the worker's index.
         self.request_queue.put((self.idx, self.idx))
 
-        # Warte auf die Antwort vom Manager
+        # Wait for the manager process to respond with the predictions.
         while True:
             try:
                 response = self.response_queue.get(timeout=0.001)
@@ -241,7 +280,6 @@ class MultiprocessedMCTS(MCTS):
                     return response["policy"], response["value"]
             except queue.Empty:
                 continue
-
 
 def dummy_console_mcts(args):
     """
@@ -263,7 +301,7 @@ def dummy_console_mcts(args):
     while not g.is_terminal_state(s):
         start_time = time.time()
         mcts = MCTS(model)
-        r = mcts.run(s, current_player)
+        r = mcts.run_search(s, current_player)
         a = r.select_action(temperature=0)
         x, y = index_to_coordinates(a)
         s, current_player = g.get_next_state(s, current_player, x, y)
@@ -273,7 +311,7 @@ def dummy_console_mcts(args):
         tn = time.time() - start_time
         print(f"Thinking time {tn:.2f} seconds")
         t.append(tn)
-        time.sleep(5)
+        #time.sleep(5)
 
     # g.print_board(s)  # Display final board state.
     print(f"Average thinking time {sum(t)/len(t):.4f} seconds")
@@ -283,22 +321,18 @@ def dummy_console_mcts(args):
 
 
 if __name__ == "__main__":
-    import multiprocessing
-    import torch.multiprocessing as tmp
+    
 
-    num_processes = 4  # Anzahl der parallelen MCTS-Instanzen
+   
     h = Hyperparameters()
     g = OthelloGame()
     s = g.get_init_board()
     current_player = -1
 
-    tmp.set_start_method("spawn", force=True)
 
     model = OthelloZeroModel(g.rows, g.get_action_size(), h.Neural_Network["device"])
-    model.eval()
-    model.share_memory()
-    args_list = [(model, i) for i in range(num_processes)]
-    with multiprocessing.Pool(num_processes) as pool:
-        result = pool.map(dummy_console_mcts, args_list)
+  
+ 
+    dummy_console_mcts(args=(model, 0))
 
-    print(result)
+
