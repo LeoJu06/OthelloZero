@@ -15,24 +15,24 @@ class Hyperparameters:
         - Node with keys ["key_passsing, prior_passing]"""
 
     MCTS = {
-        "num_simulations": 10,
+        "num_simulations": 200,
         "exploration_weight": 1.0,
-        "temp_threshold": 10,
+        "temp_threshold": 14,
         "temp": 1,
     }
 
-    Coach = {"iterations": 5, 
-             "episodes": 22*1,
+    Coach = {"iterations": 50, 
+             "episodes": 22*50,
              "num_workers" :22, }
     Coach["episodes_per_worker"] = Coach["episodes"] // Coach["num_workers"]
 
     Neural_Network = {
         "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"), 
-        "epochs" : 45, 
-        "batch_size" : 512,
-        "learning_rate" : 0.001
+        "epochs" : 75, 
+        "batch_size" : 2048,
+        "learning_rate" : 0.004
     }
 
     Node = {"key_passing": -1, "prior_passing": 1}
 
-    Arena = {"treshold": 0.6, "arena_games": 20}
+    Arena = {"treshold": 0.6, "arena_games": 100}
