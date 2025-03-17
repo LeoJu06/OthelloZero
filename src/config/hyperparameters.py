@@ -9,19 +9,30 @@ class Hyperparameters:
     Simply address them by writing Hyperparamerts.Name["key"]
 
     The Hyperparameter class contains:
-        - MCTS with keys ["num_simulations", "exploration_weight"]
+        - MCTS with keys ["num_simulations", "exploration_weight", "temp_threshold", temperature]
+        - Coach with keys ["iterations", "episodes", "num_workers", "episodes_per_worker"]
         - Neural_Network with keys ["device"]
         - Node with keys ["key_passsing, prior_passing]"""
 
     MCTS = {
-        "num_simulations": 700,
+        "num_simulations": 200,
         "exploration_weight": 1.0,
-        "temperature_turn_threshold": 1,
-        "temperature": 1,
+        "temp_threshold": 14,
+        "temp": 1,
     }
 
+    Coach = {"iterations": 50, 
+             "episodes": 22*50,
+             "num_workers" :22, }
+    Coach["episodes_per_worker"] = Coach["episodes"] // Coach["num_workers"]
+
     Neural_Network = {
-        "device": torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"), 
+        "epochs" : 75, 
+        "batch_size" : 2048,
+        "learning_rate" : 0.004
     }
 
     Node = {"key_passing": -1, "prior_passing": 1}
+
+    Arena = {"treshold": 0.6, "arena_games": 100}

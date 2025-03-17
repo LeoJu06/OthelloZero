@@ -42,3 +42,4 @@ def logger_config(name: str, log_filename: str):
 
 logger_othello_game = logger_config("Logger_Othello_Game", "logger_Othello_Game.log")
 logger_mcts = logger_config("Logger_MCTS", "logger_MCTS.log")
+logger_coach = logger_config("Logger_Coach", "Logger_Coach.log")
