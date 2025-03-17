@@ -9,6 +9,9 @@ from src.othello.game_settings import (
     FPS,
 )
 from src.othello.game_visuals import GameVisuals
+from src.data_manager.data_manager import DataManager
+from src.mcts.mcts import MCTS
+from src.utils.index_to_coordinates import index_to_coordinates
 
 
 class GamePvsAi:
@@ -27,6 +30,11 @@ class GamePvsAi:
         self.clock = pygame.time.Clock()
         self.board = OthelloGame()
         self.visuals = GameVisuals(screen, self.clock)
+
+        data_manager = DataManager()       
+        model = data_manager.load_model()
+        self.mcts = MCTS(model)
+        self.data_points = []
 
         # Game state variables
         self.running = True
@@ -120,10 +128,21 @@ class GamePvsAi:
         """
         Executes the AI's turn by making a random valid move.
         """
-        print("AI's turn")
-        self.game_state, self.current_player = self.board.play_random_move(
-            self.game_state, self.current_player
-        )
+        #print("AI's turn")
+       
+       
+        self.data_points.append(self.mcts.model.predict(self.game_state)[1].item())
+        print(self.data_points)
+        
+        
+        root = self.mcts.run_search(self.board.get_canonical_board(self.game_state, self.current_player), self.current_player)
+        x, y = index_to_coordinates(root.select_action(0))
+        self.game_state, self.current_player = self.board.get_next_state(self.game_state, self.current_player, x, y)
+        root.reset()
+
+        #self.game_state, self.current_player = self.board.play_random_move(
+        #    self.game_state, self.current_player
+        #)
 
         self.switch_turn()
 
@@ -140,6 +159,7 @@ class GamePvsAi:
         self.visuals.draw_board(self.game_state)
         valid_moves = self.board.get_valid_moves(self.game_state, self.current_player)
         self.visuals.mark_valid_fields(valid_moves)
+        self.visuals.draw_plot(self.data_points)
         pygame.display.flip()
 
     def display_winner(self):
@@ -147,6 +167,7 @@ class GamePvsAi:
         Determines and displays the winner of the game.
         """
         winner = self.board.determine_winner(self.game_state)
+        print(winner)
         if winner == 0:
             print("The game is a draw!")
         else:
