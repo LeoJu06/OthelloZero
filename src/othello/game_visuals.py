@@ -7,7 +7,46 @@ from src.othello.game_settings import BACKGROUND_COLOR, ROWS, COLS
 from src.othello.game_settings import GRID_COLOR, SQUARE_SIZE, COLOR_VALID_FIELDS
 import src.othello.game_constants as const
 
+import matplotlib.pyplot as plt
+import numpy as np
+import pygame
+import io
 
+def generate_plot_image(data_points):
+    """
+    Erstellt ein Matplotlib-Diagramm mit Zugnummern auf der X-Achse und gibt es als Pygame-Bild zurück.
+
+    Args:
+        data_points (list): Eine Liste von Zahlen, die geplottet werden sollen.
+
+    Returns:
+        pygame.Surface: Das gerenderte Diagramm als Bild.
+    """
+    fig, ax = plt.subplots(figsize=(4, 2))  # Größe des Plots anpassen
+    
+    # Erstellen des Plots mit X-Achse als Züge (0,1,2,...)
+    turns = list(range(len(data_points)))  # X-Achse: Zugnummern
+    ax.plot(turns, data_points, marker="o", linestyle="-", color="blue")
+
+    # Achsentitel setzen
+    ax.set_title("Spielverlauf")
+    ax.set_xlabel("Zugnummer")
+    ax.set_ylabel("Wert")
+
+    # Layout anpassen
+    plt.xticks(turns)  # Zeigt alle Zugnummern als x-Ticks
+    plt.grid(True, linestyle="--", alpha=0.5)
+
+    # Konvertiere den Plot in ein Bild
+    buf = io.BytesIO()
+    plt.savefig(buf, format="PNG", bbox_inches="tight")
+    plt.close(fig)
+
+    # Lade das Bild in Pygame
+    buf.seek(0)
+    image = pygame.image.load(buf)
+    
+    return image
 class GameVisuals:
     """
     Handles the rendering and animation for the Othello game.
@@ -176,3 +215,15 @@ class GameVisuals:
             pygame.draw.rect(
                 self.screen, COLOR_VALID_FIELDS, pygame.Rect(rect_position, rect_size)
             )
+
+    def draw_plot(self, data_points, position=(900, 50)):
+        """
+        Zeichnet einen Live-Plot in das Pygame-Fenster.
+
+        Args:
+            data_points (list): Eine Liste von Zahlen, die geplottet werden sollen.
+            position (tuple): Die (x, y)-Position des Plots im Fenster.
+        """
+        plot_image = generate_plot_image(data_points)
+        self.screen.blit(plot_image, position)
+        pygame.display.flip()
