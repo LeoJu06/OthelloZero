@@ -260,9 +260,9 @@ class OthelloGame:
             int: 1 for black, -1 for white, 0 for a draw.
         """
         score = np.sum(state)
-        if score > 0:
+        if score < 0:
             return const.PlayerColor.BLACK.value
-        elif score < 0:
+        elif score > 0:
             return const.PlayerColor.WHITE.value
         return 0
 
