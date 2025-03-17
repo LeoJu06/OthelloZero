@@ -8,14 +8,7 @@ import matplotlib.pyplot as plt
 
 from src.neural_net.model import OthelloZeroModel
 from src.data_manager.data_manager import DataManager
-if __name__ == "__main__":
-# Load data
-    data_manager = DataManager()
-    examples = data_manager.load_examples(0)
 
-    # Initialize the model
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = OthelloZeroModel(8, 65, device)
 
 def train(model, data, epochs=10, batch_size=2048, lr=0.001, save_training_plot=False):
     """
@@ -91,12 +84,14 @@ def train(model, data, epochs=10, batch_size=2048, lr=0.001, save_training_plot=
     return model, policy_losses, value_losses
 
 if __name__ == "__main__":
-    print(f"Number of training examples: {len(examples)}")
-    train(model, examples)
-    data_manager.save_model(model)
-    print("saved")
-    model = data_manager.load_model(None)
-    train(model, examples)
-    model = data_manager.load_model(None)
-    train(model, examples)
+
+# Load data
+    data_manager = DataManager()
+    examples = data_manager.load_examples()
+    print(len(examples))
+
+    # Initialize the model
+    model = data_manager.load_model()
+    
+    train(model, examples, lr=0.004, batch_size=2048, epochs=100)
 
