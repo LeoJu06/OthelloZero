@@ -132,7 +132,8 @@ class Coach:
         """
         game = OthelloGame()
         hyperparams = self.hyperparams
-        model = OthelloZeroModel(game.rows, game.get_action_size(), hyperparams.Neural_Network["device"])
+        #model = OthelloZeroModel(game.rows, game.get_action_size(), hyperparams.Neural_Network["device"])
+        model = self.data_manager.load_model()
         self.data_manager.save_model(model)
 
         for iteration in (range(1, hyperparams.Coach["iterations"] + 1)):
