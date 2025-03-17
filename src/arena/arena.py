@@ -32,6 +32,7 @@ class Arena:
             root = mcts.run_search(state, current_player)
 
             # Aktion auswählen und Zustand aktualisieren
+            # TODO
             x_pos, y_pos = index_to_coordinates(root.select_action(int(turn < 15)))
             state, current_player = game.get_next_state(state, current_player, x_pos, y_pos)
 
