@@ -331,6 +331,7 @@ if __name__ == "__main__":
 
 
     model = OthelloZeroModel(g.rows, g.get_action_size(), h.Neural_Network["device"])
+    
   
  
     dummy_console_mcts(args=(model, 0))
