@@ -4,10 +4,7 @@ import torch.nn.functional as F
 import numpy as np
 from src.neural_net.residual_block import ResidualBlock
 
-
-
-
-# OthelloZeroModel with Residual Blocks
+# OthelloZeroModel with Residual Blocks and Convolutional Layers
 class OthelloZeroModel(nn.Module):
     def __init__(self, board_size, action_size, device):
         super(OthelloZeroModel, self).__init__()
@@ -16,35 +13,39 @@ class OthelloZeroModel(nn.Module):
         self.board_size = board_size  # Expected 8x8
         self.action_size = action_size
 
-        # Initial fully connected layers
-        self.fc1 = nn.Linear(in_features=self.board_size * self.board_size, out_features=256)
-        
-        # Stack of Residual Blocks (9 blocks)
+        # Initial convolutional layer
+        self.conv1 = nn.Conv2d(1, 256, kernel_size=3, padding=1)
+        self.bn1 = nn.BatchNorm2d(256)
+        self.relu = nn.ReLU()
+
+        # Stack of Residual Blocks (10 blocks)
         self.residual_blocks = nn.ModuleList([ResidualBlock(256, 256) for _ in range(10)])
         
-        # Output heads: one for actions and one for the value
-        self.action_head = nn.Linear(in_features=256, out_features=self.action_size)
-        self.value_head = nn.Linear(in_features=256, out_features=1)
+        # Output heads: one for actions (policy) and one for the value
+        self.action_head = nn.Linear(in_features=256 * board_size * board_size, out_features=action_size)
+        self.value_head = nn.Linear(in_features=256 * board_size * board_size, out_features=1)
 
         self.to(device)
 
     def forward(self, x):
-        # Flatten the board(s) for the fully connected layers
-        x = x.view(x.size(0), -1)  # Batch size stays the same, flatten board
+        # Add a channel dimension
+        x = x.unsqueeze(1)
 
-        # Initial fully connected layer
-        x = F.relu(self.fc1(x))
+        # Initial convolutional layer
+        x = self.relu(self.bn1(self.conv1(x)))
 
         # Pass through all the residual blocks
         for block in self.residual_blocks:
             x = block(x)
         
-        # Action and value heads
-        action_logits = self.action_head(x)
-        value_logit = self.value_head(x)
+        # Flatten the output for the fully connected layers
+        x = x.view(x.size(0), -1)
 
-        # Softmax for actions, Tanh for the value
-        return F.softmax(action_logits, dim=1), torch.tanh(value_logit)
+        # Action and value heads
+        action_logits = self.action_head(x)  # Rohe Logits für die Policy
+        value_logit = self.value_head(x)     # Roher Wert
+
+        return action_logits, torch.tanh(value_logit)  # Tanh für den Wert beibehalten
 
     def predict(self, board):
         """
@@ -54,40 +55,40 @@ class OthelloZeroModel(nn.Module):
             board (np.ndarray): 8x8 Board (single).
 
         Returns:
-            Tuple[np.ndarray, np.ndarray]: Action probabilities and value.
+            Tuple[np.ndarray, np.ndarray]: Action probabilities (Softmax) and value.
         """
-        # Convert to tensor and ensure batch dimension
-        board = torch.FloatTensor(board.astype(np.float32)).to(self.device).unsqueeze(0)
+        # Convert to tensor and ensure batch and channel dimensions
+        board = torch.FloatTensor(board.astype(np.float32)).to(self.device).unsqueeze(0).unsqueeze(0)
 
         # Forward pass in evaluation mode
         self.eval()
         with torch.no_grad():
-            pi, v = self.forward(board)
+            action_logits, v = self.forward(board)
 
-        return pi.data.cpu().numpy().squeeze(), v.data.cpu().numpy().squeeze()
+        # Apply Softmax to action_logits
+        action_probs = F.softmax(action_logits, dim=1)
+
+        return action_probs.data.cpu().numpy().squeeze(), v.data.cpu().numpy().squeeze()
 
     def predict_batch(self, boards):
         """
         Makes predictions for a batch of boards.
 
         Args:
-            boards (np.ndarray): Batch of boards (N, 8, 8).
+            boards (torch.Tensor): Batch of boards (N, 8, 8).
 
         Returns:
-            Tuple[np.ndarray, np.ndarray]: Action probabilities and values for the batch.
+            Tuple[np.ndarray, np.ndarray]: Action probabilities (Softmax) and values for the batch.
         """
-        # Convert to tensor
-        boards = boards.to(self.device)
+        # Ensure channel dimension
+        boards = boards.unsqueeze(1).to(self.device)
 
         # Forward pass in evaluation mode
         self.eval()
         with torch.no_grad():
-            pi, v = self.forward(boards)
+            action_logits, v = self.forward(boards)
 
-        return pi.data.cpu().numpy(), v.data.cpu().numpy()
-    
+        # Apply Softmax to action_logits
+        action_probs = F.softmax(action_logits, dim=1)
 
-
-
-
-
+        return action_probs.data.cpu().numpy(), v.data.cpu().numpy()
