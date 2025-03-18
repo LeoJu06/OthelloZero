@@ -1,28 +1,19 @@
 import torch.nn as nn
 import torch.nn.functional as F
 
-
-# Residual Block Definition
 class ResidualBlock(nn.Module):
-    def __init__(self, in_features, out_features):
+    def __init__(self, in_channels, out_channels):
         super(ResidualBlock, self).__init__()
-        self.fc1 = nn.Linear(in_features, out_features)
-        self.fc2 = nn.Linear(out_features, out_features)
-        
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1)
+        self.bn1 = nn.BatchNorm2d(out_channels)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
+        self.bn2 = nn.BatchNorm2d(out_channels)
+        self.relu = nn.ReLU()
+
     def forward(self, x):
-        # Save the input to add later
-        identity = x
-        
-        # First layer
-        x = F.relu(self.fc1(x))
-        
-        # Second layer
-        x = self.fc2(x)
-        
-        # Skip connection (add the original input to the output)
-        x += identity
-        
-        # Apply ReLU after adding
-        x = F.relu(x)
-        
-        return x
+        residual = x
+        out = self.relu(self.bn1(self.conv1(x)))
+        out = self.bn2(self.conv2(out))
+        out += residual
+        out = self.relu(out)
+        return out
