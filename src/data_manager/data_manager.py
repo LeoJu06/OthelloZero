@@ -2,6 +2,7 @@ from src.othello.game_constants import PlayerColor
 from src.othello.othello_game import OthelloGame
 from src.neural_net.model import OthelloZeroModel
 from src.mcts.node import Node
+import json 
 import os
 
 import pickle
@@ -153,6 +154,17 @@ class DataManager:
             training_example: A single training example to add to the data list.
         """
         self.data.append(training_example)
+
+
+    def save_report_as_json(self, won, lost):
+        """Creates a report.json file. Where all training information is stored"""
+
+        pass 
+        raise NotImplementedError
+
+
+
+
 
 
 
