@@ -1,9 +1,10 @@
-from src.config.hyperparameters import Hyperparameters
+from src.config.hyperparameters import Hyperparameters, temperature
 import os
 from src.othello.othello_game import OthelloGame
 from src.mcts.mcts import MultiprocessedMCTS
-from src.neural_net.model import OthelloZeroModel
 from src.data_manager.data_manager import DataManager
+from src.data_manager.replay_buffer import ReplayBuffer
+from src.utils.no_duplicates import filter_duplicates
 from src.mcts.manager import init_manager, init_manager_process, terminate_manager_process, create_multiprocessed_mcts
 from src.othello.game_constants import PlayerColor
 from src.utils.index_to_coordinates import index_to_coordinates
@@ -12,13 +13,11 @@ from src.neural_net.train_model import train
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
-from reportlab.lib.units import inch
-from reportlab.platypus import Table, TableStyle
+
 import torch.multiprocessing as mp
 import src.utils.logger_config as lg
 import matplotlib.pyplot as plt
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+
 from tqdm import tqdm
 import time
 
@@ -39,6 +38,7 @@ class Coach:
         """
         self.hyperparams = Hyperparameters()
         self.data_manager = DataManager()
+        self.replay_buffer = ReplayBuffer()
         self.arena = Arena()
 
     def execute_single_episode(self, mcts: MultiprocessedMCTS):
@@ -58,10 +58,12 @@ class Coach:
         episode_step = 0
 
         while not game.is_terminal_state(state):
-            temp = int(episode_step < self.hyperparams.MCTS["temp_threshold"])
+            temp = temperature(episode_step)
             root = mcts.run_search(state, current_player)
 
+            
             if episode_step < self.hyperparams.MCTS["data_turn_limit"]: # othello games endures max of 60 moves, last 5 moves do not have to be stored
+                # The NN do not has to see the last 5 moves
                 # Store training example
                 examples.append(self.data_manager.create_example(state, current_player, root, temp))
 
@@ -154,9 +156,10 @@ class Coach:
             lg.logger_coach.info(f"Iteration {iteration} - Self-play complete. Training model...")
 
             examples = self.data_manager.load_examples()
+            self.replay_buffer.add(filter_duplicates(examples))
             
             lg.logger_coach.info("Start Training Model.")
-            new_model = self.train(model, examples)
+            new_model = self.train(model)
             lg.logger_coach.info("Training Model complete.")
 
             old_model =  self.data_manager.load_model(latest_model=True)
@@ -192,7 +195,7 @@ class Coach:
             lg.logger_coach.info("*** --- ***")
             lg.logger_coach.info("")
 
-    def train(self,model,  examples):
+    def train(self,model):
         """
         Trains the neural network using collected self-play data.
         """
@@ -201,7 +204,7 @@ class Coach:
         learning_rate = self.hyperparams.Neural_Network["learning_rate"]
        
 
-        model, policy_losses, value_losses = train(model, examples, epochs, batch_size, learning_rate)
+        model, policy_losses, value_losses = train(model, replay_buffer=self.replay_buffer, epochs=epochs, batch_size=batch_size, lr=learning_rate)
 
         iter_number = self.data_manager.get_iter_number()
         plt.figure(figsize=(10, 5))
