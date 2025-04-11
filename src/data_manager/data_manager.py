@@ -4,13 +4,10 @@ from src.neural_net.model import OthelloZeroModel
 from src.mcts.node import Node
 import json 
 import os
-
+from src.utils.no_duplicates import filter_duplicates
 import pickle
-import random
-from collections import deque
 import pickle
 import torch
-from pathlib import Path
 
 class DataManager:
     def __init__(self):
@@ -101,33 +98,62 @@ class DataManager:
 
 
     def load_examples(self, n=None):
-
+        """
+        Load training examples from disk, either from a specific iteration or multiple recent iterations.
+        
+        Args:
+            n: Optional[int]. If specified, loads examples from this specific iteration number.
+                If None, loads examples from the last 5 iterations (excluding current).
+                
+        Returns:
+            List of training examples. When loading multiple iterations, duplicates are removed.
+            
+        Raises:
+            FileNotFoundError: If specified iteration file doesn't exist.
+            pickle.UnpicklingError: If a pickle file is corrupted.
+        """
         data_dir = self._path_to_data_dir()
 
+        # Case 1: Load specific iteration
         if n is not None:
-
-            filename = f"examples_iteration_{n}.pkl"
+            filename = f"examples/examples_iteration_{n}.pkl"
             path = os.path.join(data_dir, filename)
+            
+            try:
+                with open(path, "rb") as f:
+                    return pickle.load(f)
+            except FileNotFoundError:
+                raise FileNotFoundError(f"Training examples file not found for iteration {n}")
+            except pickle.UnpicklingError as e:
+                raise pickle.UnpicklingError(f"Corrupted pickle file for iteration {n}: {str(e)}")
 
-            with open(path, "rb") as f:
-                examples = pickle.load(f)
-
-            return examples
+        # Case 2: Load multiple recent iterations (with deduplication)
+        current_iter = self.get_iter_number()
+        combined_examples = []
         
-        else:
-            n = self.get_iter_number()  # +1, because range() exludes the last number
-            combinded = []
-
-            for ex_n in (range(max(n-5, 0), max(n, 1))):
-                print("File number", ex_n)
-                filename = f"examples/examples_iteration_{ex_n}.pkl"
+        # Load examples from last 5 completed iterations (n-5 to n-1)
+        start_iter = max(current_iter - 5, 0)  # Ensure we don't go negative
+        end_iter = max(current_iter, 1)  # Ensure at least 1 iteration exists
+        
+        for iter_num in range(start_iter, end_iter):
+            try:
+                filename = f"examples/examples_iteration_{iter_num}.pkl"
                 path = os.path.join(data_dir, filename)
-
+                
                 with open(path, "rb") as f:
                     examples = pickle.load(f)
-                    combinded.extend(examples)
+                    combined_examples.extend(examples)
+                    
+            except FileNotFoundError:
+                print(f"Warning: Examples file missing for iteration {iter_num}")
+                raise FileNotFoundError
+                continue
+            except pickle.UnpicklingError:
+                print(f"Warning: Corrupted examples file for iteration {iter_num}")
+                continue
 
-            return combinded
+       
+        return combined_examples
 
         
 
@@ -168,28 +194,18 @@ class DataManager:
 
 
 
-class ReplayBuffer:
-    def __init__(self, max_size=500_000):
-        self.buffer = deque(maxlen=max_size)
-    
-    def add(self, examples):
-        self.buffer.extend(examples)
-    
-    def sample(self, num_samples):
-        # Gibt alle Beispiele zurück, wenn weniger als num_samples vorhanden sind
-        return random.sample(self.buffer, min(num_samples, len(self.buffer)))
-    
-    def __len__(self):
-        return len(self.buffer)
-
-
 if __name__ == "__main__":
     # Example usage
     data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'data')
     print(f"Data directory: {data_dir}")
 
     da = DataManager()
+  
     n = da.get_iter_number()
 
-    e = da.load_examples(0)
+    e = da.load_examples()
     print(len(e))
+    e = filter_duplicates(e)
+    print(len(e))
+    
+
