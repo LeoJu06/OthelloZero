@@ -19,7 +19,7 @@ class ResidualBlock(nn.Module):
         return F.relu(x + residual)
 
 class OthelloZeroModel(nn.Module):
-    def __init__(self, board_size=8, action_size=64, num_res_blocks=12, device="cpu"):
+    def __init__(self, board_size=8, action_size=64, num_res_blocks=10, device="cpu"):
         super().__init__()
         self.device = device
         self.board_size = board_size
