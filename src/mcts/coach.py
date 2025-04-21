@@ -1,5 +1,6 @@
 from src.config.hyperparameters import Hyperparameters, temperature
 import os
+from src.neural_net.model import OthelloZeroModel
 from src.othello.othello_game import OthelloGame
 from src.mcts.mcts import MultiprocessedMCTS
 from src.data_manager.data_manager import DataManager
@@ -135,8 +136,8 @@ class Coach:
         """
         game = OthelloGame()
         hyperparams = self.hyperparams
-        #model = OthelloZeroModel(game.rows, game.get_action_size(), device=hyperparams.Neural_Network["device"])
-        model = self.data_manager.load_model()
+        model = OthelloZeroModel(game.rows, game.get_action_size(), device=hyperparams.Neural_Network["device"])
+        #model = self.data_manager.load_model()
         self.data_manager.save_model(model)
 
         for iteration in (range(1, hyperparams.Coach["iterations"] + 1)):
@@ -161,12 +162,15 @@ class Coach:
             lg.logger_coach.info("Start Training Model.")
             new_model = self.train(model)
             lg.logger_coach.info("Training Model complete.")
+            if iteration % 5 == 0:
+                old_model =  self.data_manager.load_model(latest_model=True)
+                lg.logger_coach.info("Arena - New Model vs. old Model.")
 
-            old_model =  self.data_manager.load_model(latest_model=True)
-            lg.logger_coach.info("Arena - New Model vs. old Model.")
-
-            won, lost = self.arena.let_compete(new_model, old_model)
-            lg.logger_coach.info("Battle Completed.")
+                won, lost = self.arena.let_compete(new_model, old_model)
+                lg.logger_coach.info("Battle Completed.")
+            else:
+                won = 100
+                lost = 50
 
 
             if self.accept_new_model(won):
