@@ -9,8 +9,10 @@ from src.utils.no_duplicates import filter_duplicates
 from src.mcts.manager import init_manager, init_manager_process, terminate_manager_process, create_multiprocessed_mcts
 from src.othello.game_constants import PlayerColor
 from src.utils.index_to_coordinates import index_to_coordinates
+from src.utils.create_report import create_loss_figure
+from src.utils.data_augmentation import augment_data
 from src.arena.arena import Arena
-from src.neural_net.train_model import train
+from src.neural_net.train_model import train, calculate_epochs
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
@@ -127,8 +129,10 @@ class Coach:
 
         lg.logger_coach.info("Data was successfully saved")
 
-        for worker in workers:
+        for i, worker in enumerate(workers):
             worker.join()
+            print(f"Worker {i} joinded")
+            worker.terminate()
 
     def learn(self):
         """
@@ -136,11 +140,13 @@ class Coach:
         """
         game = OthelloGame()
         hyperparams = self.hyperparams
-        model = OthelloZeroModel(game.rows, game.get_action_size(), device=hyperparams.Neural_Network["device"])
-        #model = self.data_manager.load_model()
+        #model = OthelloZeroModel(game.rows, game.get_action_size(), device=hyperparams.Neural_Network["device"])
+        model = self.data_manager.load_model()
         self.data_manager.save_model(model)
 
-        for iteration in (range(1, hyperparams.Coach["iterations"] + 1)):
+        start_iter = self.data_manager.get_iter_number()
+
+        for iteration in (range(start_iter, hyperparams.Coach["iterations"])):
             lg.logger_coach.info(f"---Starting Iteration {iteration}---")
           
             start_time = time.time()
@@ -157,45 +163,43 @@ class Coach:
             lg.logger_coach.info(f"Iteration {iteration} - Self-play complete. Training model...")
 
             examples = self.data_manager.load_examples()
-            self.replay_buffer.add(filter_duplicates(examples))
+
+            # filter => augment => filter (symmetrical boards can become redundant through augmentation)
+            self.replay_buffer.add(filter_duplicates(augment_data(filter_duplicates(examples))))
             
             lg.logger_coach.info("Start Training Model.")
-            new_model = self.train(model)
+            new_model, policy_losses, value_losses, epochs = self.train(model)
+            create_loss_figure(policy_losses, value_losses,epochs, iteration)
+
             lg.logger_coach.info("Training Model complete.")
-            if iteration % 5 == 0:
-                old_model =  self.data_manager.load_model(latest_model=True)
+
+
+            if (iteration % self.hyperparams.Coach["arena_competition"]) == 0:
+
+                model_version = max(iteration - self.hyperparams.Coach["arena_competition"], 0)
+                old_model =  self.data_manager.load_model(latest_model=False, n=model_version)
                 lg.logger_coach.info("Arena - New Model vs. old Model.")
 
                 won, lost = self.arena.let_compete(new_model, old_model)
                 lg.logger_coach.info("Battle Completed.")
-            else:
-                won = 100
-                lost = 50
 
+                if self.accept_new_model(won):
+                    lg.logger_coach.info(f"New Model was accepted [win={won}, lost={lost}]")
 
-            if self.accept_new_model(won):
-                lg.logger_coach.info(f"New Model was accepted [win={won}, lost={lost}]")
+                    print("New model was accepted")
+                    model = new_model
+                else:
+                    print("New model was Rejected")
+                    lg.logger_coach.info(f"New Model was rejected [win={won}, lost={lost}]")
+                    model = old_model        
+                self.report(won, lost, examples, duration=time.time()-start_time)
 
-                print("New model was accepted")
-                model = new_model
-            else:
-                print("New model was Rejected")
-                lg.logger_coach.info(f"New Model was rejected [win={won}, lost={lost}]")
-                model = old_model
-
-            
-
-          
-            self.report(won, lost, examples, duration=time.time()-start_time)
             self.data_manager.increment_iteration() # increment interation number in txt file
             self.data_manager.save_model(model) # save new model
-            self.hyperparams.MCTS["num_simulations"] += 30
-            self.hyperparams.MCTS["num_simulations"] = min(800, self.hyperparams.MCTS["num_simulations"])
-            self.hyperparams.Neural_Network["learning_rate"] = max(self.hyperparams.Neural_Network["learning_rate"]-0.001, 0.001)
-            
-            lg.logger_coach.info(f"Iteration {iteration} completed in {time.time() - start_time:.2f}s.")
+            self.replay_buffer.clear()
 
             
+            lg.logger_coach.info(f"Iteration {iteration} completed in {time.time() - start_time:.2f}s.")    
             lg.logger_coach.info("*** --- ***")
             lg.logger_coach.info("")
 
@@ -203,25 +207,17 @@ class Coach:
         """
         Trains the neural network using collected self-play data.
         """
-        epochs = self.hyperparams.Neural_Network["epochs"]
+        
         batch_size = self.hyperparams.Neural_Network["batch_size"]
+        epochs = calculate_epochs(buffer_size=len(self.replay_buffer), batch_size=batch_size)
         learning_rate = self.hyperparams.Neural_Network["learning_rate"]
        
 
         model, policy_losses, value_losses = train(model, replay_buffer=self.replay_buffer, epochs=epochs, batch_size=batch_size, lr=learning_rate)
 
-        iter_number = self.data_manager.get_iter_number()
-        plt.figure(figsize=(10, 5))
-        plt.plot(range(1, epochs + 1), policy_losses, label="Policy Loss")
-        plt.plot(range(1, epochs + 1), value_losses, label="Value Loss")
-        plt.xlabel("Epochs")
-        plt.ylabel("Loss")
-        plt.title(f"Training Loss Iteration {iter_number} ")
-        plt.legend()
+ 
 
-        plt.savefig(f"data/losses_plotted/Training_loss_{iter_number}", dpi=300)
-
-        return model
+        return model, policy_losses, value_losses, epochs
     
     def accept_new_model(self, won):
       
