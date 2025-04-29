@@ -132,10 +132,11 @@ class DataManager:
         combined_examples = []
         
         # Load examples from last 5 completed iterations (n-5 to n-1)
-        start_iter = max(current_iter - 5, 0)  # Ensure we don't go negative
+        start_iter = max(current_iter - 9, 0)  # Ensure we don't go negative
         end_iter = max(current_iter, 1)  # Ensure at least 1 iteration exists
         
         for iter_num in range(start_iter, end_iter):
+            print(iter_num)
             try:
                 filename = f"examples/examples_iteration_{iter_num}.pkl"
                 path = os.path.join(data_dir, filename)
@@ -163,7 +164,7 @@ class DataManager:
         n = self.get_iter_number()
         torch.save(model.state_dict(), f"data/models/othello_zero_model_{n}")
 
-    def load_model(self, latest_model=True):
+    def load_model(self, latest_model=True, n=None):
         """Loads a model. If n is None the best model (last iter) is being returned"""
 
         if latest_model:
@@ -206,6 +207,6 @@ if __name__ == "__main__":
     e = da.load_examples()
     print(len(e))
     e = filter_duplicates(e)
-    print(len(e))
-    
+    print(e[0])
+    print(len(e[0][1]))
 
