@@ -19,6 +19,11 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm  # Für Fortschrittsbalken
 
+
+def calculate_epochs(buffer_size, batch_size, samples_per_iteration=5):
+    return (buffer_size * samples_per_iteration) // batch_size
+
+
 def train(model, replay_buffer, batch_size=512, epochs=1, lr=0.001):
     """
     Trainiert das Modell mit zufälligen Stichproben aus dem Replay Buffer.
@@ -26,9 +31,14 @@ def train(model, replay_buffer, batch_size=512, epochs=1, lr=0.001):
     """
     model.train()
     optimizer = optim.Adam(model.parameters(), lr=lr)
+    print(len(replay_buffer))
+    print(batch_size)
+    epochs = calculate_epochs(buffer_size=len(replay_buffer), batch_size=batch_size)
+    print(epochs)
     
     value_losses  =[]
     policy_losses = []
+
     
     for epoch in range(epochs):
         # Sample einen zufälligen Batch (originaler Ansatz)
