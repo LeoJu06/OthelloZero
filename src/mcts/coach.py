@@ -196,7 +196,7 @@ class Coach:
 
             self.data_manager.increment_iteration() # increment interation number in txt file
             self.data_manager.save_model(model) # save new model
-            self.replay_buffer.clear()
+            self.replay_buffer.clear() # clear and empty the replay buffer
 
             
             lg.logger_coach.info(f"Iteration {iteration} completed in {time.time() - start_time:.2f}s.")    
