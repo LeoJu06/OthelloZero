@@ -117,11 +117,11 @@ def init_manager_process(manager:Manager):
     manager_process.start()
     return manager_process
 
-def terminate_manager_process(manager_process:mp.Process):
+def terminate_manager_process(manager_process: mp.Process):
+    if manager_process.is_alive():
+        manager_process.terminate()
+        manager_process.join()  # <-- Das hier ist entscheidend
 
-    
-    # Cleanup
-    manager_process.terminate()
 
 def create_multiprocessed_mcts(worker_id, manager):
     shared_states = manager.shared_states  # Access shared memory
