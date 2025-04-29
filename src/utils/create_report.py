@@ -2,6 +2,7 @@ import os
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
+import matplotlib.pyplot as plt
 
 
 
@@ -44,3 +45,19 @@ def report(self, won, lost, examples, duration, n):
     # PDF speichern
     c.save()
     print(f"📄 PDF gespeichert als {pdf_filename}")
+
+
+def create_loss_figure(policy_losses, value_losses, epochs, iter_number):
+
+    "creates a loss figure and saves it"
+
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(range(1, epochs + 1), policy_losses, label="Policy Loss")
+    plt.plot(range(1, epochs + 1), value_losses, label="Value Loss")
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.title(f"Training Loss Iteration {iter_number} ")
+    plt.legend()
+
+    plt.savefig(f"data/losses_plotted/Training_loss_{iter_number}", dpi=300)
