@@ -49,9 +49,9 @@ class Arena:
             return -1  # Challenger verliert
         return 0  # Unentschieden 
 
-    def let_compete(self, challenger, old_model):
+    def let_compete(self, challenger, old_model, num_games=None):
         """Lässt die zwei Modelle gegeneinander spielen und parallelisiert die Spiele."""
-        num_games = Hyperparameters.Arena["arena_games"]
+        num_games = num_games or Hyperparameters.Arena["arena_games"]
         num_workers = 5
 
         with Pool(num_workers) as pool:
