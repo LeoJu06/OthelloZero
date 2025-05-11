@@ -4,6 +4,12 @@ import torch.nn.functional as F
 from src.neural_net.preprocess_board import preprocess_board
 import numpy as np
 
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+
+
 class ResidualBlock(nn.Module):
     def __init__(self, channels):
         super().__init__()
@@ -11,7 +17,7 @@ class ResidualBlock(nn.Module):
         self.bn1 = nn.BatchNorm2d(channels)
         self.conv2 = nn.Conv2d(channels, channels, kernel_size=3, padding=1)
         self.bn2 = nn.BatchNorm2d(channels)
-
+        
     def forward(self, x):
         residual = x
         x = F.relu(self.bn1(self.conv1(x)))
@@ -19,46 +25,47 @@ class ResidualBlock(nn.Module):
         return F.relu(x + residual)
 
 class OthelloZeroModel(nn.Module):
-    def __init__(self, board_size=8, action_size=64, num_res_blocks=10, device="cpu"):
+    def __init__(self, board_size=8, action_size=64, num_res_blocks=6, channels=128, device="cpu"):
         super().__init__()
         self.device = device
-        self.board_size = board_size
         
-        # Input: 3 Kanäle (Spieler, Gegner, legale Züge)
-        self.conv1 = nn.Conv2d(3, 192, kernel_size=3, padding=1)
-        self.bn1 = nn.BatchNorm2d(192)
+        # Input block
+        self.conv_input = nn.Conv2d(3, channels, kernel_size=3, padding=1)
+        self.bn_input = nn.BatchNorm2d(channels)
         
-        # Residual Tower
+        # Residual tower (6 Blöcke reichen für Othello)
         self.res_blocks = nn.Sequential(*[
-            ResidualBlock(192) for _ in range(num_res_blocks)
+            ResidualBlock(channels) for _ in range(num_res_blocks)
         ])
         
-        # Policy Head (Original unverändert)
-        self.policy_conv = nn.Conv2d(192, 2, kernel_size=3, padding=1)
+        # Policy head
+        self.policy_conv = nn.Conv2d(channels, 2, kernel_size=1)
         self.policy_bn = nn.BatchNorm2d(2)
         self.policy_fc = nn.Linear(2 * board_size * board_size, action_size)
-        
-        # OPTIMIERTER Value Head (stabilisiert)
-        self.value_conv = nn.Conv2d(192, 4, kernel_size=1)  # Nur 4 Kanäle (statt 32)
-        self.value_bn = nn.BatchNorm2d(4)
-        self.value_fc = nn.Linear(4 * board_size * board_size, 1)  # Direkte Regression
+
+        # Value head (kompakt)
+        self.value_conv = nn.Conv2d(channels, 1, kernel_size=1)
+        self.value_bn = nn.BatchNorm2d(1)
+        self.value_fc1 = nn.Linear(board_size * board_size, 32)  # Kleiner als Policy!
+        self.value_fc2 = nn.Linear(32, 1)
 
         self.to(device)
 
     def forward(self, x):
-        # Initial Conv
-        x = F.relu(self.bn1(self.conv1(x)))
+        # Shared backbone
+        x = F.relu(self.bn_input(self.conv_input(x)))
         x = self.res_blocks(x)
         
-        # Policy Head (Original)
+        # Policy
         p = F.relu(self.policy_bn(self.policy_conv(x)))
         p = p.view(p.size(0), -1)
         p = self.policy_fc(p)
         
-        # NEUER Value Forward (stabilisiert)
-        v = F.relu(self.value_bn(self.value_conv(x)))  # [B, 4, 8, 8]
-        v = v.view(v.size(0), -1)                     # [B, 256]
-        v = torch.tanh(self.value_fc(v))               # [B, 1]
+        # Value
+        v = F.relu(self.value_bn(self.value_conv(x)))
+        v = v.view(v.size(0), -1)
+        v = F.relu(self.value_fc1(v))
+        v = torch.tanh(self.value_fc2(v))
         
         return p, v
 
@@ -106,3 +113,8 @@ class OthelloZeroModel(nn.Module):
         return pi.data.cpu().numpy(), v.data.cpu().numpy()
 
 
+if __name__ == "__main__":
+
+    model = OthelloZeroModel()
+    total_params = sum(p.numel() for p in model.parameters())
+    print(f"Total parameters: {total_params}")
