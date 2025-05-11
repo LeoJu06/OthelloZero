@@ -31,8 +31,8 @@ class Hyperparameters:
     Neural_Network = {
         "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"), 
         "epochs" : 10, 
-        "batch_size" : 512,
-        "learning_rate" : 0.01
+        "batch_size" : 1024,
+        "learning_rate" : 0.1
     }
 
     Node = {"key_passing": -1, "prior_passing": 1}
