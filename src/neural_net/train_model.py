@@ -20,35 +20,31 @@ from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm  # Für Fortschrittsbalken
 
 
-def calculate_epochs(buffer_size, batch_size, samples_per_iteration=5):
-    return (buffer_size * samples_per_iteration) // batch_size
+def calculate_epochs(buffer_size, batch_size, samples_per_iteration=3):
+    return ( buffer_size * samples_per_iteration) // batch_size  # 3× Coverage
 
 
-def train(model, replay_buffer, batch_size=512, epochs=1, lr=0.001):
-    """
-    Trainiert das Modell mit zufälligen Stichproben aus dem Replay Buffer.
-    Behält den originalen Sampling-Ansatz bei, aber mit stabileren Loss-Funktionen.
-    """
+
+def train(model, replay_buffer, batch_size=512, lr=0.1, epochs=10_000):
+
+    epochs = calculate_epochs(len(replay_buffer), batch_size, 3)
+
     model.train()
-    optimizer = optim.Adam(model.parameters(), lr=lr)
-    print(len(replay_buffer))
-    print(batch_size)
-    epochs = calculate_epochs(buffer_size=len(replay_buffer), batch_size=batch_size)
-    print(epochs)
+    optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs, eta_min=1e-6)
     
+
     value_losses  =[]
     policy_losses = []
-
     
     for epoch in range(epochs):
-        # Sample einen zufälligen Batch (originaler Ansatz)
         batch = replay_buffer.sample(batch_size)
-        
+
         # Effiziente Konvertierung mit numpy
         states_np = np.array([preprocess_board(x[0]) for x in batch])
         policies_np = np.array([x[1] for x in batch])
         values_np = np.array([x[2] for x in batch])
-        
+
         # Konvertierung zu Tensoren
         states = torch.tensor(states_np, dtype=torch.float32).to(model.device)
         policy_targets = torch.tensor(policies_np, dtype=torch.float32).to(model.device)
@@ -56,29 +52,28 @@ def train(model, replay_buffer, batch_size=512, epochs=1, lr=0.001):
         
         # Forward pass
         policy_pred, value_pred = model(states)
-        
-        # Stabilere Loss-Berechnungen
-        policy_loss = F.kl_div(
-            F.log_softmax(policy_pred, dim=1),
-            policy_targets,
-            reduction='batchmean'
-        )
+
+        policy_log_probs = F.log_softmax(policy_pred, dim=1)
+        policy_loss = -(policy_targets * policy_log_probs).sum(dim=1).mean()
+
+      
         value_loss = F.mse_loss(value_pred.squeeze(), value_targets)
         total_loss = policy_loss + value_loss
         
         # Backward pass
         optimizer.zero_grad()
         total_loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)  # Gradient Clipping
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
         optimizer.step()
+        scheduler.step()
         
-        print(f"Epoch {epoch+1}/{epochs} | Loss: {total_loss.item():.4f} "
-              f"(Policy: {policy_loss.item():.4f}, Value: {value_loss.item():.4f})")
+        print(f"Epoch {epoch+1}/{epochs} | LR: {scheduler.get_last_lr()[0]:.5f} | Loss: {total_loss.item():.4f}"
+               f"(Policy: {policy_loss.item():.4f}, Value: {value_loss.item():.4f})")
         
         value_losses.append(value_loss.item())
         policy_losses.append(policy_loss.item())
 
-    return model, policy_losses,  value_losses
+    return model, policy_losses, value_losses
 
 if __name__ == "__main__":
     # Load data
@@ -97,8 +92,8 @@ if __name__ == "__main__":
     train(
         model,
         replay_buffer=replay_buffer,
-        lr=0.001,  # Reduzierte Lernrate für mehr Stabilität
-        batch_size=2028,  # Optimierte Batch-Größe
-        epochs=500
+        lr=0.0001,  # Reduzierte Lernrate für mehr Stabilität
+        batch_size=1024,  # Optimierte Batch-Größe
+        epochs=None # epochen werden berechnet. 
     )
 
