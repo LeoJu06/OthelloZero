@@ -10,7 +10,6 @@ from src.mcts.manager import init_manager, init_manager_process, terminate_manag
 from src.othello.game_constants import PlayerColor
 from src.utils.index_to_coordinates import index_to_coordinates
 from src.utils.create_report import create_loss_figure
-from src.utils.data_augmentation import augment_data
 from src.arena.arena import Arena
 from src.neural_net.train_model import train, calculate_epochs
 from reportlab.lib.pagesizes import letter
@@ -140,8 +139,8 @@ class Coach:
         """
         game = OthelloGame()
         hyperparams = self.hyperparams
-        #model = OthelloZeroModel(game.rows, game.get_action_size(), device=hyperparams.Neural_Network["device"])
-        model = self.data_manager.load_model()
+        model = OthelloZeroModel(game.rows, game.get_action_size(), device=hyperparams.Neural_Network["device"])
+       # model = self.data_manager.load_model()
         self.data_manager.save_model(model)
 
         start_iter = self.data_manager.get_iter_number()
@@ -164,8 +163,9 @@ class Coach:
 
             examples = self.data_manager.load_examples()
 
-            # filter => augment => filter (symmetrical boards can become redundant through augmentation)
-            self.replay_buffer.add(filter_duplicates(augment_data(filter_duplicates(examples))))
+          
+            self.replay_buffer.add(examples)
+            print(f"Replay Buffers length = {len(self.replay_buffer)}")
             
             lg.logger_coach.info("Start Training Model.")
             new_model, policy_losses, value_losses, epochs = self.train(model)
@@ -213,7 +213,7 @@ class Coach:
         learning_rate = self.hyperparams.Neural_Network["learning_rate"]
        
 
-        model, policy_losses, value_losses = train(model, replay_buffer=self.replay_buffer, epochs=epochs, batch_size=batch_size, lr=learning_rate)
+        model, policy_losses, value_losses = train(model, replay_buffer=self.replay_buffer, max_epochs=epochs, batch_size=batch_size, lr=learning_rate)
 
  
 
