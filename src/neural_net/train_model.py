@@ -20,80 +20,75 @@ from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm  # Für Fortschrittsbalken
 
 
-def calculate_epochs(buffer_size, batch_size, samples_per_iteration=3):
-    return ( buffer_size * samples_per_iteration) // batch_size  # 3× Coverage
+def calculate_epochs(buffer_size, batch_size, samples_per_iteration=2):
+    return ( buffer_size * samples_per_iteration) // batch_size  # 4× Coverage
 
 
 
-def train(model, replay_buffer, batch_size=512, lr=0.1, epochs=10_000):
+def train(model, replay_buffer, batch_size=2048, lr=0.01, max_epochs=100, samples_per_iteration=10):
 
-    epochs = calculate_epochs(len(replay_buffer), batch_size, 3)
-
+    alpha = 0.25
+    device = model.device
+    buffer_size = len(replay_buffer)
+    epochs = max_epochs
+     # Dynamische Anpassung:
+    alpha = 0.5
     model.train()
-    optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
-    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs, eta_min=1e-6)
     
+    # Optimizer + OneCycle Scheduler
+    optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
+    scheduler = optim.lr_scheduler.OneCycleLR(
+    optimizer,
+    max_lr=3e-3,          # Spitze während der mittleren Phase
+    epochs=epochs,
+    steps_per_epoch=1,
+    pct_start=0.1,        # 10% der Epochen für Warmup
+    div_factor=300,       # Start-LR = max_lr/300 = 1e-5
+    final_div_factor=3000, # End-LR = max_lr/3000 = 1e-6
+    anneal_strategy='cos' # Glatte Abnahme
+    )
 
-    value_losses  =[]
-    policy_losses = []
-    
+    value_losses, policy_losses = [], []
+
     for epoch in range(epochs):
+
+       
         batch = replay_buffer.sample(batch_size)
 
-        # Effiziente Konvertierung mit numpy
+        # Preprocessing
         states_np = np.array([preprocess_board(x[0]) for x in batch])
         policies_np = np.array([x[1] for x in batch])
         values_np = np.array([x[2] for x in batch])
 
-        # Konvertierung zu Tensoren
-        states = torch.tensor(states_np, dtype=torch.float32).to(model.device)
-        policy_targets = torch.tensor(policies_np, dtype=torch.float32).to(model.device)
-        value_targets = torch.tensor(values_np, dtype=torch.float32).to(model.device)
-        
-        # Forward pass
+        states = torch.tensor(states_np, dtype=torch.float32).to(device)
+        policy_targets = torch.tensor(policies_np, dtype=torch.float32).to(device)
+        value_targets = torch.tensor(values_np, dtype=torch.float32).to(device)
+
+        # Forward
         policy_pred, value_pred = model(states)
 
+        # Loss Functions
         policy_log_probs = F.log_softmax(policy_pred, dim=1)
         policy_loss = -(policy_targets * policy_log_probs).sum(dim=1).mean()
 
-      
         value_loss = F.mse_loss(value_pred.squeeze(), value_targets)
-        total_loss = policy_loss + value_loss
-        
-        # Backward pass
+
+        total_loss = policy_loss + value_loss * alpha
+
+        # Backward
         optimizer.zero_grad()
         total_loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
         scheduler.step()
-        
-        print(f"Epoch {epoch+1}/{epochs} | LR: {scheduler.get_last_lr()[0]:.5f} | Loss: {total_loss.item():.4f}"
-               f"(Policy: {policy_loss.item():.4f}, Value: {value_loss.item():.4f})")
-        
+
+        print(f"Epoch {epoch+1}/{epochs} | LR: {scheduler.get_last_lr()[0]:.6f} | "
+              f"Total Loss: {total_loss.item():.4f} (Policy: {policy_loss.item():.4f}, "
+              f"Value: {value_loss.item():.4f}) alpha: {alpha}")
+
         value_losses.append(value_loss.item())
         policy_losses.append(policy_loss.item())
 
     return model, policy_losses, value_losses
 
-if __name__ == "__main__":
-    # Load data
-    data_manager = DataManager()
-    examples = data_manager.load_examples()
-    
-    # Initialize the model
-    model = data_manager.load_model()
-    
-    # Create replay buffer and add examples
-    replay_buffer = ReplayBuffer()
-    replay_buffer.add(examples)
-    print(f"Loaded {len(examples)} training examples")
-    
-    # Train with more stable parameters
-    train(
-        model,
-        replay_buffer=replay_buffer,
-        lr=0.0001,  # Reduzierte Lernrate für mehr Stabilität
-        batch_size=1024,  # Optimierte Batch-Größe
-        epochs=None # epochen werden berechnet. 
-    )
 

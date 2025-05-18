@@ -1,44 +1,47 @@
 import numpy as np
+import random
 
 def rotate_board(board, k):
     """Rotates the board by 90° * k counter-clockwise."""
     return np.rot90(board, k)
 
-def flip_board_horizontal(board):
-    """Flips the board horizontally (left ↔ right)."""
-    return np.fliplr(board)
-
-def flip_board_vertical(board):
-    """Flips the board vertically (top ↔ bottom)."""
-    return np.flipud(board)
+def flip_board(board, axis):
+    """Flips the board along the specified axis (0=horizontal, 1=vertical)."""
+    return np.flip(board, axis=axis)
 
 def transform_policy_with_pass(policy, transform_fn):
     """
     Transforms the policy (64 board values + 1 pass value),
     keeping the pass value unchanged.
     """
-    board_policy = policy[:-1].reshape(8, 8)        # Only board policy
-    transformed = transform_fn(board_policy)       # e.g., rotate or flip
-    transformed_flat = transformed.flatten()
-    pass_prob = policy[-1]                         # Last entry remains unchanged
-    return np.append(transformed_flat, pass_prob)
+    board_policy = policy[:-1].reshape(8, 8)
+    transformed = transform_fn(board_policy)
+    return np.append(transformed.flatten(), policy[-1])
 
-def augment_data(data):
+def random_augment_data(data, augment_prob=0.75):
     """
-    Augments a list of (state, policy, value) triples through symmetry transformations.
-    Returns a new list with 8× as many entries.
+    Augments data randomly through symmetry transformations.
+    Each sample has `augment_prob` chance of being augmented.
+    Returns a new list with the same length as input.
     """
     augmented = []
-
+    
     for state, policy, value in data:
-        for k in range(4):  # Rotation 0°, 90°, 180°, 270°
-            rot_state = rotate_board(state, k)
-            rot_policy = transform_policy_with_pass(policy, lambda b: rotate_board(b, k))
-            augmented.append((rot_state, rot_policy, value))
-
-            # Horizontally flipped after rotation
-            flip_state = flip_board_horizontal(rot_state)
-            flip_policy = transform_policy_with_pass(rot_policy, flip_board_horizontal)
-            augmented.append((flip_state, flip_policy, value))
-
+        if random.random() < augment_prob:
+            # Randomly choose a transformation
+            k = random.randint(0, 3)  # Rotation (0-3)
+            flip = random.choice([True, False])  # Whether to flip
+            
+            # Apply rotation
+            state = rotate_board(state, k)
+            policy = transform_policy_with_pass(policy, lambda b: rotate_board(b, k))
+            
+            # Optionally apply flip
+            if flip:
+                axis = random.choice([0, 1])  # 0=horizontal, 1=vertical
+                state = flip_board(state, axis)
+                policy = transform_policy_with_pass(policy, lambda b: flip_board(b, axis))
+        
+        augmented.append((state, policy, value))
+    
     return augmented

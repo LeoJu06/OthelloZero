@@ -151,7 +151,8 @@ class GamePvsAi:
 
     def _run_mcts_search(self):
         root = self.mcts.run_search(self.game_state, self.current_player, False)
-        action = root.select_action(0)
+        print(root.children)
+        action = root.select_action(temperature=0)
         self.ai_action = action
 
 
