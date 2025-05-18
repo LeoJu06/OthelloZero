@@ -1,21 +1,26 @@
 import random
 from collections import deque
+from typing import List, Tuple
+import numpy as np
+from src.utils.data_augmentation import random_augment_data
+
+SampleType = Tuple[np.ndarray, np.ndarray, float]  # (board, policy, value)
 
 class ReplayBuffer:
-    def __init__(self, max_size=22*20*60*5*8):
-        self.buffer = deque(maxlen=max_size)
+    def __init__(self, max_size: int = 200_000):
+        self.buffer: deque[SampleType] = deque(maxlen=max_size)
     
-    def add(self, examples):
+    def add(self, examples: List[SampleType]):
         self.buffer.extend(examples)
     
-    def sample(self, num_samples):
-        # Gibt alle Beispiele zurück, wenn weniger als num_samples vorhanden sind
-        return random.sample(self.buffer, min(num_samples, len(self.buffer)))
+    def sample(self, num_samples: int, augment_prob: float = 0.75) -> List[SampleType]:
+        batch = random.sample(self.buffer, min(num_samples, len(self.buffer)))
+        batch = random_augment_data(batch, augment_prob)
+        random.shuffle(batch)
+        return batch
     
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.buffer)
-
-
+    
     def clear(self):
-        """Clear the buffer"""
         self.buffer.clear()
