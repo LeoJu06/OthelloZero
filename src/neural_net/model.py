@@ -33,15 +33,17 @@ class OthelloZeroModel(nn.Module):
         self.conv_input = nn.Conv2d(3, channels, kernel_size=3, padding=1)
         self.bn_input = nn.BatchNorm2d(channels)
         
-        # Residual tower (6 Blöcke reichen für Othello)
+        # Residual tower (8 Blöcke reichen für Othello)
         self.res_blocks = nn.Sequential(*[
             ResidualBlock(channels) for _ in range(num_res_blocks)
         ])
+        self.final_bn = nn.BatchNorm2d(channels)  # Neu
         
         # Policy head
-        self.policy_conv = nn.Conv2d(channels, 2, kernel_size=1)
-        self.policy_bn = nn.BatchNorm2d(2)
-        self.policy_fc = nn.Linear(2 * board_size * board_size, action_size)
+
+        self.policy_conv = nn.Conv2d(channels, 32, kernel_size=3, padding=1)  # Statt 2 Kanäle
+        self.policy_bn = nn.BatchNorm2d(32)
+        self.policy_fc = nn.Linear(32 * board_size * board_size, action_size)  # Statt 2*8*8
 
         # Value head (kompakt)
         self.value_conv = nn.Conv2d(channels, 1, kernel_size=1)
@@ -55,6 +57,7 @@ class OthelloZeroModel(nn.Module):
         # Shared backbone
         x = F.relu(self.bn_input(self.conv_input(x)))
         x = self.res_blocks(x)
+        x = self.final_bn(x)  # Stabilisiert Gradienten
         
         # Policy
         p = F.relu(self.policy_bn(self.policy_conv(x)))
