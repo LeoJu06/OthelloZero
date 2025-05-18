@@ -132,7 +132,7 @@ class DataManager:
         combined_examples = []
         
         # Load examples from last 5 completed iterations (n-5 to n-1)
-        start_iter = max(current_iter - 9, 0)  # Ensure we don't go negative
+        start_iter = max(current_iter - 5, 0)  # Ensure we don't go negative
         end_iter = max(current_iter, 1)  # Ensure at least 1 iteration exists
         
         for iter_num in range(start_iter, end_iter):
