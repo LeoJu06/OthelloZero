@@ -23,7 +23,7 @@ class Hyperparameters:
     }
 
     Coach = {"iterations": 50, 
-             "episodes": 22*20,
+             "episodes": 22*30,
              "num_workers" :22,
               "arena_competition": 5}
     Coach["episodes_per_worker"] = Coach["episodes"] // Coach["num_workers"]
@@ -31,8 +31,8 @@ class Hyperparameters:
     Neural_Network = {
         "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"), 
         "epochs" : 10, 
-        "batch_size" : 1024,
-        "learning_rate" : 0.1
+        "batch_size" : 128,
+        "learning_rate" : 0.01
     }
 
     Node = {"key_passing": -1, "prior_passing": 1}
