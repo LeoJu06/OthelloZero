@@ -15,7 +15,7 @@ class Hyperparameters:
         - Node with keys ["key_passsing, prior_passing]"""
 
     MCTS = {
-        "num_simulations": 80,
+        "num_simulations": 10,
         "exploration_weight": 1.5,
         "temp_threshold": 14,
         "temp": 1,
@@ -23,7 +23,7 @@ class Hyperparameters:
     }
 
     Coach = {"iterations": 50, 
-             "episodes": 22*30,
+             "episodes": 22*1,
              "num_workers" :22,
               "arena_competition": 5}
     Coach["episodes_per_worker"] = Coach["episodes"] // Coach["num_workers"]
