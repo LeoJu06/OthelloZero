@@ -1,4 +1,5 @@
 import os 
+import json
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
@@ -60,4 +61,15 @@ def create_loss_figure(policy_losses, value_losses, epochs, iter_number):
     plt.title(f"Training Loss Iteration {iter_number} ")
     plt.legend()
 
+
     plt.savefig(f"data/losses_plotted/Training_loss_{iter_number}", dpi=300)
+
+
+def save_loss_data(policy_loss, value_loss, epochs, iter_number):
+
+    path = f"data/losses_plotted/Training_loss_{iter_number}.json"
+
+    data = {"policy_loss": policy_loss, "value_loss": value_loss, "epochs": epochs}
+
+    with open(path, "w") as f:
+        json.dump(data, f, indent=4)
