@@ -1,5 +1,6 @@
 from src.config.hyperparameters import Hyperparameters, temperature
 import os
+import json
 from src.neural_net.model import OthelloZeroModel
 from src.othello.othello_game import OthelloGame
 from src.mcts.mcts import MultiprocessedMCTS
@@ -9,9 +10,9 @@ from src.utils.no_duplicates import filter_duplicates
 from src.mcts.manager import init_manager, init_manager_process, terminate_manager_process, create_multiprocessed_mcts
 from src.othello.game_constants import PlayerColor
 from src.utils.index_to_coordinates import index_to_coordinates
-from src.utils.create_report import create_loss_figure
+from src.utils.create_report import create_loss_figure, save_loss_data
 from src.arena.arena import Arena
-from src.neural_net.train_model import train, calculate_epochs
+from src.neural_net.train_model import train, calculate_epochs, calculate_training_steps
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
@@ -170,6 +171,7 @@ class Coach:
             lg.logger_coach.info("Start Training Model.")
             new_model, policy_losses, value_losses, epochs = self.train(model)
             create_loss_figure(policy_losses, value_losses,epochs, iteration)
+            save_loss_data(policy_losses, value_losses, epochs, iteration)
 
             lg.logger_coach.info("Training Model complete.")
 
@@ -210,14 +212,15 @@ class Coach:
         
         batch_size = self.hyperparams.Neural_Network["batch_size"]
         epochs = calculate_epochs(buffer_size=len(self.replay_buffer), batch_size=batch_size)
+        steps = calculate_training_steps(buffer_size=len(self.replay_buffer), batch_size=batch_size)
         learning_rate = self.hyperparams.Neural_Network["learning_rate"]
        
 
-        model, policy_losses, value_losses = train(model, replay_buffer=self.replay_buffer, max_epochs=epochs, batch_size=batch_size, lr=learning_rate)
+        model, policy_losses, value_losses = train(model, replay_buffer=self.replay_buffer, max_epochs=steps, batch_size=batch_size, lr=learning_rate)
 
  
 
-        return model, policy_losses, value_losses, epochs
+        return model, policy_losses, value_losses, steps
     
     def accept_new_model(self, won):
       
@@ -263,6 +266,11 @@ class Coach:
         # PDF speichern
         c.save()
         print(f"📄 PDF gespeichert als {pdf_filename}")
+
+        data = {"data":info_text}
+        data_file = f"data/reports/data_iter_{n}.json"
+        with open(data_file, "w") as f:
+            json.dump(data, f, indent=4)
 
 if __name__ == "__main__":
     coach = Coach()
