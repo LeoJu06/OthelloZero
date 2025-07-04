@@ -1,4 +1,4 @@
-from src.config.hyperparameters import Hyperparameters, temperature
+from src.config.hyperparameters import Hyperparameters, temperature, mcts_simulations
 import os
 import json
 from src.neural_net.model import OthelloZeroModel
@@ -59,10 +59,11 @@ class Coach:
         current_player = PlayerColor.BLACK.value  # Black always starts
         examples = []  # Training data storage
         episode_step = 0
+        num_simulations = mcts_simulations(self.data_manager.get_iter_number())
 
         while not game.is_terminal_state(state):
             temp = temperature(episode_step)
-            root = mcts.run_search(state, current_player)
+            root = mcts.run_search(state, current_player, num_simulations=num_simulations)
 
             
             if episode_step < self.hyperparams.MCTS["data_turn_limit"]: # othello games endures max of 60 moves, last 5 moves do not have to be stored
