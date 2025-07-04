@@ -23,6 +23,17 @@ from tqdm import tqdm  # Für Fortschrittsbalken
 def calculate_epochs(buffer_size, batch_size, samples_per_iteration=2):
     return ( buffer_size * samples_per_iteration) // batch_size  # 4× Coverage
 
+def calculate_training_steps(buffer_size: int, batch_size: int, coverage: int = 2, augmentation_factor: int = 8) -> int:
+    """
+    Berechnet, wie viele SGD-Schritte (Batches) du brauchst, um die gewünschte Coverage zu erreichen.
+    
+    - buffer_size: Anzahl Originaldatenpunkte im ReplayBuffer (z. B. 160_000)
+    - batch_size: z. B. 128 oder 2048
+    - coverage: gewünschte Abdeckung pro Sample (z. B. 2–4)
+    - augmentation_factor: wie viele augmentierte Versionen generierst du pro Sample? z. B. 8
+    """
+    total_augmented_samples = buffer_size * coverage * augmentation_factor
+    return total_augmented_samples // batch_size
 
 
 def train(model, replay_buffer, batch_size=2048, lr=0.01, max_epochs=100, samples_per_iteration=10):
