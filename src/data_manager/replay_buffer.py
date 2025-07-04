@@ -7,7 +7,7 @@ from src.utils.data_augmentation import random_augment_data
 SampleType = Tuple[np.ndarray, np.ndarray, float]  # (board, policy, value)
 
 class ReplayBuffer:
-    def __init__(self, max_size: int = 200_000):
+    def __init__(self, max_size: int = 160_000):
         self.buffer: deque[SampleType] = deque(maxlen=max_size)
     
     def add(self, examples: List[SampleType]):
