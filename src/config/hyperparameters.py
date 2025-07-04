@@ -23,7 +23,7 @@ class Hyperparameters:
     }
 
     Coach = {"iterations": 50, 
-             "episodes": 22*1,
+             "episodes": 22*30,
              "num_workers" :22,
               "arena_competition": 5}
     Coach["episodes_per_worker"] = Coach["episodes"] // Coach["num_workers"]
@@ -37,11 +37,22 @@ class Hyperparameters:
 
     Node = {"key_passing": -1, "prior_passing": 1}
 
-    Arena = {"treshold": 0.55, "arena_games": 100}
+    Arena = {"treshold": 0.55, "arena_games": 150}
 
 
 def temperature(move_num, total_moves=60):
     return max(0.1, 1.0 - move_num*0.03)  # Linear von 1.0 → 0.1 über 30 Züge
 
-        
+def mcts_simulations(iteration):
+    if iteration <= 5:
+        return 100
+    elif iteration <= 15:
+        return 200
+    elif iteration <= 30:
+        return 300
+    elif iteration <= 50:
+        return 400
+    else:
+        return 600
+
     
