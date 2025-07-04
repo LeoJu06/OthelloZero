@@ -41,7 +41,7 @@ class MCTS:
         self.root = Node(prior=0, to_play=-1)  # Initialize root with default values.
 
     def run_search(
-        self, state: np.ndarray, to_play: int, add_dirichlet_noise: bool = True
+        self, state: np.ndarray, to_play: int, add_dirichlet_noise: bool = True, num_simulations: int = None
     ) -> Node:
         """
         Executes MCTS to determine the optimal policy and value.
@@ -56,9 +56,11 @@ class MCTS:
         """
         # Expand the root node with initial probabilities.
         self.expand_root(state, to_play, add_dirichlet_noise)
+        if num_simulations is None:
+            num_simulations = self.hyperparameters.MCTS["num_simulations"]
 
         # Perform a series of simulations.
-        for _ in range(self.hyperparameters.MCTS["num_simulations"]):
+        for _ in range(num_simulations):
             search_path, action_path = self.tree_traverse(
                 self.root
             )  # Traverse tree to a leaf.
