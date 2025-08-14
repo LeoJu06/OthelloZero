@@ -37,6 +37,7 @@ def fetch_trello_board_json(api_key, token, board_id):
     all_cards = []
     page = 1
     limit = 100  # Set the limit for the number of cards per page
+    i = 0
 
     while True:
         # Set the pagination parameters for cards
@@ -47,6 +48,7 @@ def fetch_trello_board_json(api_key, token, board_id):
         response = requests.get(f"{url}/cards", params=params)
 
         if response.status_code == 200:
+            print(f"Received cards successfully {page}.")
             cards = response.json()
             all_cards.extend(cards)
 
@@ -54,8 +56,14 @@ def fetch_trello_board_json(api_key, token, board_id):
             if len(cards) < limit:
                 break
 
+            if page >= 1:
+                print("Reached the maximum number of pages (5). Stopping further requests.")
+                break
+
             # Otherwise, move to the next page
             page += 1
+
+
         else:
             print(f"Error fetching cards: {response.status_code} - {response.text}")
             break
