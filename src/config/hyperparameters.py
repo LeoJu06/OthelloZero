@@ -15,15 +15,15 @@ class Hyperparameters:
         - Node with keys ["key_passsing, prior_passing]"""
 
     MCTS = {
-        "num_simulations": 10,
+        "num_simulations": 1,
         "exploration_weight": 1.5,
         "temp_threshold": 14,
         "temp": 1,
         "data_turn_limit": 55
     }
 
-    Coach = {"iterations": 50, 
-             "episodes": 22*30,
+    Coach = {"iterations": 100, 
+             "episodes": 22*12,
              "num_workers" :22,
               "arena_competition": 5}
     Coach["episodes_per_worker"] = Coach["episodes"] // Coach["num_workers"]
@@ -31,7 +31,7 @@ class Hyperparameters:
     Neural_Network = {
         "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"), 
         "epochs" : 10, 
-        "batch_size" : 128,
+        "batch_size" : 512,
         "learning_rate" : 0.01
     }
 
@@ -44,15 +44,19 @@ def temperature(move_num, total_moves=60):
     return max(0.1, 1.0 - move_num*0.03)  # Linear von 1.0 → 0.1 über 30 Züge
 
 def mcts_simulations(iteration):
-    if iteration <= 5:
-        return 100
-    elif iteration <= 15:
-        return 200
-    elif iteration <= 30:
-        return 300
-    elif iteration <= 50:
-        return 400
+    if iteration < 6:
+        mcts_sims = 100
+    elif iteration < 11:
+        mcts_sims = 200
+    elif iteration < 21:
+        mcts_sims = 250
+    elif iteration < 31:
+        mcts_sims = 300 
+    elif iteration < 46:
+        mcts_sims = 350
     else:
-        return 600
+        mcts_sims = 400
+    return mcts_sims
+
 
     

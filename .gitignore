@@ -163,3 +163,10 @@ cython_debug/
 
 .pkl
 data/examples/*.pkl
+/data/
+/data/losses_plotted/
+/data/elo/
+/data/models/
+
+/src/data/
+

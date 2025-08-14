@@ -1,9 +1,12 @@
 from multiprocessing import Pool
 from src.othello.othello_game import OthelloGame
-from src.config.hyperparameters import Hyperparameters
+from src.config.hyperparameters import Hyperparameters, mcts_simulations
 from src.mcts.mcts import MCTS
 from src.othello.game_constants import PlayerColor
 from src.utils.index_to_coordinates import index_to_coordinates
+from src.data_manager.data_manager import DataManager
+import numpy as np
+import random
 
 
 class Arena:
@@ -20,12 +23,13 @@ class Arena:
 
         state = game.get_init_board()
         turn = 0
+        num_simulations = mcts_simulations(DataManager().get_iter_number())
 
         while not game.is_terminal_state(state):
             mcts = mcts_challenger if current_player == PlayerColor.BLACK.value else mcts_old_model
 
             try:
-                root = mcts.run_search(state, current_player)
+                root = mcts.run_search(state, current_player, num_simulations=num_simulations)
             except AttributeError:
                 print("Error Occurred, Network output no valid moves")
                 return 0
@@ -73,7 +77,7 @@ class Arena:
 
             while not game.is_terminal_state(state):
                 if current_player == model_color:
-                    root = mcts_model.run_search(state, current_player)
+                    root = mcts_model.run_search(state, current_player, num_simulations=1000)
                     move = index_to_coordinates(root.select_action(int(turn < 14)))
                     root.reset()
                 else:
@@ -163,6 +167,49 @@ class Arena:
         disc_diff = (state == player_color).sum() - (state == opponent).sum()
 
         return 5 * corner_score + 2 * mobility_score + 1 * disc_diff
+    
+    def count_policy_from_fixed_state(self, model, move_counts, num_simulations=1000, target_turn=8):
+        """
+        Führt ein Spiel bis zu einem bestimmten Zug aus und sammelt dort die normalisierte MCTS-Policy.
+        Ziel: Heatmap der Modellpolicy (wie bei OLIVAW)
+        """
+        game = OthelloGame()
+        state = game.get_init_board()
+        current_player = PlayerColor.BLACK.value
+        turn = 0
+
+        # Zufällige Spielerfarbe für das Modell (nur wenn du später noch duellierst, hier egal)
+        model_color = random.choice([PlayerColor.BLACK.value, PlayerColor.WHITE.value])
+
+        while not game.is_terminal_state(state) and turn < target_turn:
+            root = MCTS(model).run_search(state, current_player, num_simulations=num_simulations)
+            action = root.select_action(temperature=1 if turn < 8 else 0)
+            if action == -1:
+                break
+            x, y = index_to_coordinates(action)
+            state, current_player = game.get_next_state(state, current_player, x, y)
+            turn += 1
+
+        # Jetzt bei gewünschtem Zug MCTS laufen lassen und Policy extrahieren
+        if not game.is_terminal_state(state):
+            root = MCTS(model).run_search(state, current_player, num_simulations=num_simulations)
+
+            # Extrahiere und normiere Visit-Counts
+            total_visits = sum(c.visit_count for a, c in root.children.items() if a != -1)
+            if total_visits > 0:
+                for action, child in root.children.items():
+                    if action != -1:
+                        row, col = index_to_coordinates(action)
+                        move_counts[row, col] += child.visit_count / total_visits
+
+
+    def count_moves_over_games(self, model, num_games=100, num_simulations=1000):
+        move_counts = np.zeros((8, 8), dtype=np.int32)
+        for i in range(num_games):
+            self.count_policy_from_fixed_state(model, move_counts, num_simulations)
+        return move_counts
+
+
 
 
 if __name__ == "__main__":

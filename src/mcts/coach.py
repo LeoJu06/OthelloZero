@@ -61,6 +61,7 @@ class Coach:
         episode_step = 0
         num_simulations = mcts_simulations(self.data_manager.get_iter_number())
 
+
         while not game.is_terminal_state(state):
             temp = temperature(episode_step)
             root = mcts.run_search(state, current_player, num_simulations=num_simulations)
@@ -141,13 +142,14 @@ class Coach:
         """
         game = OthelloGame()
         hyperparams = self.hyperparams
-        model = OthelloZeroModel(game.rows, game.get_action_size(), device=hyperparams.Neural_Network["device"])
-       # model = self.data_manager.load_model()
+        #model = OthelloZeroModel(game.rows, game.get_action_size(), device=hyperparams.Neural_Network["device"])
+        model = self.data_manager.load_model()
         self.data_manager.save_model(model)
 
         start_iter = self.data_manager.get_iter_number()
 
         for iteration in (range(start_iter, hyperparams.Coach["iterations"])):
+            print(mcts_simulations(iteration))
             lg.logger_coach.info(f"---Starting Iteration {iteration}---")
           
             start_time = time.time()
@@ -276,3 +278,4 @@ class Coach:
 if __name__ == "__main__":
     coach = Coach()
     coach.learn()
+    print("Training completed.")

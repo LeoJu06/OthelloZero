@@ -23,39 +23,40 @@ from tqdm import tqdm  # Für Fortschrittsbalken
 def calculate_epochs(buffer_size, batch_size, samples_per_iteration=2):
     return ( buffer_size * samples_per_iteration) // batch_size  # 4× Coverage
 
-def calculate_training_steps(buffer_size: int, batch_size: int, coverage: int = 2, augmentation_factor: int = 8) -> int:
+def calculate_training_steps(buffer_size: int, batch_size: int, coverage: int = 5) -> int:
     """
-    Berechnet, wie viele SGD-Schritte (Batches) du brauchst, um die gewünschte Coverage zu erreichen.
+    Berechnet die Anzahl SGD-Schritte, um jeden Datenpunkt im Buffer 'coverage'-mal zu sehen.
+    Gilt bei 'on-the-fly' Augmentation (z. B. 8 symmetrische Varianten pro Sample).
     
-    - buffer_size: Anzahl Originaldatenpunkte im ReplayBuffer (z. B. 160_000)
+    - buffer_size: Anzahl originaler Samples im ReplayBuffer
     - batch_size: z. B. 128 oder 2048
-    - coverage: gewünschte Abdeckung pro Sample (z. B. 2–4)
-    - augmentation_factor: wie viele augmentierte Versionen generierst du pro Sample? z. B. 8
+    - coverage: gewünschte Coverage (z. B. 2–4)
     """
-    total_augmented_samples = buffer_size * coverage * augmentation_factor
-    return total_augmented_samples // batch_size
+    total_samples = buffer_size * coverage
+    return total_samples // batch_size
+
 
 
 def train(model, replay_buffer, batch_size=2048, lr=0.01, max_epochs=100, samples_per_iteration=10):
 
-    alpha = 0.25
+
     device = model.device
     buffer_size = len(replay_buffer)
     epochs = max_epochs
      # Dynamische Anpassung:
-    alpha = 0.5
+    alpha = 0.75
     model.train()
     
     # Optimizer + OneCycle Scheduler
     optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
     scheduler = optim.lr_scheduler.OneCycleLR(
     optimizer,
-    max_lr=3e-3,          # Spitze während der mittleren Phase
+    max_lr=1e-3,          # Spitze während der mittleren Phase
     epochs=epochs,
     steps_per_epoch=1,
     pct_start=0.1,        # 10% der Epochen für Warmup
-    div_factor=300,       # Start-LR = max_lr/300 = 1e-5
-    final_div_factor=3000, # End-LR = max_lr/3000 = 1e-6
+    div_factor=100,       # Start-LR = max_lr/300 = 1e-5
+    final_div_factor=1000, # End-LR = max_lr/3000 = 1e-6
     anneal_strategy='cos' # Glatte Abnahme
     )
 
@@ -84,7 +85,7 @@ def train(model, replay_buffer, batch_size=2048, lr=0.01, max_epochs=100, sample
 
         value_loss = F.mse_loss(value_pred.squeeze(), value_targets)
 
-        total_loss = policy_loss + value_loss * alpha
+        total_loss = policy_loss + value_loss  # Kombinierter Loss
 
         # Backward
         optimizer.zero_grad()

@@ -39,6 +39,7 @@ class MCTS:
         self.game = OthelloGame()  
         self.hyperparameters = Hyperparameters()
         self.root = Node(prior=0, to_play=-1)  # Initialize root with default values.
+        self.max_depth_reached = 0
 
     def run_search(
         self, state: np.ndarray, to_play: int, add_dirichlet_noise: bool = True, num_simulations: int = None
@@ -54,6 +55,7 @@ class MCTS:
         Returns:
             Node: The updated root node after simulations.
         """
+        self._reset_max_depth()  # Reset the maximum depth before starting a new search.
         # Expand the root node with initial probabilities.
         self.expand_root(state, to_play, add_dirichlet_noise)
         if num_simulations is None:
@@ -127,6 +129,8 @@ class MCTS:
             action, node = node.select_child()
             search_path.append(node)
             action_path.append(action)
+        
+        self.max_depth_reached = max(self.max_depth_reached, len(search_path))
 
         return search_path, action_path
 
@@ -221,6 +225,15 @@ class MCTS:
             # Update value sum and visit count for each node.
             node.value_sum += value if node.to_play == to_play else -value
             node.visit_count += 1
+
+    def get_max_depth(self):
+        return self.max_depth_reached
+    
+    def _reset_max_depth(self):
+        """
+        Resets the maximum depth reached during the search.
+        """
+        self.max_depth_reached = 0
 
 
 

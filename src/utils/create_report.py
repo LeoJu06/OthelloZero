@@ -73,3 +73,21 @@ def save_loss_data(policy_loss, value_loss, epochs, iter_number):
 
     with open(path, "w") as f:
         json.dump(data, f, indent=4)
+
+
+def save_game_results(results, generation, edax_level, num_games):
+    """
+    Saves the game results to a JSON file.
+    """
+    data = {
+        "generation": generation,
+        "edax_level": edax_level,
+        "num_games": num_games,
+        "results": results
+    }
+
+    path = f"data/elo/results_gen_{generation}_edax_level_{edax_level}.json"
+    with open(path, "w") as f:
+        json.dump(data, f, indent=4)
+
+    print(f"Game results saved to {path}")
