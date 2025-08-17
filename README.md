@@ -1,6 +1,6 @@
 # OthelloZero
 
-**OthelloZero** is the practical part of my baccalaureate thesis. The goal is to build an **AlphaZero-style** system that learns the board game [Othello (Reversi)](https://de.wikipedia.org/wiki/Othello_(Spiel)) via **self-play** and **deep reinforcement learning**.  
+**OthelloZero** is the practical part of my Matura thesis. The goal is to build an **AlphaZero-style** system that learns the board game [Othello (Reversi)](https://de.wikipedia.org/wiki/Othello_(Spiel)) via **self-play** and **deep reinforcement learning**.  
 The system combines a **Policy+Value neural network** with **Monte-Carlo Tree Search (MCTS)** to discover strategies autonomously and improve iteratively.
 
 ---
