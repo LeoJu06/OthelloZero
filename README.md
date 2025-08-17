@@ -14,7 +14,7 @@ The system combines a **Policy+Value neural network** with **Monte-Carlo Tree Se
 
 ### 1) Clone & Install
 ```bash
-git clone https://github.com/<LeoJu06>/OthelloZero.git
+git clone https://github.com/LeoJu06/OthelloZero.git
 cd OthelloZero
 
 # (optional) create & activate a virtual env
@@ -84,12 +84,6 @@ OthelloZero/
 
 ---
 
-## ⚙️ Configuration (common places to look)
-- **Training parameters:** usually near the top of `main/pipeline.py` or in a config block/arg parser there.  
-- **Model/checkpoint paths:** defined in the pipeline or passed as CLI args.  
-- **MCTS settings (e.g., simulations, exploration constants):** inside MCTS module or pipeline args.
-
----
 
 ## 🧪 Troubleshooting
 
