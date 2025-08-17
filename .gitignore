@@ -167,6 +167,6 @@ data/examples/*.pkl
 /data/losses_plotted/
 /data/elo/
 /data/models/
-
+/src/edax-reversi
 /src/data/
 
