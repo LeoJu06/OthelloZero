@@ -1,9 +1,28 @@
-# OthelloZero
+# OthelloZero  
 
-This GitHub repository is the practical part of my baccalaureate thesis. My goal is to implement a kind of AlphaZero algorithm to master the game Othello (https://de.wikipedia.org/wiki/Othello_(Spiel)). 
+OthelloZero ist die praktische Umsetzung meiner Maturitätsarbeit. Ziel des Projekts ist es, einen **AlphaZero-ähnlichen Algorithmus** zu entwickeln, der das Brettspiel [Othello (Reversi)](https://de.wikipedia.org/wiki/Othello_(Spiel)) durch **Selbstspiel** und **Deep Reinforcement Learning** erlernt.  
 
-## How to execute the code:
-Simply clone the folder and execute the game.py file in the src/Othello repository. Note that src must be in the Python path. So if you receive an error message, add it.
+Das Programm kombiniert ein neuronales Netz mit **Monte-Carlo Tree Search (MCTS)**, um eigenständig Strategien zu entwickeln und seine Spielstärke kontinuierlich zu verbessern.  
 
-## Components of the programme: 
-I cannot provide this information yet. 
+---
+
+## 🚀 Installation & Ausführung  
+
+### 1. Repository klonen  
+```bash
+git clone https://github.com/<dein-username>/OthelloZero.git
+cd OthelloZero
+# OthelloZero  
+
+OthelloZero ist die praktische Umsetzung meiner Maturitätsarbeit. Ziel des Projekts ist es, einen **AlphaZero-ähnlichen Algorithmus** zu entwickeln, der das Brettspiel [Othello (Reversi)](https://de.wikipedia.org/wiki/Othello_(Spiel)) durch **Selbstspiel** und **Deep Reinforcement Learning** erlernt.  
+
+Das Programm kombiniert ein neuronales Netz mit **Monte-Carlo Tree Search (MCTS)**, um eigenständig Strategien zu entwickeln und seine Spielstärke kontinuierlich zu verbessern.  
+
+---
+
+## 🚀 Installation & Ausführung  
+
+### 1. Repository klonen  
+```bash
+git clone https://github.com/<dein-username>/OthelloZero.git
+cd OthelloZero
